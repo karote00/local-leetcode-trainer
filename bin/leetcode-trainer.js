@@ -37,7 +37,7 @@ Examples:
   lct lang python
   lct complete easy/two-sum
 
-For more help: https://github.com/username/local-leetcode-trainer
+For more help: https://github.com/karote00/local-leetcode-trainer
 `);
   process.exit(command ? 1 : 0);
 }

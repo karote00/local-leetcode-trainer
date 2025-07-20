@@ -45,7 +45,7 @@ lct challenge easy
 ### Option 2: Clone Repository
 ```bash
 # Clone and setup
-git clone https://github.com/username/local-leetcode-trainer
+git clone https://github.com/karote00/local-leetcode-trainer
 cd local-leetcode-trainer
 yarn install
 

@@ -24,7 +24,7 @@ Thank you for your interest in contributing! This project aims to provide the be
 ## 🛠️ Development Setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/local-leetcode-trainer
+git clone https://github.com/karote00/local-leetcode-trainer
 cd local-leetcode-trainer
 yarn install
 ```

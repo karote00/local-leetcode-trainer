@@ -22,6 +22,6 @@ module.exports = {
   info: {
     name: 'Local LeetCode Trainer',
     description: 'A complete offline LeetCode practice environment with multi-language support',
-    repository: 'https://github.com/username/local-leetcode-trainer'
+    repository: 'https://github.com/karote00/local-leetcode-trainer'
   }
 };
