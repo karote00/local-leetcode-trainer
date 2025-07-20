@@ -1,80 +1,122 @@
 #!/usr/bin/env node
 
+const { Command } = require('commander');
 const { spawn } = require('child_process');
 const path = require('path');
+const packageJson = require('../package.json');
 
-// Get command and arguments
-let [,, command, ...args] = process.argv;
+const program = new Command();
 
-// Map of commands to script files
-const commands = {
-  'challenge': 'challenge.js',
-  'test': 'test-runner.js',
-  'open': 'open-problem.js',
-  'complete': 'complete.js',
-  'lang': 'config.js',
-  'config': 'config.js',
-  'hint': 'hint.js',
-  'learn': 'hint.js',
-  'patterns': 'hint.js'
-};
+// Configure the main program
+program
+  .name('leetcode-trainer')
+  .description('🎯 A complete offline LeetCode practice environment with multi-language support')
+  .version(packageJson.version, '-v, --version', 'Show version number')
+  .helpOption('-h, --help', 'Show this help message');
 
-// Handle version and help flags
-if (command === '--version' || command === '-v') {
-  const packageJson = require('../package.json');
-  console.log(`Local LeetCode Trainer v${packageJson.version}`);
-  process.exit(0);
+// Helper function to execute scripts
+function executeScript(scriptName, args = []) {
+  const scriptPath = path.join(__dirname, '..', 'scripts', scriptName);
+  const child = spawn('node', [scriptPath, ...args], {
+    stdio: 'inherit',
+    cwd: process.cwd()
+  });
+  
+  child.on('exit', (code) => {
+    process.exit(code);
+  });
 }
 
-if (command === '--help' || command === '-h') {
-  command = null; // This will trigger the help display below
+// Challenge command
+program
+  .command('challenge')
+  .description('Generate new LeetCode problems')
+  .argument('<difficulty>', 'Problem difficulty (easy/medium/hard)')
+  .argument('[count]', 'Number of problems to generate', '1')
+  .action((difficulty, count) => {
+    executeScript('challenge.js', [difficulty, count]);
+  });
+
+// Test command
+program
+  .command('test')
+  .description('Run tests for a problem')
+  .argument('[problem]', 'Problem to test (e.g., easy/two-sum)')
+  .action((problem) => {
+    executeScript('test-runner.js', problem ? [problem] : []);
+  });
+
+// Open command
+program
+  .command('open')
+  .description('Open LeetCode problem in browser')
+  .argument('[problem]', 'Problem to open (e.g., easy/two-sum)')
+  .action((problem) => {
+    executeScript('open-problem.js', problem ? [problem] : []);
+  });
+
+// Complete command
+program
+  .command('complete')
+  .description('Mark problem as completed or manage completion')
+  .argument('[action]', 'Action: problem-path, "list", or "undo problem-path"')
+  .argument('[problem]', 'Problem path for undo action')
+  .action((action, problem) => {
+    const args = problem ? [action, problem] : (action ? [action] : []);
+    executeScript('complete.js', args);
+  });
+
+// Language command
+program
+  .command('lang')
+  .alias('config')
+  .description('Show or change programming language')
+  .argument('[language]', 'Language to switch to (javascript/python/java/cpp)')
+  .action((language) => {
+    executeScript('config.js', language ? [language] : []);
+  });
+
+// Hint command
+program
+  .command('hint')
+  .description('Get progressive hints for a problem')
+  .argument('<problem>', 'Problem to get hints for (e.g., easy/two-sum)')
+  .argument('[level]', 'Hint level (1-4)', '1')
+  .action((problem, level) => {
+    executeScript('hint.js', ['hint', problem, level]);
+  });
+
+// Learn command
+program
+  .command('learn')
+  .description('Show algorithm approaches and complexity analysis')
+  .argument('<problem>', 'Problem to learn about (e.g., easy/two-sum)')
+  .action((problem) => {
+    executeScript('hint.js', ['learn', problem]);
+  });
+
+// Patterns command
+program
+  .command('patterns')
+  .description('List all available algorithm patterns')
+  .action(() => {
+    executeScript('hint.js', ['patterns']);
+  });
+
+// Show welcome message when no command is given
+if (process.argv.length === 2) {
+  console.log('🎯 Welcome to Local LeetCode Trainer!\n');
+  console.log('🚀 Quick start: lct challenge easy');
+  console.log('📚 Get help: lct --help');
+  console.log('🧠 Learn: lct patterns\n');
 }
 
-// Show help if no command or invalid command
-if (!command || !commands[command]) {
-  console.log(`
-🎯 Local LeetCode Trainer CLI
-
-Usage: leetcode-trainer <command> [options]
-   or: lct <command> [options]
-
-Commands:
-  challenge <difficulty>     Generate new problem (easy/medium/hard)
-  test <problem>            Run tests for a problem
-  open <problem>            Open LeetCode link in browser
-  complete <problem>        Mark problem as completed
-  lang [language]           Show/change language (js/python/java/cpp)
-  hint <problem> [level]    Get progressive hints for a problem
-  learn <problem>           Show algorithm approaches and patterns
-  patterns                  List all available algorithm patterns
-
-Options:
-  --version, -v             Show version number
-  --help, -h                Show this help message
-
-Examples:
-  leetcode-trainer challenge easy
-  lct test easy/two-sum
-  lct lang python
-  lct complete easy/two-sum
-  lct hint easy/two-sum
-  lct hint easy/two-sum 2
-  lct learn easy/two-sum
-  lct patterns
-  lct --version
-
-For more help: https://github.com/karote00/local-leetcode-trainer
-`);
-  process.exit(command ? 1 : 0);
-}
-
-// Execute the corresponding script
-const scriptPath = path.join(__dirname, '..', 'scripts', commands[command]);
-const child = spawn('node', [scriptPath, ...args], {
-  stdio: 'inherit',
-  cwd: process.cwd()
+// Handle unknown commands
+program.on('command:*', () => {
+  console.error('❌ Unknown command: %s\n', program.args.join(' '));
+  console.log('💡 See "lct --help" for available commands');
+  process.exit(1);
 });
 
-child.on('exit', (code) => {
-  process.exit(code);
-});
+// Parse command line arguments
+program.parse();

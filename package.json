@@ -1,6 +1,6 @@
 {
   "name": "local-leetcode-trainer",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A complete offline LeetCode practice environment with multi-language support - practice anywhere, collaborate with AI, submit with confidence",
   "main": "scripts/index.js",
   "bin": {
@@ -57,5 +57,8 @@
     "CONTRIBUTING.md"
   ],
   "preferGlobal": true,
-  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
+  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c",
+  "dependencies": {
+    "commander": "^14.0.0"
+  }
 }
