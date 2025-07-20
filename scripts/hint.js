@@ -14,40 +14,69 @@ const ALGORITHM_PATTERNS = {
       "⚡ Hash maps provide O(1) lookup time",
       "🎯 For each number, calculate: target - current_number"
     ],
+    problemAnalysis: {
+      coreQuestion: "We need to find TWO numbers that add up to a target. The key insight is: for each number, we know exactly what its partner should be (target - current_number).",
+      keyConstraints: [
+        "Each input has exactly one solution - no need to handle multiple answers",
+        "Can't use the same element twice - need to track indices",
+        "Return indices, not the actual numbers",
+        "Array is unsorted - can't use two pointers easily"
+      ],
+      patternRecognition: [
+        "This is a 'find complement' problem - for each element, we know what we're looking for",
+        "When you need to find pairs that satisfy a condition, think hash maps",
+        "When you need O(1) lookup of 'have I seen this before?', think hash maps",
+        "The constraint 'exactly one solution' simplifies our logic"
+      ]
+    },
+    thinkingProcess: [
+      "What am I looking for? Two numbers that sum to target",
+      "For each number X, I need to find (target - X)",
+      "How can I quickly check if I've seen (target - X) before?",
+      "Hash map gives me O(1) lookup - perfect for 'have I seen this?' questions",
+      "I need indices, so I'll store number → index mapping"
+    ],
     approaches: [
       {
         name: "Brute Force",
         timeComplexity: "O(n²)",
         spaceComplexity: "O(1)",
-        description: "Check every pair of numbers",
-        pseudocode: `for i in range(len(nums)):
-    for j in range(i+1, len(nums)):
-        if nums[i] + nums[j] == target:
-            return [i, j]`
+        whenToUse: "When space is extremely limited or array is very small",
+        tradeoffs: "Simple to understand but doesn't scale - becomes slow with large arrays",
+        description: "Check every pair of numbers"
       },
       {
         name: "Hash Map",
         timeComplexity: "O(n)",
         spaceComplexity: "O(n)",
-        description: "Store complements in hash map for O(1) lookup",
-        pseudocode: `seen = {}
-for i, num in enumerate(nums):
-    complement = target - num
-    if complement in seen:
-        return [seen[complement], i]
-    seen[num] = i`
+        whenToUse: "When you need optimal time complexity and space isn't a constraint",
+        tradeoffs: "Uses extra space but dramatically faster - this is usually the preferred solution",
+        description: "Store complements in hash map for O(1) lookup"
       }
     ],
-    relatedProblems: [
-      "3Sum",
-      "4Sum", 
-      "Two Sum II - Input Array Is Sorted",
-      "Two Sum III - Data Structure Design"
+    patternSignals: [
+      "Problem asks to find pairs/combinations that satisfy a condition",
+      "You need to check 'have I seen this complement before?'",
+      "Problem involves finding elements that add up to a target",
+      "You need O(1) lookup time for previously seen elements"
     ],
     keyInsights: [
-      "Trade space for time complexity",
-      "Hash maps are perfect for 'find complement' problems",
-      "Always consider what you're looking for vs what you have"
+      "Transform 'find two numbers' into 'for each number, find its complement'",
+      "Hash maps excel at 'membership testing' - use them when you need to check if something exists",
+      "Sometimes trading space for time complexity is worth it",
+      "The complement pattern: if you know the sum and one number, you know the other"
+    ],
+    commonMistakes: [
+      "Forgetting to check if complement exists before adding current number to hash map",
+      "Using the same element twice (not handling indices correctly)",
+      "Not considering that the complement might be the same as current number",
+      "Overcomplicating with sorting when hash map is simpler"
+    ],
+    relatedProblems: [
+      "3Sum - extends the complement concept to three numbers",
+      "4Sum - further extension of the pattern",
+      "Two Sum II - when array is sorted, can use two pointers instead",
+      "Two Sum III - when you need to support multiple queries"
     ]
   },
   'palindrome-number': {
@@ -272,7 +301,7 @@ function getProblemName(problemPath) {
 function provideHints(problemPath, level = 1) {
   const problemName = getProblemName(problemPath);
   const pattern = ALGORITHM_PATTERNS[problemName];
-  
+
   if (!pattern) {
     console.log(`🤔 No hints available for ${problemName} yet.`);
     console.log(`💡 Try these general problem-solving steps:`);
@@ -283,11 +312,11 @@ function provideHints(problemPath, level = 1) {
     console.log(`   5. Think about edge cases`);
     return;
   }
-  
+
   console.log(`🎯 ${pattern.category} Problem - ${pattern.difficulty}`);
   console.log(`📚 Patterns: ${pattern.patterns.join(', ')}`);
   console.log('');
-  
+
   // Progressive hints based on level
   console.log(`💡 Hint Level ${level}:`);
   if (level <= pattern.hints.length) {
@@ -295,52 +324,100 @@ function provideHints(problemPath, level = 1) {
   } else {
     console.log(`   🎉 You've seen all hints! Time to implement.`);
   }
-  
+
   if (level < pattern.hints.length) {
     console.log(`\n🔍 Want more hints? Run: lct hint ${problemPath.replace(/\.(js|py|java|cpp)$/, '')} ${level + 1}`);
   }
 }
 
-// Function to show algorithm approaches
-function showApproaches(problemPath) {
+// Function to show problem analysis and learning
+function showProblemAnalysis(problemPath) {
   const problemName = getProblemName(problemPath);
   const pattern = ALGORITHM_PATTERNS[problemName];
-  
-  if (!pattern || !pattern.approaches) {
-    console.log(`📚 No algorithm approaches available for ${problemName} yet.`);
+
+  if (!pattern) {
+    console.log(`📚 No analysis available for ${problemName} yet.`);
     return;
   }
-  
-  console.log(`🧠 Algorithm Approaches for ${problemName}:`);
+
+  console.log(`🎯 Problem Analysis: ${pattern.category} - ${pattern.difficulty}`);
   console.log('');
-  
-  pattern.approaches.forEach((approach, index) => {
-    console.log(`${index + 1}. **${approach.name}**`);
-    console.log(`   ⏰ Time: ${approach.timeComplexity}`);
-    console.log(`   💾 Space: ${approach.spaceComplexity}`);
-    console.log(`   📝 ${approach.description}`);
-    
-    if (approach.pseudocode) {
-      console.log(`   \n   Pseudocode:`);
-      approach.pseudocode.split('\n').forEach(line => {
-        console.log(`   ${line}`);
-      });
-    }
+
+  // Step 1: Problem Understanding
+  if (pattern.problemAnalysis) {
+    console.log(`🔍 **Step 1: What is this problem really asking?**`);
+    console.log(`   ${pattern.problemAnalysis.coreQuestion}`);
     console.log('');
-  });
-  
+
+    console.log(`🎯 **Step 2: What are the key constraints?**`);
+    pattern.problemAnalysis.keyConstraints.forEach(constraint => {
+      console.log(`   • ${constraint}`);
+    });
+    console.log('');
+
+    console.log(`🧠 **Step 3: What patterns do you recognize?**`);
+    pattern.problemAnalysis.patternRecognition.forEach(recognition => {
+      console.log(`   • ${recognition}`);
+    });
+    console.log('');
+  }
+
+  // Step 2: Thinking Process
+  if (pattern.thinkingProcess) {
+    console.log(`💭 **How to approach this systematically:**`);
+    pattern.thinkingProcess.forEach((step, index) => {
+      console.log(`   ${index + 1}. ${step}`);
+    });
+    console.log('');
+  }
+
+  // Step 3: Multiple Approaches with Trade-offs
+  if (pattern.approaches) {
+    console.log(`⚖️  **Different approaches and their trade-offs:**`);
+    console.log('');
+
+    pattern.approaches.forEach((approach, index) => {
+      console.log(`${index + 1}. **${approach.name}** (${approach.timeComplexity} time, ${approach.spaceComplexity} space)`);
+      console.log(`   💡 When to use: ${approach.whenToUse || approach.description}`);
+      if (approach.tradeoffs) {
+        console.log(`   ⚖️  Trade-offs: ${approach.tradeoffs}`);
+      }
+      console.log('');
+    });
+  }
+
+  // Step 4: Key Insights and Generalizable Concepts
   if (pattern.keyInsights) {
-    console.log(`🔑 Key Insights:`);
+    console.log(`🔑 **Key insights you can apply to other problems:**`);
     pattern.keyInsights.forEach(insight => {
       console.log(`   • ${insight}`);
     });
     console.log('');
   }
-  
+
+  // Step 5: Pattern Recognition for Future Problems
+  if (pattern.patternSignals) {
+    console.log(`🎯 **How to recognize this pattern in future problems:**`);
+    pattern.patternSignals.forEach(signal => {
+      console.log(`   • ${signal}`);
+    });
+    console.log('');
+  }
+
+  // Step 6: Related Problems for Practice
   if (pattern.relatedProblems) {
-    console.log(`🔗 Related Problems:`);
+    console.log(`🔗 **Practice the same pattern with these problems:**`);
     pattern.relatedProblems.forEach(problem => {
       console.log(`   • ${problem}`);
+    });
+    console.log('');
+  }
+
+  // Step 7: Common Mistakes
+  if (pattern.commonMistakes) {
+    console.log(`⚠️  **Common mistakes to avoid:**`);
+    pattern.commonMistakes.forEach(mistake => {
+      console.log(`   • ${mistake}`);
     });
   }
 }
@@ -350,24 +427,24 @@ function resolveProblemPath(input) {
   const projectRoot = path.join(__dirname, '..');
   const language = getCurrentLanguage();
   const langConfig = getLanguageConfig(language);
-  
+
   const parts = input.split('/');
   if (parts.length === 2) {
     const [difficulty, problemName] = parts;
-    
+
     // Try active folder first
     const activePath = path.join(projectRoot, difficulty, problemName, `${problemName}${langConfig.extension}`);
     if (fs.existsSync(activePath)) {
       return path.relative(projectRoot, activePath);
     }
-    
+
     // Try completed folder
     const completedPath = path.join(projectRoot, difficulty, 'completed', problemName, `${problemName}${langConfig.extension}`);
     if (fs.existsSync(completedPath)) {
       return path.relative(projectRoot, completedPath);
     }
   }
-  
+
   return null;
 }
 
@@ -377,7 +454,7 @@ function main() {
   const command = args[0];
   const problemInput = args[1];
   const level = parseInt(args[2]) || 1;
-  
+
   if (!command) {
     console.log('🧠 LeetCode Learning Assistant');
     console.log('');
@@ -394,11 +471,11 @@ function main() {
     });
     return;
   }
-  
+
   if (command === 'patterns') {
     console.log('📚 Available Algorithm Patterns:');
     console.log('');
-    
+
     const categories = {};
     Object.entries(ALGORITHM_PATTERNS).forEach(([problem, pattern]) => {
       if (!categories[pattern.category]) {
@@ -406,7 +483,7 @@ function main() {
       }
       categories[pattern.category].push({ problem, ...pattern });
     });
-    
+
     Object.entries(categories).forEach(([category, problems]) => {
       console.log(`🏷️  ${category}:`);
       problems.forEach(p => {
@@ -416,20 +493,20 @@ function main() {
     });
     return;
   }
-  
+
   if (!problemInput) {
     console.log('❌ Please specify a problem: lct hint easy/two-sum');
     return;
   }
-  
+
   const problemPath = resolveProblemPath(problemInput);
   if (!problemPath) {
     console.log(`❌ Problem not found: ${problemInput}`);
     return;
   }
-  
+
   if (command === 'learn') {
-    showApproaches(problemPath);
+    showProblemAnalysis(problemPath);
   } else {
     provideHints(problemPath, level);
   }
@@ -438,7 +515,7 @@ function main() {
 // Export for use in other scripts
 module.exports = {
   provideHints,
-  showApproaches,
+  showProblemAnalysis,
   ALGORITHM_PATTERNS
 };
 

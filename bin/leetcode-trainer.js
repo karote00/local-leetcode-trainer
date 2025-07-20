@@ -21,7 +21,7 @@ function executeScript(scriptName, args = []) {
     stdio: 'inherit',
     cwd: process.cwd()
   });
-  
+
   child.on('exit', (code) => {
     process.exit(code);
   });
