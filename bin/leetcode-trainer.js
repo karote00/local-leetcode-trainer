@@ -13,7 +13,10 @@ const commands = {
   'open': 'open-problem.js',
   'complete': 'complete.js',
   'lang': 'config.js',
-  'config': 'config.js'
+  'config': 'config.js',
+  'hint': 'hint.js',
+  'learn': 'hint.js',
+  'patterns': 'hint.js'
 };
 
 // Show help if no command or invalid command
@@ -30,12 +33,19 @@ Commands:
   open <problem>            Open LeetCode link in browser
   complete <problem>        Mark problem as completed
   lang [language]           Show/change language (js/python/java/cpp)
+  hint <problem> [level]    Get progressive hints for a problem
+  learn <problem>           Show algorithm approaches and patterns
+  patterns                  List all available algorithm patterns
 
 Examples:
   leetcode-trainer challenge easy
   lct test easy/two-sum
   lct lang python
   lct complete easy/two-sum
+  lct hint easy/two-sum
+  lct hint easy/two-sum 2
+  lct learn easy/two-sum
+  lct patterns
 
 For more help: https://github.com/karote00/local-leetcode-trainer
 `);

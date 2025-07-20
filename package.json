@@ -1,6 +1,6 @@
 {
   "name": "local-leetcode-trainer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A complete offline LeetCode practice environment with multi-language support - practice anywhere, collaborate with AI, submit with confidence",
   "main": "scripts/index.js",
   "bin": {
@@ -13,6 +13,7 @@
     "challenge": "node scripts/challenge.js",
     "complete": "node scripts/complete.js",
     "lang": "node scripts/config.js",
+    "hint": "node scripts/hint.js",
     "postinstall": "node scripts/setup.js"
   },
   "keywords": [

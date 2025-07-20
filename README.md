@@ -130,6 +130,14 @@ yarn lang java                # Switch to Java
 yarn lang cpp                 # Switch to C++
 ```
 
+### AI-Powered Learning Assistant
+```bash
+lct hint easy/two-sum          # Get progressive hints
+lct hint easy/two-sum 2        # Get more advanced hints
+lct learn easy/two-sum         # Show algorithm approaches & complexity
+lct patterns                   # List all available algorithm patterns
+```
+
 ### Progress Tracking
 ```bash
 yarn complete easy/two-sum      # Mark as completed
@@ -158,6 +166,13 @@ yarn complete undo easy/two-sum # Move back to active
 - **Debugging support** - Add breakpoints, console.logs, step through code
 - **Code iteration** - Modify and test instantly without network delays
 - **Learning conversations** - Ask AI to explain concepts, algorithms, optimizations
+
+### 🧠 Built-in Learning Assistant
+- **Progressive hints** - Get hints without spoiling the solution
+- **Algorithm approaches** - Learn multiple ways to solve each problem
+- **Complexity analysis** - Understand time and space trade-offs
+- **Pattern recognition** - See connections between similar problems
+- **Related problems** - Discover what to practice next
 
 ### ⚡ Lightning Fast
 - **Instant testing** - No network delays, immediate feedback
