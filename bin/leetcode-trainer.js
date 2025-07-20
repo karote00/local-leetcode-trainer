@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 // Get command and arguments
-const [,, command, ...args] = process.argv;
+let [,, command, ...args] = process.argv;
 
 // Map of commands to script files
 const commands = {
@@ -18,6 +18,17 @@ const commands = {
   'learn': 'hint.js',
   'patterns': 'hint.js'
 };
+
+// Handle version and help flags
+if (command === '--version' || command === '-v') {
+  const packageJson = require('../package.json');
+  console.log(`Local LeetCode Trainer v${packageJson.version}`);
+  process.exit(0);
+}
+
+if (command === '--help' || command === '-h') {
+  command = null; // This will trigger the help display below
+}
 
 // Show help if no command or invalid command
 if (!command || !commands[command]) {
@@ -37,6 +48,10 @@ Commands:
   learn <problem>           Show algorithm approaches and patterns
   patterns                  List all available algorithm patterns
 
+Options:
+  --version, -v             Show version number
+  --help, -h                Show this help message
+
 Examples:
   leetcode-trainer challenge easy
   lct test easy/two-sum
@@ -46,6 +61,7 @@ Examples:
   lct hint easy/two-sum 2
   lct learn easy/two-sum
   lct patterns
+  lct --version
 
 For more help: https://github.com/karote00/local-leetcode-trainer
 `);
