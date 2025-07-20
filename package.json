@@ -1,0 +1,38 @@
+{
+  "name": "local-leetcode-trainer",
+  "version": "1.0.0",
+  "description": "A complete offline LeetCode practice environment that lets you code, test, and learn anywhere - no internet required!",
+  "main": "index.js",
+  "scripts": {
+    "test": "node scripts/test-runner.js",
+    "open": "node scripts/open-problem.js",
+    "challenge": "node scripts/challenge.js",
+    "complete": "node scripts/complete.js",
+    "lang": "node scripts/config.js"
+  },
+  "keywords": [
+    "leetcode",
+    "algorithms",
+    "practice",
+    "offline",
+    "coding-interview",
+    "data-structures",
+    "problem-solving",
+    "programming-practice",
+    "ai-friendly"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/local-leetcode-trainer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/local-leetcode-trainer/issues"
+  },
+  "homepage": "https://github.com/username/local-leetcode-trainer#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
+}
