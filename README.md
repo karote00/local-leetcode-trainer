@@ -31,26 +31,44 @@ Unlike the LeetCode website where you're limited to just solving problems, the L
 
 ## 🚀 Quick Start
 
+### Option 1: NPM Installation (Recommended)
 ```bash
-# 1. Clone and setup
+# Install globally
+npm install -g local-leetcode-trainer
+
+# Start practicing immediately
+leetcode-trainer challenge easy
+# or use the short alias
+lct challenge easy
+```
+
+### Option 2: Clone Repository
+```bash
+# Clone and setup
 git clone https://github.com/username/local-leetcode-trainer
 cd local-leetcode-trainer
 yarn install
 
-# 2. Choose your language (JavaScript is default)
-yarn lang python          # Switch to Python
-yarn lang java            # Switch to Java
-yarn lang                 # Show current language
-
-# 3. Get your first challenge
+# Use yarn commands
 yarn challenge easy
+```
 
-# 4. Start coding and testing
-yarn test easy/two-sum
-yarn open easy/two-sum     # Opens LeetCode for final submission
+### Getting Started
+```bash
+# Choose your language (JavaScript is default)
+leetcode-trainer lang python    # Switch to Python
+lct lang java                   # Switch to Java
+lct lang                        # Show current language
 
-# 5. Mark as completed when done
-yarn complete easy/two-sum
+# Get your first challenge
+lct challenge easy
+
+# Start coding and testing
+lct test easy/two-sum
+lct open easy/two-sum           # Opens LeetCode for final submission
+
+# Mark as completed when done
+lct complete easy/two-sum
 ```
 
 ## 🎯 Perfect Workflow
