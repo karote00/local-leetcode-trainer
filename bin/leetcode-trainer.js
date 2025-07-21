@@ -10,7 +10,7 @@ const program = new Command();
 // Configure the main program
 program
   .name('leetcode-trainer')
-  .description('🎯 A complete offline LeetCode practice environment with multi-language support')
+  .description('🎯 A complete local LeetCode practice environment with multi-language support')
   .version(packageJson.version, '-v, --version', 'Show version number')
   .helpOption('-h, --help', 'Show this help message');
 

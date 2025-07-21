@@ -1,25 +1,25 @@
 # 🎯 Local LeetCode Trainer
 
-A complete offline LeetCode practice environment that lets you code, test, and learn anywhere - no internet required!
+A complete local LeetCode practice environment - use your IDE, your tools, your way. Practice with full debugging support, AI collaboration, and instant testing, then submit to LeetCode when ready.
 
-## ✨ Why Local Practice?
+## ✨ Why Practice Locally?
 
-**Train Like a Pro, Anywhere You Want**
+**Use Your Development Environment, Not a Web Browser**
 
-Unlike the LeetCode website where you're limited to just solving problems, the Local LeetCode Trainer gives you a complete development environment where you can:
+Unlike the LeetCode website where you're limited to a basic web editor, the Local LeetCode Trainer gives you a complete development environment where you can:
 
-- 🤖 **Collaborate with AI** - Ask AI to explain algorithms, review your code, suggest optimizations
+- 🤖 **Collaborate with AI** - Use ChatGPT, Claude, Copilot freely in your IDE
 - 🔍 **Debug freely** - Add console.logs, breakpoints, step through your code
-- ⚡ **Instant feedback** - No network delays, test immediately
-- 🏠 **Practice offline** - Airplane, coffee shop, anywhere without internet
+- ⚡ **Instant testing** - No network delays, test immediately on your machine
+- 🛠️ **Use your IDE** - VS Code, IntelliJ, or whatever you prefer
 - 📝 **Custom test cases** - Add your own edge cases and scenarios
-- 🎯 **Focus on learning** - No distractions, just you and the code
+- 🎯 **Focus on learning** - Built-in hints and algorithmic thinking guidance
 
 ## 🆚 LeetCode Website vs Local Trainer
 
 | Feature | LeetCode Website | Local LeetCode Trainer |
 |---------|------------------|---------------|
-| **Internet Required** | ✅ Always | ❌ Never |
+| **Development Environment** | 🌐 Web editor only | 🛠️ Your IDE + tools |
 | **AI Collaboration** | ❌ Limited | ✅ Full access |
 | **Custom Test Cases** | ❌ No | ✅ Yes |
 | **Debugging Tools** | ❌ Limited | ✅ Full IDE support |
