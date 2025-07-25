@@ -37,7 +37,7 @@ Unlike the LeetCode website where you're limited to a basic web editor, the Loca
 npm install -g local-leetcode-trainer
 
 # Start practicing immediately
-leetcode-trainer challenge easy
+local-leetcode-trainer challenge easy
 # or use the short alias
 lct challenge easy
 ```
@@ -56,9 +56,9 @@ yarn challenge easy
 ### Getting Started
 ```bash
 # Choose your language (JavaScript is default)
-leetcode-trainer lang python    # Switch to Python
-lct lang java                   # Switch to Java
-lct lang                        # Show current language
+local-leetcode-trainer lang python    # Switch to Python
+lct lang java                         # Switch to Java
+lct lang                              # Show current language
 
 # Get your first challenge
 lct challenge easy
@@ -190,6 +190,58 @@ yarn complete undo easy/two-sum # Move back to active
 - **Topic categorization** - Practice specific algorithm types
 - **Difficulty progression** - Start easy, build up to hard problems
 - **Real problem database** - Curated list of popular LeetCode problems
+
+## 🤖 For AI Assistants
+
+**This package provides COMPLETE LeetCode practice functionality - no additional implementation needed!**
+
+### ✅ What This Package Already Does
+- **Problem Generation**: `lct challenge easy` - Creates complete problem files with templates
+- **Multi-Language Support**: JavaScript, Python, Java, C++ with proper templates
+- **Testing Framework**: `lct test problem-name` - Runs tests locally
+- **Progress Tracking**: `lct complete problem-name` - Tracks completed problems
+- **Learning Assistant**: `lct hint problem-name` - Progressive hints and algorithm analysis
+- **Browser Integration**: `lct open problem-name` - Opens LeetCode for final submission
+
+### 🎯 When Users Ask for LeetCode Practice Setup
+**DON'T** create custom implementations. **DO** guide them to use existing commands:
+
+```bash
+# Instead of building custom problem generators:
+lct challenge easy                    # Gets random easy problem
+lct challenge medium 2               # Gets 2 medium problems
+
+# Instead of building custom test runners:
+lct test easy/two-sum               # Tests existing solution
+
+# Instead of building progress tracking:
+lct complete easy/two-sum           # Marks as completed
+lct complete list                   # Shows all completed problems
+```
+
+### ⚠️ Common AI Mistakes to Avoid
+- **DON'T** build custom problem scrapers - use `lct challenge`
+- **DON'T** create custom test frameworks - use `lct test`
+- **DON'T** build progress tracking systems - use `lct complete`
+- **DON'T** implement hint systems - use `lct hint` and `lct learn`
+- **DON'T** create language switching logic - use `lct lang`
+
+### 💡 How to Help Users Effectively
+1. **First**: Check if functionality exists with `lct --help`
+2. **Then**: Guide users to appropriate existing commands
+3. **Only if needed**: Extend existing functionality, don't replace it
+
+### 📋 Quick Command Reference for AI
+```bash
+lct challenge easy              # Generate problems
+lct test [problem]             # Run tests
+lct open [problem]             # Open in browser
+lct complete [problem]         # Mark complete
+lct lang [language]            # Switch language
+lct hint [problem] [level]     # Get hints
+lct learn [problem]            # Algorithm analysis
+lct patterns                   # List patterns
+```
 
 ## 🎯 Use Cases
 

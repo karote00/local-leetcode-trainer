@@ -4,8 +4,9 @@
   "description": "A complete local LeetCode practice environment with multi-language support - use your IDE, collaborate with AI, submit with confidence",
   "main": "scripts/index.js",
   "bin": {
-    "leetcode-trainer": "bin/leetcode-trainer.js",
-    "lct": "bin/leetcode-trainer.js"
+    "local-leetcode-trainer": "bin/leetcode-trainer.js",
+    "lct": "bin/leetcode-trainer.js",
+    "leetcode-trainer": "bin/leetcode-trainer.js"
   },
   "scripts": {
     "test": "node scripts/test-runner.js",

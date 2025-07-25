@@ -7,9 +7,17 @@ const packageJson = require('../package.json');
 
 const program = new Command();
 
+// Check if using deprecated command and show warning
+const isDeprecatedCommand = process.argv[1].includes('leetcode-trainer') && !process.argv[1].includes('local-leetcode-trainer');
+if (isDeprecatedCommand) {
+  console.log('⚠️  DEPRECATION WARNING: "leetcode-trainer" command is deprecated.');
+  console.log('💡 Please use "local-leetcode-trainer" or "lct" instead.');
+  console.log('');
+}
+
 // Configure the main program
 program
-  .name('leetcode-trainer')
+  .name('local-leetcode-trainer')
   .description('🎯 A complete local LeetCode practice environment with multi-language support')
   .version(packageJson.version, '-v, --version', 'Show version number')
   .helpOption('-h, --help', 'Show this help message');
