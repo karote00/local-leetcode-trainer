@@ -38,6 +38,7 @@ function executeScript(scriptName, args = []) {
 // Challenge command
 program
   .command('challenge')
+  .alias('c')
   .description('Generate new LeetCode problems')
   .argument('<difficulty>', 'Problem difficulty (easy/medium/hard)')
   .argument('[count]', 'Number of problems to generate', '1')
