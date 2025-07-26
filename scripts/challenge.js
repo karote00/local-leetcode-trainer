@@ -11,7 +11,21 @@ const PROBLEMS = {
       title: "Two Sum",
       description: "Find two numbers that add up to target",
       topics: ["Array", "Hash Table"],
-      companies: ["Amazon", "Google", "Apple"]
+      companies: ["Amazon", "Google", "Apple"],
+      testCases: [
+        { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+        { input: [[3, 2, 4], 6], expected: [1, 2] },
+        { input: [[3, 3], 6], expected: [0, 1] },
+        { input: [[1, 2, 3, 4, 5], 9], expected: [3, 4] },
+        { input: [[5, 5, 11], 10], expected: [0, 1] },
+        { input: [[-1, -2, -3, -4, -5], -8], expected: [2, 4] },
+        { input: [[0, 4, 3, 0], 0], expected: [0, 3] },
+        { input: [[2, 5, 5, 11], 10], expected: [1, 2] },
+        { input: [[1, 3, 7, 9, 2], 11], expected: [3, 4] },
+        { input: [[6, 2, 4], 6], expected: [0, 2] },
+        { input: [[10, 20, 30, 40], 50], expected: [1, 2] },
+        { input: [[1, 2], 3], expected: [0, 1] }
+      ]
     },
     {
       id: 9,
@@ -19,7 +33,21 @@ const PROBLEMS = {
       title: "Palindrome Number",
       description: "Check if integer is palindrome without string conversion",
       topics: ["Math"],
-      companies: ["Amazon", "Apple"]
+      companies: ["Amazon", "Apple"],
+      testCases: [
+        { input: [121], expected: true },
+        { input: [-121], expected: false },
+        { input: [10], expected: false },
+        { input: [0], expected: true },
+        { input: [1], expected: true },
+        { input: [12321], expected: true },
+        { input: [123321], expected: true },
+        { input: [12345], expected: false },
+        { input: [1001], expected: true },
+        { input: [1234321], expected: true },
+        { input: [987654321], expected: false },
+        { input: [9009], expected: true }
+      ]
     },
     {
       id: 13,
@@ -27,7 +55,21 @@ const PROBLEMS = {
       title: "Roman to Integer",
       description: "Convert roman numerals to integer",
       topics: ["Hash Table", "Math", "String"],
-      companies: ["Facebook", "Microsoft", "Yahoo"]
+      companies: ["Facebook", "Microsoft", "Yahoo"],
+      testCases: [
+        { input: ["III"], expected: 3 },
+        { input: ["LVIII"], expected: 58 },
+        { input: ["MCMXC"], expected: 1990 },
+        { input: ["IV"], expected: 4 },
+        { input: ["IX"], expected: 9 },
+        { input: ["XL"], expected: 40 },
+        { input: ["XC"], expected: 90 },
+        { input: ["CD"], expected: 400 },
+        { input: ["CM"], expected: 900 },
+        { input: ["MCDLIV"], expected: 1454 },
+        { input: ["MMCDXLIV"], expected: 2444 },
+        { input: ["DCXXI"], expected: 621 }
+      ]
     },
     {
       id: 14,
@@ -35,7 +77,21 @@ const PROBLEMS = {
       title: "Longest Common Prefix",
       description: "Find longest common prefix among array of strings",
       topics: ["String"],
-      companies: ["Google", "Yelp"]
+      companies: ["Google", "Yelp"],
+      testCases: [
+        { input: [["flower","flow","flight"]], expected: "fl" },
+        { input: [["dog","racecar","car"]], expected: "" },
+        { input: [["interspecies","interstellar","interstate"]], expected: "inters" },
+        { input: [["throne","throne"]], expected: "throne" },
+        { input: [["throne","dungeon"]], expected: "" },
+        { input: [["a"]], expected: "a" },
+        { input: [[""]], expected: "" },
+        { input: [["ab", "a"]], expected: "a" },
+        { input: [["abab","aba","abc"]], expected: "ab" },
+        { input: [["leets","leetcode","leet","leeds"]], expected: "lee" },
+        { input: [["c","acc","ccc"]], expected: "" },
+        { input: [["reflower","flow","flight"]], expected: "" }
+      ]
     },
     {
       id: 20,
@@ -43,7 +99,21 @@ const PROBLEMS = {
       title: "Valid Parentheses",
       description: "Check if parentheses are properly matched",
       topics: ["String", "Stack"],
-      companies: ["Amazon", "Google", "Facebook"]
+      companies: ["Amazon", "Google", "Facebook"],
+      testCases: [
+        { input: ["()"], expected: true },
+        { input: ["()[]{}"], expected: true },
+        { input: ["(]"], expected: false },
+        { input: ["([)]"], expected: false },
+        { input: ["{[]}"], expected: true },
+        { input: [""], expected: true },
+        { input: ["("], expected: false },
+        { input: [")"], expected: false },
+        { input: ["(("], expected: false },
+        { input: ["))"], expected: false },
+        { input: ["({[]})"], expected: true },
+        { input: ["([{}])"], expected: true }
+      ]
     },
     {
       id: 21,
@@ -51,7 +121,21 @@ const PROBLEMS = {
       title: "Merge Two Sorted Lists",
       description: "Merge two sorted linked lists",
       topics: ["Linked List", "Recursion"],
-      companies: ["Amazon", "Apple", "Adobe"]
+      companies: ["Amazon", "Apple", "Adobe"],
+      testCases: [
+        { input: [[1,2,4], [1,3,4]], expected: [1,1,2,3,4,4] },
+        { input: [[], []], expected: [] },
+        { input: [[], [0]], expected: [0] },
+        { input: [[1], [2]], expected: [1,2] },
+        { input: [[2], [1]], expected: [1,2] },
+        { input: [[1,3,5], [2,4,6]], expected: [1,2,3,4,5,6] },
+        { input: [[1,1,1], [2,2,2]], expected: [1,1,1,2,2,2] },
+        { input: [[5], [1,2,4]], expected: [1,2,4,5] },
+        { input: [[1,2,4], [3]], expected: [1,2,3,4] },
+        { input: [[-1,0,1], [-2,2,3]], expected: [-2,-1,0,1,2,3] },
+        { input: [[1,2,3,4,5], []], expected: [1,2,3,4,5] },
+        { input: [[0,1,2], [3,4,5]], expected: [0,1,2,3,4,5] }
+      ]
     }
   ],
   medium: [
@@ -61,7 +145,21 @@ const PROBLEMS = {
       title: "Add Two Numbers",
       description: "Add numbers represented as linked lists",
       topics: ["Linked List", "Math", "Recursion"],
-      companies: ["Amazon", "Microsoft", "Bloomberg"]
+      companies: ["Amazon", "Microsoft", "Bloomberg"],
+      testCases: [
+        { input: [[2,4,3], [5,6,4]], expected: [7,0,8] },
+        { input: [[0], [0]], expected: [0] },
+        { input: [[9,9,9,9,9,9,9], [9,9,9,9]], expected: [8,9,9,9,0,0,0,1] },
+        { input: [[1,2], [9,9]], expected: [0,2,1] },
+        { input: [[5], [5]], expected: [0,1] },
+        { input: [[1,8], [0]], expected: [1,8] },
+        { input: [[2,4,9], [5,6,4,9]], expected: [7,0,4,0,1] },
+        { input: [[9], [1,9,9,9,9,9,9,9,9,9]], expected: [0,0,0,0,0,0,0,0,0,0,1] },
+        { input: [[1], [9,9]], expected: [0,0,1] },
+        { input: [[7,2,4,3], [5,6,4]], expected: [2,9,8,3] },
+        { input: [[2,4,3,2,4,3,2,4,3], [5,6,4]], expected: [7,0,8,2,4,3,2,4,3] },
+        { input: [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [5,6,4]], expected: [6,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] }
+      ]
     },
     {
       id: 3,
@@ -148,6 +246,154 @@ const PROBLEMS = {
   ]
 };
 
+// Function to generate test content with actual test cases
+function generateTestContent(problem, language, langConfig) {
+  if (!problem.testCases || problem.testCases.length === 0) {
+    // Fallback to empty template if no test cases
+    return langConfig.testTemplate
+      .replace(/\{\{title\}\}/g, problem.title)
+      .replace(/\{\{ClassName\}\}/g, generateClassName(problem.name));
+  }
+
+  const functionName = generateFunctionName(problem.name, language);
+  const className = generateClassName(problem.name);
+
+  switch (language) {
+    case 'javascript':
+      return generateJavaScriptTests(problem, functionName);
+    case 'python':
+      return generatePythonTests(problem, functionName);
+    case 'java':
+      return generateJavaTests(problem, className);
+    case 'cpp':
+      return generateCppTests(problem, className);
+    default:
+      return generateJavaScriptTests(problem, functionName);
+  }
+}
+
+function generateJavaScriptTests(problem, functionName) {
+  const testCasesStr = problem.testCases.map((testCase, index) => {
+    return `    {
+        input: ${JSON.stringify(testCase.input)},
+        expected: ${JSON.stringify(testCase.expected)}
+    }`;
+  }).join(',\n');
+
+  return `// Test cases for ${problem.title}
+// Run with: npm test or yarn test
+const ${functionName} = require('./${problem.name}.js');
+
+const testCases = [
+${testCasesStr}
+];
+
+module.exports = testCases;`;
+}
+
+function generatePythonTests(problem, functionName) {
+  const testCasesStr = problem.testCases.map((testCase, index) => {
+    return `    {
+        "input": ${JSON.stringify(testCase.input)},
+        "expected": ${JSON.stringify(testCase.expected)}
+    }`;
+  }).join(',\n');
+
+  return `# Test cases for ${problem.title}
+# Run with: python3 ${problem.name}.test.py
+
+test_cases = [
+${testCasesStr}
+]
+
+if __name__ == "__main__":
+    from ${problem.name.replace(/-/g, '_')} import ${functionName}
+    
+    passed = 0
+    total = len(test_cases)
+    
+    print(f"🧪 Running tests for ${problem.title}...")
+    print()
+    
+    for i, test_case in enumerate(test_cases):
+        try:
+            result = ${functionName}(*test_case["input"])
+            expected = test_case["expected"]
+            
+            if result == expected:
+                print(f"✅ Test {i + 1}: PASSED")
+                print(f"   Input: {test_case['input']}")
+                print(f"   Output: {result}")
+                passed += 1
+            else:
+                print(f"❌ Test {i + 1}: FAILED")
+                print(f"   Input: {test_case['input']}")
+                print(f"   Expected: {expected}")
+                print(f"   Got: {result}")
+        except Exception as error:
+            print(f"❌ Test {i + 1}: ERROR")
+            print(f"   Input: {test_case['input']}")
+            print(f"   Error: {error}")
+        print()
+    
+    print(f"📊 Results: {passed}/{total} tests passed")
+    if passed == total:
+        print("🎉 All tests passed! Great job!")
+    else:
+        print("💪 Keep working on it!")`;
+}
+
+function generateJavaTests(problem, className) {
+  const testCasesStr = problem.testCases.map((testCase, index) => {
+    return `        // Test case ${index + 1}
+        // Input: ${JSON.stringify(testCase.input)}
+        // Expected: ${JSON.stringify(testCase.expected)}`;
+  }).join('\n');
+
+  return `// Test cases for ${problem.title}
+// Compile and run with: javac ${className}Test.java && java ${className}Test
+
+public class ${className}Test {
+    public static void main(String[] args) {
+        System.out.println("🧪 Running tests for ${problem.title}...");
+        System.out.println();
+        
+        // TODO: Implement test cases
+        // Test cases available:
+${testCasesStr}
+        
+        System.out.println("💡 Implement the test runner to run these test cases!");
+    }
+}`;
+}
+
+function generateCppTests(problem, className) {
+  const testCasesStr = problem.testCases.map((testCase, index) => {
+    return `        // Test case ${index + 1}
+        // Input: ${JSON.stringify(testCase.input)}
+        // Expected: ${JSON.stringify(testCase.expected)}`;
+  }).join('\n');
+
+  return `// Test cases for ${problem.title}
+// Compile and run with: g++ -o test ${problem.name}.test.cpp && ./test
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    cout << "🧪 Running tests for ${problem.title}..." << endl;
+    cout << endl;
+    
+    // TODO: Implement test cases
+    // Test cases available:
+${testCasesStr}
+    
+    cout << "💡 Implement the test runner to run these test cases!" << endl;
+    return 0;
+}`;
+}
+
 // Function to create problem files
 function createProblemFiles(difficulty, problem) {
   const projectRoot = process.cwd();
@@ -184,10 +430,8 @@ function createProblemFiles(difficulty, problem) {
     .replace(/\{\{function_name\}\}/g, functionName.toLowerCase().replace(/([A-Z])/g, '_$1').replace(/^_/, ''))
     .replace(/\{\{ClassName\}\}/g, className);
 
-  // Create test file
-  const testContent = langConfig.testTemplate
-    .replace(/\{\{title\}\}/g, problem.title)
-    .replace(/\{\{ClassName\}\}/g, className);
+  // Create test file with actual test cases
+  const testContent = generateTestContent(problem, language, langConfig);
 
   try {
     fs.writeFileSync(problemFile, problemContent);
