@@ -112,6 +112,14 @@ program
     executeScript('hint.js', ['patterns']);
   });
 
+// Init command
+program
+  .command('init')
+  .description('Initialize LeetCode practice environment')
+  .action(() => {
+    executeScript('init.js');
+  });
+
 // Show welcome message when no command is given
 if (process.argv.length === 2) {
   console.log('🎯 Welcome to Local LeetCode Trainer!\n');

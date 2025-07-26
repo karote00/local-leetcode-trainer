@@ -126,8 +126,8 @@ int main() {
   }
 };
 
-// Config file path
-const CONFIG_FILE = path.join(__dirname, '..', '.leetcode-config.json');
+// Config file path - now in user's project directory
+const CONFIG_FILE = path.join(process.cwd(), 'lct', 'config.json');
 
 // Read current configuration
 function readConfig() {
@@ -151,10 +151,17 @@ function readConfig() {
 // Write configuration
 function writeConfig(config) {
   try {
+    // Ensure lct directory exists
+    const lctDir = path.dirname(CONFIG_FILE);
+    if (!fs.existsSync(lctDir)) {
+      fs.mkdirSync(lctDir, { recursive: true });
+    }
+    
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
     return true;
   } catch (error) {
     console.log(`❌ Failed to write config: ${error.message}`);
+    console.log('💡 Try running "lct init" first to set up your project');
     return false;
   }
 }
