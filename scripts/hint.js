@@ -424,7 +424,7 @@ function showProblemAnalysis(problemPath) {
 
 // Function to resolve problem path (similar to other scripts)
 function resolveProblemPath(input) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const language = getCurrentLanguage();
   const langConfig = getLanguageConfig(language);
 

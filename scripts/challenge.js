@@ -1,9 +1,6 @@
-console.log('test challenge');
 const fs = require('fs');
 const path = require('path');
 const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
-
-console.log('DEBUG: About to call main()');
 
 // LeetCode problems database organized by difficulty
 const PROBLEMS = {
@@ -153,33 +150,21 @@ const PROBLEMS = {
 
 // Function to create problem files
 function createProblemFiles(difficulty, problem) {
-  console.log('DEBUG: createProblemFiles called with:', difficulty, problem.name);
   const projectRoot = process.cwd();
-  console.log('DEBUG: projectRoot:', projectRoot);
   const language = getCurrentLanguage();
-  console.log('DEBUG: language:', language);
   const langConfig = getLanguageConfig(language);
-  console.log('DEBUG: langConfig extension:', langConfig.extension);
   
   const dir = path.join(projectRoot, difficulty, problem.name);
-  console.log('DEBUG: dir to create:', dir);
   const problemFile = path.join(dir, `${problem.name}${langConfig.extension}`);
   const testFile = path.join(dir, `${problem.name}.test${getTestExtension(language)}`);
-  console.log('DEBUG: problemFile:', problemFile);
-  console.log('DEBUG: testFile:', testFile);
   
   // Create directory if it doesn't exist
   if (!fs.existsSync(dir)) {
-    console.log('DEBUG: Creating directory...');
     fs.mkdirSync(dir, { recursive: true });
-    console.log('DEBUG: Directory created');
-  } else {
-    console.log('DEBUG: Directory already exists');
   }
   
   // Skip if files already exist
   if (fs.existsSync(problemFile)) {
-    console.log('DEBUG: Problem file already exists, skipping');
     return false;
   }
   
@@ -252,15 +237,11 @@ function getExistingProblems() {
   const existing = { easy: [], medium: [], hard: [] };
   const projectRoot = process.cwd();
   
-  console.log('DEBUG: getExistingProblems - projectRoot:', projectRoot);
-  
   ['easy', 'medium', 'hard'].forEach(difficulty => {
     // Check active problems
     const activePath = path.join(projectRoot, difficulty);
-    console.log('DEBUG: Checking activePath:', activePath, 'exists:', fs.existsSync(activePath));
     if (fs.existsSync(activePath)) {
       const dirs = fs.readdirSync(activePath);
-      console.log('DEBUG: Active dirs in', difficulty, ':', dirs);
       dirs.forEach(dir => {
         const problemPath = path.join(activePath, dir);
         if (fs.statSync(problemPath).isDirectory() && dir !== 'completed') {
@@ -271,10 +252,8 @@ function getExistingProblems() {
     
     // Check completed problems within difficulty folder
     const completedPath = path.join(projectRoot, difficulty, 'completed');
-    console.log('DEBUG: Checking completedPath:', completedPath, 'exists:', fs.existsSync(completedPath));
     if (fs.existsSync(completedPath)) {
       const dirs = fs.readdirSync(completedPath);
-      console.log('DEBUG: Completed dirs in', difficulty, ':', dirs);
       dirs.forEach(dir => {
         const problemPath = path.join(completedPath, dir);
         if (fs.statSync(problemPath).isDirectory()) {
@@ -287,17 +266,13 @@ function getExistingProblems() {
     }
   });
   
-  console.log('DEBUG: Final existing problems:', existing);
   return existing;
 }
 
 // Main function
 function main() {
-  console.log('DEBUG: main() called');
   const args = process.argv.slice(2);
-  console.log('DEBUG: args:', args);
   const input = args.join(' ').toLowerCase();
-  console.log('DEBUG: input:', input);
   
   // Parse the request
   let difficulty = null;
@@ -307,14 +282,11 @@ function main() {
   else if (input.includes('medium')) difficulty = 'medium';
   else if (input.includes('hard')) difficulty = 'hard';
   
-  console.log('DEBUG: parsed difficulty:', difficulty);
-  
   // Extract number if specified
   const numberMatch = input.match(/(\d+)/);
   if (numberMatch) {
     count = parseInt(numberMatch[1]);
   }
-  console.log('DEBUG: parsed count:', count);
   
   if (!difficulty) {
     console.log('🎯 LeetCode Challenge Generator');
@@ -357,15 +329,10 @@ function main() {
     return;
   }
   
-  console.log('DEBUG: About to call getExistingProblems');
   const existing = getExistingProblems();
-  console.log('DEBUG: Got existing problems:', existing);
-  
-  console.log('DEBUG: PROBLEMS[difficulty] length:', PROBLEMS[difficulty].length);
   const availableProblems = PROBLEMS[difficulty].filter(p => 
     !existing[difficulty].includes(p.name)
   );
-  console.log('DEBUG: Available problems length:', availableProblems.length);
   
   if (availableProblems.length === 0) {
     console.log(`🎉 Wow! You've completed all available ${difficulty} problems!`);
@@ -386,18 +353,24 @@ function main() {
   console.log(`🎯 Generated ${actualCount} ${difficulty} challenge${actualCount > 1 ? 's' : ''}:`);
   console.log('');
   
-  console.log('DEBUG: About to create files for', selectedProblems.length, 'problems');
-  
   selectedProblems.forEach((problem, index) => {
-    console.log('DEBUG: Processing problem', index + 1, ':', problem.name);
     const created = createProblemFiles(difficulty, problem);
-    console.log('DEBUG: createProblemFiles returned:', created);
     const status = created ? '✨ NEW' : '📁 EXISTS';
+    
+    // Show absolute path for new challenges
+    const projectRoot = process.cwd();
+    const language = getCurrentLanguage();
+    const langConfig = getLanguageConfig(language);
+    const problemDir = path.join(projectRoot, difficulty, problem.name);
+    const problemFile = path.join(problemDir, `${problem.name}${langConfig.extension}`);
     
     console.log(`${index + 1}. ${status} ${problem.title}`);
     console.log(`   📝 ${problem.description}`);
     console.log(`   🏷️  ${problem.topics.join(', ')}`);
     console.log(`   🏢 ${problem.companies.slice(0, 3).join(', ')}`);
+    if (created) {
+      console.log(`   📁 Path: ${problemFile}`);
+    }
     console.log(`   🧪 Test: yarn test ${difficulty}/${problem.name}`);
     console.log(`   🔗 Open: yarn open ${difficulty}/${problem.name}`);
     console.log('');

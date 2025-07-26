@@ -190,7 +190,7 @@ function countProblems() {
   const counts = { easy: 0, medium: 0, hard: 0 };
   
   ['easy', 'medium', 'hard'].forEach(difficulty => {
-    const difficultyPath = path.join(__dirname, '..', difficulty);
+    const difficultyPath = path.join(process.cwd(), difficulty);
     if (fs.existsSync(difficultyPath)) {
       const items = fs.readdirSync(difficultyPath);
       items.forEach(item => {
@@ -219,7 +219,7 @@ function countProblems() {
 
 // Archive current workspace
 function archiveCurrentWork(currentLanguage) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const archiveDir = path.join(projectRoot, `archive-${currentLanguage}`);
   
   // Create archive directory
@@ -245,7 +245,7 @@ function archiveCurrentWork(currentLanguage) {
 
 // Create fresh workspace structure
 function createFreshWorkspace() {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   
   ['easy', 'medium', 'hard'].forEach(difficulty => {
     const difficultyPath = path.join(projectRoot, difficulty);

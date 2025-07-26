@@ -3,7 +3,7 @@ const path = require('path');
 
 // Function to resolve problem path
 function resolveProblemPath(input) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   
   // If it's already a full path to a .js file and exists, use it
   if (input.endsWith('.js')) {
@@ -28,7 +28,7 @@ function resolveProblemPath(input) {
 
 // Function to move problem to completed folder
 function markAsCompleted(problemInput) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const problemPath = resolveProblemPath(problemInput);
   
   if (!problemPath) {
@@ -77,7 +77,7 @@ function markAsCompleted(problemInput) {
 
 // Function to list completed problems
 function listCompleted() {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   
   console.log('🏆 Completed Problems:');
   console.log('');
@@ -117,7 +117,7 @@ function listCompleted() {
 
 // Function to uncomplete (move back to active)
 function markAsActive(problemInput) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   
   // Parse input
   const parts = problemInput.split('/');

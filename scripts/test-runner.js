@@ -6,7 +6,7 @@ const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
 // Language-specific test runners
 function runJavaScriptTests(problemPath) {
   try {
-    const projectRoot = path.join(__dirname, '..');
+    const projectRoot = process.cwd();
     const fullProblemPath = path.join(projectRoot, problemPath);
     
     // Import the solution
@@ -33,7 +33,7 @@ function runJavaScriptTests(problemPath) {
 }
 
 function runPythonTests(problemPath) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const fullProblemPath = path.join(projectRoot, problemPath);
   
   if (!fs.existsSync(fullProblemPath)) {
@@ -59,7 +59,7 @@ function runPythonTests(problemPath) {
 }
 
 function runJavaTests(problemPath) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const fullProblemPath = path.join(projectRoot, problemPath);
   const dir = path.dirname(fullProblemPath);
   const fileName = path.basename(fullProblemPath, '.java');
@@ -87,7 +87,7 @@ function runJavaTests(problemPath) {
 }
 
 function runCppTests(problemPath) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const fullProblemPath = path.join(projectRoot, problemPath);
   const dir = path.dirname(fullProblemPath);
   const fileName = path.basename(fullProblemPath, '.cpp');
@@ -200,7 +200,7 @@ function isProblemFile(filename) {
 }
 
 // Function to find all problem files recursively
-function findProblemFiles(dir = path.join(__dirname, '..')) {
+function findProblemFiles(dir = process.cwd()) {
   const files = [];
   
   function scanDir(currentDir) {
@@ -224,7 +224,7 @@ function findProblemFiles(dir = path.join(__dirname, '..')) {
 
 // Function to resolve problem path
 function resolveProblemPath(input) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const language = getCurrentLanguage();
   const langConfig = getLanguageConfig(language);
   
@@ -279,7 +279,7 @@ if (!input) {
   const completedProblems = [];
   
   problemFiles.forEach(file => {
-    const projectRoot = path.join(__dirname, '..');
+    const projectRoot = process.cwd();
     const relativePath = path.relative(projectRoot, file);
     const shortPath = relativePath.replace(/\/[^\/]+\.(js|py|java|cpp)$/, '');
     
@@ -308,7 +308,7 @@ if (!input) {
   
   // Use the first one by default
   const problemPath = problemFiles[0];
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const relativePath = path.relative(projectRoot, problemPath);
   console.log(`\n🎯 Running tests for: ${relativePath}`);
   runTests(relativePath);

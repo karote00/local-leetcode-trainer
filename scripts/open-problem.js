@@ -20,7 +20,7 @@ function isProblemFile(filename) {
 }
 
 // Function to find all problem files recursively
-function findProblemFiles(dir = path.join(__dirname, '..')) {
+function findProblemFiles(dir = process.cwd()) {
   const files = [];
   
   function scanDir(currentDir) {
@@ -67,7 +67,7 @@ function openInBrowser(url) {
 
 // Function to resolve problem path
 function resolveProblemPath(input) {
-  const projectRoot = path.join(__dirname, '..');
+  const projectRoot = process.cwd();
   const language = getCurrentLanguage();
   const langConfig = getLanguageConfig(language);
   
@@ -121,7 +121,7 @@ function main() {
     const completedProblems = [];
     
     problemFiles.forEach(file => {
-      const projectRoot = path.join(__dirname, '..');
+      const projectRoot = process.cwd();
       const relativePath = path.relative(projectRoot, file);
       const shortPath = relativePath.replace(/\/[^\/]+\.js$/, '');
       
