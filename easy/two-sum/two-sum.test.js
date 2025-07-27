@@ -60,7 +60,7 @@ describe('1. Two Sum', () => {
 
   // ⚠️ Minimum array length (edge)
   test('Minimum array length', () => {
-    const result = twoSum([-48]);
+    const result = twoSum([28]);
     // Expected result: null
   });
 
@@ -78,7 +78,7 @@ describe('1. Two Sum', () => {
 
   // 🔥 Large array with 10 elements (stress)
   test('Large array with 10 elements', () => {
-    const result = twoSum([25,-49,-4,-14,-41,-6,15,31,48,28]);
+    const result = twoSum([28,-9,-23,-16,20,-44,47,-47,12,-19]);
     // Expected result: null
   });
 });

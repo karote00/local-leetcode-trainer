@@ -401,8 +401,17 @@ const ENHANCED_FALLBACK_PROBLEMS = {
 /**
  * Get enhanced fallback problem data
  */
-function getEnhancedFallbackProblem(problemSlug) {
-  const problem = ENHANCED_FALLBACK_PROBLEMS[problemSlug];
+function getEnhancedFallbackProblem(identifier) {
+  let problem = null;
+  
+  // If identifier is a number, find by ID
+  if (typeof identifier === 'number') {
+    problem = Object.values(ENHANCED_FALLBACK_PROBLEMS).find(p => p.id === identifier);
+  } else {
+    // If identifier is a string, find by slug
+    problem = ENHANCED_FALLBACK_PROBLEMS[identifier];
+  }
+  
   if (!problem) {
     return null;
   }

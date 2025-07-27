@@ -7,6 +7,7 @@ const { URL } = require('url');
 const { LeetCodeAPI } = require('./interfaces');
 const { config } = require('./config');
 const { getEnhancedFallbackProblem, getAllEnhancedFallbackProblems } = require('./enhanced-fallback-database');
+const { LeetCodeScraper } = require('./leetcode-scraper');
 
 class LeetCodeAPIImpl extends LeetCodeAPI {
   constructor() {
@@ -135,21 +136,31 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
    * Fetch problem by identifier
    */
   async fetchProblem(identifier) {
+    const scraper = new LeetCodeScraper();
+    
     try {
-      const problemSlug = this.normalizeProblemIdentifier(identifier);
-      const url = `${this.baseUrl}/problems/${problemSlug}/`;
-      
-      console.log(`Fetching problem: ${problemSlug}`);
-      const html = await this.makeRequest(url);
-      
-      return this.parseProblemHTML(html, problemSlug);
-    } catch (error) {
-      // If LeetCode blocks us (403), try to use fallback problem data
-      if (error.message.includes('403') || error.message.includes('Forbidden')) {
-        console.log(`🔄 LeetCode blocked request, using fallback data for: ${identifier}`);
-        return this.getFallbackProblemData(identifier);
+      // First, try to get the problem slug
+      let problemSlug;
+      if (typeof identifier === 'number') {
+        problemSlug = await scraper.getProblemSlugById(identifier);
+      } else {
+        problemSlug = this.normalizeProblemIdentifier(identifier);
       }
-      throw new Error(`Failed to fetch problem ${identifier}: ${error.message}`);
+      
+      console.log(`🌐 Scraping problem from LeetCode: ${problemSlug}`);
+      
+      // Use web scraper to get fresh data directly from the website
+      const problemData = await scraper.scrapeProblem(problemSlug);
+      
+      console.log(`✅ Successfully scraped problem: ${problemData.title}`);
+      return problemData;
+      
+    } catch (error) {
+      console.log(`⚠️ Web scraping failed: ${error.message}`);
+      console.log(`🔄 Falling back to enhanced fallback data for: ${identifier}`);
+      
+      // If web scraping fails, use enhanced fallback data
+      return this.getFallbackProblemData(identifier);
     }
   }
 
@@ -159,10 +170,10 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
   getFallbackProblemData(identifier) {
     const problemSlug = this.normalizeProblemIdentifier(identifier);
     
-    // Try to get enhanced fallback problem first
-    const enhancedProblem = getEnhancedFallbackProblem(problemSlug);
+    // Try to get enhanced fallback problem first (pass original identifier for ID lookup)
+    const enhancedProblem = getEnhancedFallbackProblem(identifier);
     if (enhancedProblem) {
-      console.log(`📱 Using enhanced fallback data for: ${problemSlug}`);
+      console.log(`📱 Using enhanced fallback data for: ${identifier}`);
       return enhancedProblem;
     }
     
