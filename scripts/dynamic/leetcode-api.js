@@ -1,0 +1,630 @@
+/**
+ * LeetCode API Integration for fetching problem data
+ */
+
+const https = require('https');
+const { URL } = require('url');
+const { LeetCodeAPI } = require('./interfaces');
+const { config } = require('./config');
+
+class LeetCodeAPIImpl extends LeetCodeAPI {
+  constructor() {
+    super();
+    this.baseUrl = config.get('api.leetcodeBaseUrl');
+    this.timeout = config.get('api.requestTimeout');
+    this.maxRetries = config.get('api.maxRetries');
+    this.retryDelay = config.get('api.retryDelay');
+    this.userAgent = config.get('api.userAgent');
+  }
+
+  /**
+   * Make HTTP request with retry logic
+   */
+  async makeRequest(url, options = {}) {
+    const requestOptions = {
+      timeout: this.timeout,
+      headers: {
+        'User-Agent': this.userAgent,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        ...options.headers
+      },
+      ...options
+    };
+
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        return await this._httpRequest(url, requestOptions);
+      } catch (error) {
+        if (attempt === this.maxRetries) {
+          throw new Error(`Failed to fetch ${url} after ${this.maxRetries} attempts: ${error.message}`);
+        }
+        
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+      }
+    }
+  }
+
+  /**
+   * Internal HTTP request implementation
+   */
+  _httpRequest(url, options) {
+    return new Promise((resolve, reject) => {
+      const parsedUrl = new URL(url);
+      const requestOptions = {
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
+        path: parsedUrl.pathname + parsedUrl.search,
+        method: options.method || 'GET',
+        headers: options.headers,
+        timeout: options.timeout
+      };
+
+      const req = https.request(requestOptions, (res) => {
+        let data = '';
+        
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(data);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+          }
+        });
+      });
+
+      req.on('error', reject);
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('Request timeout'));
+      });
+
+      req.end();
+    });
+  }
+
+  /**
+   * Normalize problem identifier to problem slug
+   */
+  normalizeProblemIdentifier(identifier) {
+    // Handle different input formats
+    if (typeof identifier === 'number') {
+      // Problem ID - we'll need to convert this to slug
+      return identifier.toString();
+    }
+    
+    if (typeof identifier === 'string') {
+      // Handle full URL
+      if (identifier.includes('leetcode.com/problems/')) {
+        const match = identifier.match(/\/problems\/([^\/]+)/);
+        return match ? match[1] : identifier;
+      }
+      
+      // Handle problem slug
+      return identifier.toLowerCase().replace(/\s+/g, '-');
+    }
+    
+    throw new Error(`Invalid problem identifier: ${identifier}`);
+  }
+
+  /**
+   * Fetch problem by identifier
+   */
+  async fetchProblem(identifier) {
+    try {
+      const problemSlug = this.normalizeProblemIdentifier(identifier);
+      const url = `${this.baseUrl}/problems/${problemSlug}/`;
+      
+      console.log(`Fetching problem: ${problemSlug}`);
+      const html = await this.makeRequest(url);
+      
+      return this.parseProblemHTML(html, problemSlug);
+    } catch (error) {
+      throw new Error(`Failed to fetch problem ${identifier}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Parse problem HTML to extract structured data
+   */
+  parseProblemHTML(html, problemSlug) {
+    try {
+      // Extract problem title
+      const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+      const fullTitle = titleMatch ? titleMatch[1].trim() : '';
+      
+      // Parse title to get ID and name
+      const titleParts = fullTitle.match(/^(\d+)\.\s*(.+?)\s*-\s*LeetCode$/);
+      const problemId = titleParts ? parseInt(titleParts[1]) : null;
+      const problemTitle = titleParts ? titleParts[2].trim() : fullTitle.replace(' - LeetCode', '');
+
+      // Extract difficulty
+      const difficultyMatch = html.match(/class="[^"]*difficulty[^"]*"[^>]*>([^<]+)</i) || 
+                             html.match(/>(?:Easy|Medium|Hard)</gi);
+      const difficulty = difficultyMatch ? difficultyMatch[0].replace(/[<>]/g, '').toLowerCase() : 'unknown';
+
+      // Extract problem description
+      const descriptionMatch = html.match(/<div[^>]*class="[^"]*content[^"]*"[^>]*>(.*?)<\/div>/s);
+      let description = '';
+      if (descriptionMatch) {
+        description = this.cleanHTML(descriptionMatch[1]);
+      }
+
+      // Extract examples
+      const examples = this.extractExamples(html);
+
+      // Extract constraints
+      const constraints = this.extractConstraints(html);
+
+      // Extract topics
+      const topics = this.extractTopics(html);
+
+      // Extract companies (if available)
+      const companies = this.extractCompanies(html);
+
+      // Generate function signatures
+      const functionSignatures = this.generateFunctionSignatures(problemTitle, html);
+
+      // Generate test cases from examples
+      const testCases = this.generateTestCases(examples);
+
+      return {
+        id: problemId,
+        title: problemTitle,
+        name: problemSlug,
+        difficulty: difficulty,
+        description: description,
+        examples: examples,
+        constraints: constraints,
+        topics: topics,
+        companies: companies,
+        functionSignatures: functionSignatures,
+        testCases: testCases,
+        metadata: {
+          fetchedAt: new Date(),
+          source: 'leetcode',
+          version: '1.0'
+        }
+      };
+    } catch (error) {
+      throw new Error(`Failed to parse problem HTML: ${error.message}`);
+    }
+  }
+
+  /**
+   * Clean HTML content
+   */
+  cleanHTML(html) {
+    return html
+      .replace(/<[^>]+>/g, '') // Remove HTML tags
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /**
+   * Extract examples from HTML
+   */
+  extractExamples(html) {
+    const examples = [];
+    const exampleRegex = /<strong>Example\s*(\d+):<\/strong>(.*?)(?=<strong>Example|\n\n|<\/div>)/gs;
+    let match;
+
+    while ((match = exampleRegex.exec(html)) !== null) {
+      const exampleText = this.cleanHTML(match[2]);
+      const inputMatch = exampleText.match(/Input:\s*(.+?)(?=Output:|$)/s);
+      const outputMatch = exampleText.match(/Output:\s*(.+?)(?=Explanation:|$)/s);
+      const explanationMatch = exampleText.match(/Explanation:\s*(.+?)$/s);
+
+      if (inputMatch && outputMatch) {
+        examples.push({
+          input: inputMatch[1].trim(),
+          output: outputMatch[1].trim(),
+          explanation: explanationMatch ? explanationMatch[1].trim() : undefined
+        });
+      }
+    }
+
+    return examples;
+  }
+
+  /**
+   * Extract constraints from HTML
+   */
+  extractConstraints(html) {
+    const constraints = [];
+    const constraintsMatch = html.match(/<strong>Constraints:<\/strong>(.*?)(?=<\/div>|<strong>)/s);
+    
+    if (constraintsMatch) {
+      const constraintsText = this.cleanHTML(constraintsMatch[1]);
+      const lines = constraintsText.split('\n').filter(line => line.trim());
+      
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('Constraints:')) {
+          constraints.push(trimmed);
+        }
+      }
+    }
+
+    return constraints;
+  }
+
+  /**
+   * Extract topics from HTML
+   */
+  extractTopics(html) {
+    const topics = [];
+    const topicMatches = html.match(/data-topic="([^"]+)"/g);
+    
+    if (topicMatches) {
+      for (const match of topicMatches) {
+        const topic = match.match(/data-topic="([^"]+)"/)[1];
+        if (!topics.includes(topic)) {
+          topics.push(topic);
+        }
+      }
+    }
+
+    return topics;
+  }
+
+  /**
+   * Extract companies from HTML (if available)
+   */
+  extractCompanies(html) {
+    const companies = [];
+    // This is a placeholder - company data might not be available in public HTML
+    // Could be enhanced with additional data sources
+    return companies;
+  }
+
+  /**
+   * Generate function signatures for different languages
+   */
+  generateFunctionSignatures(problemTitle, html) {
+    // This is a simplified implementation
+    // In a real implementation, this would parse the code editor templates from the page
+    const functionName = this.generateFunctionName(problemTitle);
+    
+    return {
+      javascript: {
+        name: functionName,
+        params: [{ name: 'param', type: 'any' }],
+        returnType: 'any'
+      },
+      python: {
+        name: functionName,
+        params: [{ name: 'param', type: 'Any' }],
+        returnType: 'Any'
+      },
+      java: {
+        name: functionName,
+        params: [{ name: 'param', type: 'Object' }],
+        returnType: 'Object'
+      },
+      cpp: {
+        name: functionName,
+        params: [{ name: 'param', type: 'auto' }],
+        returnType: 'auto'
+      }
+    };
+  }
+
+  /**
+   * Generate function name from problem title
+   */
+  generateFunctionName(title) {
+    return title
+      .replace(/[^a-zA-Z0-9\s]/g, '')
+      .split(' ')
+      .map((word, index) => {
+        if (index === 0) {
+          return word.toLowerCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join('');
+  }
+
+  /**
+   * Generate test cases from examples
+   */
+  generateTestCases(examples) {
+    const testCases = [];
+    
+    for (const example of examples) {
+      try {
+        // This is a simplified parser - would need more sophisticated parsing
+        const input = this.parseExampleInput(example.input);
+        const expected = this.parseExampleOutput(example.output);
+        
+        testCases.push({
+          input: input,
+          expected: expected,
+          description: example.explanation
+        });
+      } catch (error) {
+        console.warn(`Failed to parse example: ${error.message}`);
+      }
+    }
+
+    return testCases;
+  }
+
+  /**
+   * Parse example input
+   */
+  parseExampleInput(inputStr) {
+    // Simplified parsing - would need more sophisticated logic
+    try {
+      return JSON.parse(inputStr.replace(/=/g, ':'));
+    } catch {
+      return [inputStr];
+    }
+  }
+
+  /**
+   * Parse example output
+   */
+  parseExampleOutput(outputStr) {
+    // Simplified parsing - would need more sophisticated logic
+    try {
+      return JSON.parse(outputStr);
+    } catch {
+      return outputStr;
+    }
+  }
+
+  /**
+   * Search problems with filters
+   */
+  async searchProblems(filters = {}) {
+    try {
+      const { difficulty, topics, companies, limit = 50 } = filters;
+      
+      // Build search URL with filters
+      let searchUrl = `${this.baseUrl}/problemset/all/`;
+      const params = new URLSearchParams();
+      
+      if (difficulty) {
+        params.append('difficulty', difficulty.toUpperCase());
+      }
+      
+      if (topics && topics.length > 0) {
+        params.append('topicSlugs', topics.join(','));
+      }
+      
+      if (params.toString()) {
+        searchUrl += '?' + params.toString();
+      }
+      
+      console.log(`Searching problems with filters:`, filters);
+      const html = await this.makeRequest(searchUrl);
+      
+      return this.parseProblemsListHTML(html, limit);
+    } catch (error) {
+      console.warn(`Search failed, using fallback: ${error.message}`);
+      return this.getFallbackProblems(filters);
+    }
+  }
+
+  /**
+   * Parse problems list from HTML
+   */
+  parseProblemsListHTML(html, limit) {
+    const problems = [];
+    
+    try {
+      // Look for JSON data containing problems list
+      const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({.*?});/s);
+      if (jsonMatch) {
+        const data = JSON.parse(jsonMatch[1]);
+        const problemsData = data.problemsetQuestionList?.questions || [];
+        
+        for (const problem of problemsData.slice(0, limit)) {
+          problems.push({
+            id: problem.frontendQuestionId,
+            title: problem.title,
+            name: problem.titleSlug,
+            difficulty: problem.difficulty?.toLowerCase() || 'unknown',
+            topics: problem.topicTags?.map(tag => tag.name) || [],
+            companies: problem.companyTags?.map(tag => tag.name) || [],
+            isPaidOnly: problem.isPaidOnly || false,
+            acRate: problem.acRate || 0
+          });
+        }
+      }
+      
+      // Fallback to HTML parsing if JSON parsing fails
+      if (problems.length === 0) {
+        return this.parseProblemsFromHTML(html, limit);
+      }
+      
+    } catch (error) {
+      console.warn(`Failed to parse problems list: ${error.message}`);
+      return this.parseProblemsFromHTML(html, limit);
+    }
+    
+    return problems;
+  }
+
+  /**
+   * Parse problems from HTML table (fallback)
+   */
+  parseProblemsFromHTML(html, limit) {
+    const problems = [];
+    const problemRegex = /<tr[^>]*>.*?<td[^>]*>.*?(\d+).*?<\/td>.*?<a[^>]*href="\/problems\/([^"]+)"[^>]*>([^<]+)<\/a>.*?<td[^>]*>.*?(Easy|Medium|Hard).*?<\/td>/gs;
+    
+    let match;
+    let count = 0;
+    
+    while ((match = problemRegex.exec(html)) !== null && count < limit) {
+      problems.push({
+        id: parseInt(match[1]),
+        title: this.cleanHTML(match[3]),
+        name: match[2],
+        difficulty: match[4].toLowerCase(),
+        topics: [],
+        companies: [],
+        isPaidOnly: false,
+        acRate: 0
+      });
+      count++;
+    }
+    
+    return problems;
+  }
+
+  /**
+   * Get fallback problems list (popular problems)
+   */
+  getFallbackProblems(filters = {}) {
+    const fallbackProblems = [
+      { id: 1, name: 'two-sum', title: 'Two Sum', difficulty: 'easy' },
+      { id: 2, name: 'add-two-numbers', title: 'Add Two Numbers', difficulty: 'medium' },
+      { id: 3, name: 'longest-substring-without-repeating-characters', title: 'Longest Substring Without Repeating Characters', difficulty: 'medium' },
+      { id: 4, name: 'median-of-two-sorted-arrays', title: 'Median of Two Sorted Arrays', difficulty: 'hard' },
+      { id: 5, name: 'longest-palindromic-substring', title: 'Longest Palindromic Substring', difficulty: 'medium' },
+      { id: 7, name: 'reverse-integer', title: 'Reverse Integer', difficulty: 'medium' },
+      { id: 8, name: 'string-to-integer-atoi', title: 'String to Integer (atoi)', difficulty: 'medium' },
+      { id: 9, name: 'palindrome-number', title: 'Palindrome Number', difficulty: 'easy' },
+      { id: 11, name: 'container-with-most-water', title: 'Container With Most Water', difficulty: 'medium' },
+      { id: 13, name: 'roman-to-integer', title: 'Roman to Integer', difficulty: 'easy' },
+      { id: 14, name: 'longest-common-prefix', title: 'Longest Common Prefix', difficulty: 'easy' },
+      { id: 15, name: '3sum', title: '3Sum', difficulty: 'medium' },
+      { id: 20, name: 'valid-parentheses', title: 'Valid Parentheses', difficulty: 'easy' },
+      { id: 21, name: 'merge-two-sorted-lists', title: 'Merge Two Sorted Lists', difficulty: 'easy' },
+      { id: 22, name: 'generate-parentheses', title: 'Generate Parentheses', difficulty: 'medium' },
+      { id: 23, name: 'merge-k-sorted-lists', title: 'Merge k Sorted Lists', difficulty: 'hard' },
+      { id: 26, name: 'remove-duplicates-from-sorted-array', title: 'Remove Duplicates from Sorted Array', difficulty: 'easy' },
+      { id: 27, name: 'remove-element', title: 'Remove Element', difficulty: 'easy' },
+      { id: 28, name: 'find-the-index-of-the-first-occurrence-in-a-string', title: 'Find the Index of the First Occurrence in a String', difficulty: 'easy' },
+      { id: 33, name: 'search-in-rotated-sorted-array', title: 'Search in Rotated Sorted Array', difficulty: 'medium' },
+      { id: 34, name: 'find-first-and-last-position-of-element-in-sorted-array', title: 'Find First and Last Position of Element in Sorted Array', difficulty: 'medium' },
+      { id: 35, name: 'search-insert-position', title: 'Search Insert Position', difficulty: 'easy' },
+      { id: 36, name: 'valid-sudoku', title: 'Valid Sudoku', difficulty: 'medium' },
+      { id: 39, name: 'combination-sum', title: 'Combination Sum', difficulty: 'medium' },
+      { id: 42, name: 'trapping-rain-water', title: 'Trapping Rain Water', difficulty: 'hard' },
+      { id: 46, name: 'permutations', title: 'Permutations', difficulty: 'medium' },
+      { id: 48, name: 'rotate-image', title: 'Rotate Image', difficulty: 'medium' },
+      { id: 49, name: 'group-anagrams', title: 'Group Anagrams', difficulty: 'medium' },
+      { id: 53, name: 'maximum-subarray', title: 'Maximum Subarray', difficulty: 'medium' },
+      { id: 54, name: 'spiral-matrix', title: 'Spiral Matrix', difficulty: 'medium' },
+      { id: 55, name: 'jump-game', title: 'Jump Game', difficulty: 'medium' },
+      { id: 56, name: 'merge-intervals', title: 'Merge Intervals', difficulty: 'medium' },
+      { id: 62, name: 'unique-paths', title: 'Unique Paths', difficulty: 'medium' },
+      { id: 70, name: 'climbing-stairs', title: 'Climbing Stairs', difficulty: 'easy' },
+      { id: 72, name: 'edit-distance', title: 'Edit Distance', difficulty: 'hard' },
+      { id: 75, name: 'sort-colors', title: 'Sort Colors', difficulty: 'medium' },
+      { id: 76, name: 'minimum-window-substring', title: 'Minimum Window Substring', difficulty: 'hard' },
+      { id: 78, name: 'subsets', title: 'Subsets', difficulty: 'medium' },
+      { id: 79, name: 'word-search', title: 'Word Search', difficulty: 'medium' },
+      { id: 84, name: 'largest-rectangle-in-histogram', title: 'Largest Rectangle in Histogram', difficulty: 'hard' },
+      { id: 85, name: 'maximal-rectangle', title: 'Maximal Rectangle', difficulty: 'hard' },
+      { id: 91, name: 'decode-ways', title: 'Decode Ways', difficulty: 'medium' },
+      { id: 94, name: 'binary-tree-inorder-traversal', title: 'Binary Tree Inorder Traversal', difficulty: 'easy' },
+      { id: 96, name: 'unique-binary-search-trees', title: 'Unique Binary Search Trees', difficulty: 'medium' },
+      { id: 98, name: 'validate-binary-search-tree', title: 'Validate Binary Search Tree', difficulty: 'medium' },
+      { id: 101, name: 'symmetric-tree', title: 'Symmetric Tree', difficulty: 'easy' },
+      { id: 102, name: 'binary-tree-level-order-traversal', title: 'Binary Tree Level Order Traversal', difficulty: 'medium' },
+      { id: 104, name: 'maximum-depth-of-binary-tree', title: 'Maximum Depth of Binary Tree', difficulty: 'easy' },
+      { id: 105, name: 'construct-binary-tree-from-preorder-and-inorder-traversal', title: 'Construct Binary Tree from Preorder and Inorder Traversal', difficulty: 'medium' },
+      { id: 121, name: 'best-time-to-buy-and-sell-stock', title: 'Best Time to Buy and Sell Stock', difficulty: 'easy' },
+      { id: 124, name: 'binary-tree-maximum-path-sum', title: 'Binary Tree Maximum Path Sum', difficulty: 'hard' },
+      { id: 125, name: 'valid-palindrome', title: 'Valid Palindrome', difficulty: 'easy' },
+      { id: 128, name: 'longest-consecutive-sequence', title: 'Longest Consecutive Sequence', difficulty: 'medium' }
+    ];
+
+    // Filter by difficulty if specified
+    let filtered = fallbackProblems;
+    if (filters.difficulty) {
+      filtered = filtered.filter(p => p.difficulty === filters.difficulty.toLowerCase());
+    }
+
+    // Add default properties
+    return filtered.map(problem => ({
+      ...problem,
+      topics: [],
+      companies: [],
+      isPaidOnly: false,
+      acRate: 0
+    }));
+  }
+
+  /**
+   * Get random problem by difficulty
+   */
+  async getRandomProblem(difficulty) {
+    try {
+      const problems = await this.searchProblems({ difficulty, limit: 100 });
+      if (problems.length === 0) {
+        throw new Error(`No problems found for difficulty: ${difficulty}`);
+      }
+      
+      const randomIndex = Math.floor(Math.random() * problems.length);
+      return problems[randomIndex];
+    } catch (error) {
+      throw new Error(`Failed to get random problem: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get problems by topic
+   */
+  async getProblemsByTopic(topic, limit = 20) {
+    return this.searchProblems({ topics: [topic], limit });
+  }
+
+  /**
+   * Get problems by company
+   */
+  async getProblemsByCompany(company, limit = 20) {
+    return this.searchProblems({ companies: [company], limit });
+  }
+
+  /**
+   * Get problem by ID
+   */
+  async getProblemById(id) {
+    try {
+      // First try to get from search results
+      const problems = await this.searchProblems({ limit: 2000 });
+      const problem = problems.find(p => p.id === parseInt(id));
+      
+      if (problem) {
+        return await this.fetchProblem(problem.name);
+      }
+      
+      // Fallback: try to fetch directly by ID
+      return await this.fetchProblem(id);
+    } catch (error) {
+      throw new Error(`Failed to get problem by ID ${id}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Validate if problem exists
+   */
+  async validateProblemExists(identifier) {
+    try {
+      await this.fetchProblem(identifier);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+module.exports = { LeetCodeAPIImpl };
