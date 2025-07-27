@@ -4,17 +4,37 @@ const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
 
 // Dynamic LeetCode Integration (required)
 let dynamicSystem = null;
+
+console.log('🔍 Loading dynamic LeetCode integration...');
+
 try {
   const { ProblemManagerImpl } = require('./dynamic/problem-manager');
   const { OfflineManager } = require('./dynamic/offline-manager');
+  
   dynamicSystem = {
     problemManager: new ProblemManagerImpl(),
     offlineManager: new OfflineManager()
   };
+  
   console.log('🌐 Dynamic LeetCode integration enabled');
 } catch (error) {
-  console.error('❌ Dynamic system failed to load:', error.message);
-  console.error('💡 Please ensure all dependencies are installed');
+  console.error('❌ CRITICAL ERROR: Dynamic system failed to load');
+  console.error('📁 Error details:', error.message);
+  console.error('📍 Error location:', error.stack?.split('\n')[1]?.trim() || 'Unknown');
+  console.error('');
+  console.error('💡 Possible solutions:');
+  console.error('  1. Reinstall the package: npm install -g local-leetcode-trainer@latest');
+  console.error('  2. Check if all files were installed correctly');
+  console.error('  3. Report this issue at: https://github.com/karote00/local-leetcode-trainer/issues');
+  console.error('');
+  console.error('🚨 Cannot continue without dynamic system - exiting...');
+  process.exit(1);
+}
+
+// Verify dynamic system is working
+if (!dynamicSystem || !dynamicSystem.problemManager || !dynamicSystem.offlineManager) {
+  console.error('❌ CRITICAL ERROR: Dynamic system components missing');
+  console.error('🚨 Cannot continue - exiting...');
   process.exit(1);
 }
 
