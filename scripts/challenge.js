@@ -675,6 +675,9 @@ function generateJavaScriptProblem(problem, signature) {
 ` : '';
   
   return `${listNodeDef}/**
+ * ${problem.id}. ${problem.title}
+ * https://leetcode.com/problems/${problem.name}/
+ * 
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
  * ${examples.replace(/\n/g, '\n * ')}
@@ -710,7 +713,7 @@ function generatePythonProblem(problem, signature) {
   
   const imports = needsListNode ? 'from typing import List, Optional\n' : 'from typing import List\n';
   
-  return `"""\n${problem.description}\n\n${examples}\n\nConstraints:\n${constraints}${problem.followUp ? '\n\nFollow-up: ' + problem.followUp : ''}\n"""\n\n${listNodeDef}${imports}\nclass Solution:\n    def ${signature.name}(self, ${params}) -> ${signature.returnType}:\n        pass\n\n# For testing\nif __name__ == "__main__":\n    solution = Solution()\n    # Test your solution here`;
+  return `"""\n${problem.id}. ${problem.title}\nhttps://leetcode.com/problems/${problem.name}/\n\n${problem.description}\n\n${examples}\n\nConstraints:\n${constraints}${problem.followUp ? '\n\nFollow-up: ' + problem.followUp : ''}\n"""\n\n${listNodeDef}${imports}\nclass Solution:\n    def ${signature.name}(self, ${params}) -> ${signature.returnType}:\n        pass\n\n# For testing\nif __name__ == "__main__":\n    solution = Solution()\n    # Test your solution here`;
 }
 
 function generateJavaProblem(problem, signature) {
