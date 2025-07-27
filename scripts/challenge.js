@@ -79,7 +79,7 @@ const PROBLEMS = {
         { input: [[0, 4, 3, 0], 0], expected: [0, 3] },
         { input: [[2, 5, 5, 11], 10], expected: [1, 2] },
         { input: [[1, 3, 7, 9, 2], 11], expected: [3, 4] },
-        { input: [[6, 2, 4], 6], expected: [0, 2] },
+        { input: [[6, 2, 4], 6], expected: [1, 2] },
         { input: [[10, 20, 30, 40], 50], expected: [1, 2] },
         { input: [[1, 2], 3], expected: [0, 1] }
       ]
