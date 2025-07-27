@@ -24,12 +24,17 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
     const requestOptions = {
       timeout: this.timeout,
       headers: {
-        'User-Agent': this.userAgent,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Cache-Control': 'max-age=0',
         ...options.headers
       },
       ...options
@@ -37,14 +42,25 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
+        // Add random delay to avoid rate limiting
+        if (attempt > 1) {
+          const delay = this.retryDelay * attempt + Math.random() * 1000;
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        
         return await this._httpRequest(url, requestOptions);
       } catch (error) {
         if (attempt === this.maxRetries) {
           throw new Error(`Failed to fetch ${url} after ${this.maxRetries} attempts: ${error.message}`);
         }
         
-        // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+        // Exponential backoff with jitter for 403 errors
+        if (error.message.includes('403')) {
+          const backoffDelay = Math.min(this.retryDelay * Math.pow(2, attempt) + Math.random() * 2000, 10000);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        } else {
+          await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+        }
       }
     }
   }
@@ -127,8 +143,164 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
       
       return this.parseProblemHTML(html, problemSlug);
     } catch (error) {
+      // If LeetCode blocks us (403), try to use fallback problem data
+      if (error.message.includes('403') || error.message.includes('Forbidden')) {
+        console.log(`🔄 LeetCode blocked request, using fallback data for: ${identifier}`);
+        return this.getFallbackProblemData(identifier);
+      }
       throw new Error(`Failed to fetch problem ${identifier}: ${error.message}`);
     }
+  }
+
+  /**
+   * Get fallback problem data when LeetCode blocks us
+   */
+  getFallbackProblemData(identifier) {
+    const problemSlug = this.normalizeProblemIdentifier(identifier);
+    
+    // Find the problem in our fallback list
+    const fallbackProblems = this.getFallbackProblems();
+    const problem = fallbackProblems.find(p => 
+      p.name === problemSlug || 
+      p.id.toString() === identifier.toString() ||
+      p.title.toLowerCase().replace(/\s+/g, '-') === problemSlug
+    );
+    
+    if (!problem) {
+      throw new Error(`Problem "${identifier}" not available in fallback data. Try: two-sum, valid-parentheses, palindrome-number, etc.`);
+    }
+    
+    // Return enhanced problem data with LeetCode-accurate format
+    return this.enhanceFallbackProblem(problem);
+  }
+
+  /**
+   * Enhance fallback problem with complete LeetCode-style data
+   */
+  enhanceFallbackProblem(problem) {
+    const problemData = {
+      'two-sum': {
+        description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+        examples: [
+          {
+            input: "nums = [2,7,11,15], target = 9",
+            output: "[0,1]",
+            explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+          },
+          {
+            input: "nums = [3,2,4], target = 6",
+            output: "[1,2]",
+            explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
+          }
+        ],
+        constraints: [
+          "2 <= nums.length <= 10^4",
+          "-10^9 <= nums[i] <= 10^9",
+          "-10^9 <= target <= 10^9",
+          "Only one valid answer exists."
+        ],
+        topics: ["Array", "Hash Table"],
+        companies: ["Amazon", "Google", "Apple"],
+        functionSignatures: {
+          javascript: {
+            name: "twoSum",
+            params: [{ name: "nums", type: "number[]" }, { name: "target", type: "number" }],
+            returnType: "number[]"
+          },
+          python: {
+            name: "twoSum",
+            params: [{ name: "nums", type: "List[int]" }, { name: "target", type: "int" }],
+            returnType: "List[int]"
+          }
+        }
+      },
+      'valid-parentheses': {
+        description: "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.",
+        examples: [
+          {
+            input: 's = "()"',
+            output: "true",
+            explanation: "The string contains valid parentheses."
+          },
+          {
+            input: 's = "()[]{}"',
+            output: "true",
+            explanation: "The string contains valid combinations of all bracket types."
+          }
+        ],
+        constraints: [
+          "1 <= s.length <= 10^4",
+          "s consists of parentheses only '()[]{}'."
+        ],
+        topics: ["String", "Stack"],
+        companies: ["Amazon", "Google", "Facebook"],
+        functionSignatures: {
+          javascript: {
+            name: "isValid",
+            params: [{ name: "s", type: "string" }],
+            returnType: "boolean"
+          },
+          python: {
+            name: "isValid",
+            params: [{ name: "s", type: "str" }],
+            returnType: "bool"
+          }
+        }
+      },
+      'palindrome-number': {
+        description: "Given an integer x, return true if x is a palindrome, and false otherwise.",
+        examples: [
+          {
+            input: "x = 121",
+            output: "true",
+            explanation: "121 reads as 121 from left to right and from right to left."
+          },
+          {
+            input: "x = -121",
+            output: "false",
+            explanation: "From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome."
+          }
+        ],
+        constraints: ["-2^31 <= x <= 2^31 - 1"],
+        followUp: "Could you solve it without converting the integer to a string?",
+        topics: ["Math"],
+        companies: ["Amazon", "Apple"],
+        functionSignatures: {
+          javascript: {
+            name: "isPalindrome",
+            params: [{ name: "x", type: "number" }],
+            returnType: "boolean"
+          },
+          python: {
+            name: "isPalindrome",
+            params: [{ name: "x", type: "int" }],
+            returnType: "bool"
+          }
+        }
+      }
+    };
+
+    const enhancedData = problemData[problem.name] || {};
+    
+    return {
+      id: problem.id,
+      title: problem.title,
+      name: problem.name,
+      difficulty: problem.difficulty,
+      description: enhancedData.description || `${problem.title} - Problem description not available in offline mode.`,
+      examples: enhancedData.examples || [],
+      constraints: enhancedData.constraints || [],
+      followUp: enhancedData.followUp,
+      topics: enhancedData.topics || problem.topics || [],
+      companies: enhancedData.companies || problem.companies || [],
+      functionSignatures: enhancedData.functionSignatures || this.generateFunctionSignatures(problem.title),
+      testCases: this.generateTestCases(enhancedData.examples || []),
+      metadata: {
+        fetchedAt: new Date(),
+        source: 'fallback',
+        version: '1.0'
+      }
+    };
   }
 
   /**
@@ -568,6 +740,7 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
    */
   async getRandomProblem(difficulty) {
     try {
+      // First try to search LeetCode
       const problems = await this.searchProblems({ difficulty, limit: 100 });
       if (problems.length === 0) {
         throw new Error(`No problems found for difficulty: ${difficulty}`);
@@ -576,7 +749,16 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
       const randomIndex = Math.floor(Math.random() * problems.length);
       return problems[randomIndex];
     } catch (error) {
-      throw new Error(`Failed to get random problem: ${error.message}`);
+      // If search fails (403 errors), use fallback problems directly
+      console.log(`🔄 LeetCode search failed, using fallback problems...`);
+      const fallbackProblems = this.getFallbackProblems({ difficulty });
+      
+      if (fallbackProblems.length === 0) {
+        throw new Error(`No fallback problems available for difficulty: ${difficulty}`);
+      }
+      
+      const randomIndex = Math.floor(Math.random() * fallbackProblems.length);
+      return fallbackProblems[randomIndex];
     }
   }
 
