@@ -171,6 +171,14 @@ yarn complete undo easy/two-sum # Move back to active
 - **Automatic definitions** - ListNode definitions for linked list problems
 - **Solution class format** - Python uses LeetCode's Solution class structure
 
+### 🌐 Dynamic LeetCode Integration (NEW in v1.6.0)
+- **Real-time problem fetching** - Get any LeetCode problem directly from leetcode.com
+- **AI learning assistant** - Progressive hints and step-by-step guidance
+- **Intelligent caching** - Works offline with cached problems
+- **Automatic fallback** - Seamlessly falls back to static database if needed
+- **Opt-in activation** - Enable with `--dynamic` flag or `LCT_DYNAMIC=true`
+- **No breaking changes** - Existing workflows continue to work exactly the same
+
 ### 🤖 AI-Friendly Environment
 - **Full IDE integration** - Use your favorite editor with AI assistants
 - **Debugging support** - Add breakpoints, console.logs, step through code
