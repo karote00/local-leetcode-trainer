@@ -2,6 +2,24 @@ const fs = require('fs');
 const path = require('path');
 const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
 
+// Dynamic LeetCode Integration (optional)
+let dynamicSystem = null;
+const ENABLE_DYNAMIC = process.env.LCT_DYNAMIC === 'true' || process.argv.includes('--dynamic');
+
+if (ENABLE_DYNAMIC) {
+  try {
+    const { ProblemManagerImpl } = require('./dynamic/problem-manager');
+    const { OfflineManager } = require('./dynamic/offline-manager');
+    dynamicSystem = {
+      problemManager: new ProblemManagerImpl(),
+      offlineManager: new OfflineManager()
+    };
+    console.log('🌐 Dynamic LeetCode integration enabled');
+  } catch (error) {
+    console.log('⚠️  Dynamic system failed to load, using static database');
+  }
+}
+
 // LeetCode problems database organized by difficulty
 const PROBLEMS = {
   easy: [
@@ -19,7 +37,7 @@ const PROBLEMS = {
           explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
         },
         {
-          input: "nums = [3,2,4], target = 6", 
+          input: "nums = [3,2,4], target = 6",
           output: "[1,2]",
           explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
         },
@@ -31,7 +49,7 @@ const PROBLEMS = {
       ],
       constraints: [
         "2 <= nums.length <= 10^4",
-        "-10^9 <= nums[i] <= 10^9", 
+        "-10^9 <= nums[i] <= 10^9",
         "-10^9 <= target <= 10^9",
         "Only one valid answer exists."
       ],
@@ -286,18 +304,18 @@ const PROBLEMS = {
         }
       },
       testCases: [
-        { input: [["flower","flow","flight"]], expected: "fl" },
-        { input: [["dog","racecar","car"]], expected: "" },
-        { input: [["interspecies","interstellar","interstate"]], expected: "inters" },
-        { input: [["throne","throne"]], expected: "throne" },
-        { input: [["throne","dungeon"]], expected: "" },
+        { input: [["flower", "flow", "flight"]], expected: "fl" },
+        { input: [["dog", "racecar", "car"]], expected: "" },
+        { input: [["interspecies", "interstellar", "interstate"]], expected: "inters" },
+        { input: [["throne", "throne"]], expected: "throne" },
+        { input: [["throne", "dungeon"]], expected: "" },
         { input: [["a"]], expected: "a" },
         { input: [[""]], expected: "" },
         { input: [["ab", "a"]], expected: "a" },
-        { input: [["abab","aba","abc"]], expected: "ab" },
-        { input: [["leets","leetcode","leet","leeds"]], expected: "lee" },
-        { input: [["c","acc","ccc"]], expected: "" },
-        { input: [["reflower","flow","flight"]], expected: "" }
+        { input: [["abab", "aba", "abc"]], expected: "ab" },
+        { input: [["leets", "leetcode", "leet", "leeds"]], expected: "lee" },
+        { input: [["c", "acc", "ccc"]], expected: "" },
+        { input: [["reflower", "flow", "flight"]], expected: "" }
       ]
     },
     {
@@ -437,18 +455,18 @@ const PROBLEMS = {
         }
       },
       testCases: [
-        { input: [[1,2,4], [1,3,4]], expected: [1,1,2,3,4,4] },
+        { input: [[1, 2, 4], [1, 3, 4]], expected: [1, 1, 2, 3, 4, 4] },
         { input: [[], []], expected: [] },
         { input: [[], [0]], expected: [0] },
-        { input: [[1], [2]], expected: [1,2] },
-        { input: [[2], [1]], expected: [1,2] },
-        { input: [[1,3,5], [2,4,6]], expected: [1,2,3,4,5,6] },
-        { input: [[1,1,1], [2,2,2]], expected: [1,1,1,2,2,2] },
-        { input: [[5], [1,2,4]], expected: [1,2,4,5] },
-        { input: [[1,2,4], [3]], expected: [1,2,3,4] },
-        { input: [[-1,0,1], [-2,2,3]], expected: [-2,-1,0,1,2,3] },
-        { input: [[1,2,3,4,5], []], expected: [1,2,3,4,5] },
-        { input: [[0,1,2], [3,4,5]], expected: [0,1,2,3,4,5] }
+        { input: [[1], [2]], expected: [1, 2] },
+        { input: [[2], [1]], expected: [1, 2] },
+        { input: [[1, 3, 5], [2, 4, 6]], expected: [1, 2, 3, 4, 5, 6] },
+        { input: [[1, 1, 1], [2, 2, 2]], expected: [1, 1, 1, 2, 2, 2] },
+        { input: [[5], [1, 2, 4]], expected: [1, 2, 4, 5] },
+        { input: [[1, 2, 4], [3]], expected: [1, 2, 3, 4] },
+        { input: [[-1, 0, 1], [-2, 2, 3]], expected: [-2, -1, 0, 1, 2, 3] },
+        { input: [[1, 2, 3, 4, 5], []], expected: [1, 2, 3, 4, 5] },
+        { input: [[0, 1, 2], [3, 4, 5]], expected: [0, 1, 2, 3, 4, 5] }
       ]
     }
   ],
@@ -461,18 +479,18 @@ const PROBLEMS = {
       topics: ["Linked List", "Math", "Recursion"],
       companies: ["Amazon", "Microsoft", "Bloomberg"],
       testCases: [
-        { input: [[2,4,3], [5,6,4]], expected: [7,0,8] },
+        { input: [[2, 4, 3], [5, 6, 4]], expected: [7, 0, 8] },
         { input: [[0], [0]], expected: [0] },
-        { input: [[9,9,9,9,9,9,9], [9,9,9,9]], expected: [8,9,9,9,0,0,0,1] },
-        { input: [[1,2], [9,9]], expected: [0,2,1] },
-        { input: [[5], [5]], expected: [0,1] },
-        { input: [[1,8], [0]], expected: [1,8] },
-        { input: [[2,4,9], [5,6,4,9]], expected: [7,0,4,0,1] },
-        { input: [[9], [1,9,9,9,9,9,9,9,9,9]], expected: [0,0,0,0,0,0,0,0,0,0,1] },
-        { input: [[1], [9,9]], expected: [0,0,1] },
-        { input: [[7,2,4,3], [5,6,4]], expected: [2,9,8,3] },
-        { input: [[2,4,3,2,4,3,2,4,3], [5,6,4]], expected: [7,0,8,2,4,3,2,4,3] },
-        { input: [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [5,6,4]], expected: [6,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] }
+        { input: [[9, 9, 9, 9, 9, 9, 9], [9, 9, 9, 9]], expected: [8, 9, 9, 9, 0, 0, 0, 1] },
+        { input: [[1, 2], [9, 9]], expected: [0, 2, 1] },
+        { input: [[5], [5]], expected: [0, 1] },
+        { input: [[1, 8], [0]], expected: [1, 8] },
+        { input: [[2, 4, 9], [5, 6, 4, 9]], expected: [7, 0, 4, 0, 1] },
+        { input: [[9], [1, 9, 9, 9, 9, 9, 9, 9, 9, 9]], expected: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] },
+        { input: [[1], [9, 9]], expected: [0, 0, 1] },
+        { input: [[7, 2, 4, 3], [5, 6, 4]], expected: [2, 9, 8, 3] },
+        { input: [[2, 4, 3, 2, 4, 3, 2, 4, 3], [5, 6, 4]], expected: [7, 0, 8, 2, 4, 3, 2, 4, 3] },
+        { input: [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [5, 6, 4]], expected: [6, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] }
       ]
     },
     {
@@ -506,22 +524,22 @@ const PROBLEMS = {
       functionSignature: {
         javascript: {
           name: "lengthOfLongestSubstring",
-          params: [{name: "s", type: "string"}],
+          params: [{ name: "s", type: "string" }],
           returnType: "number"
         },
         python: {
           name: "lengthOfLongestSubstring",
-          params: [{name: "s", type: "str"}],
+          params: [{ name: "s", type: "str" }],
           returnType: "int"
         },
         java: {
           name: "lengthOfLongestSubstring",
-          params: [{name: "s", type: "String"}],
+          params: [{ name: "s", type: "String" }],
           returnType: "int"
         },
         cpp: {
           name: "lengthOfLongestSubstring",
-          params: [{name: "s", type: "string"}],
+          params: [{ name: "s", type: "string" }],
           returnType: "int"
         }
       },
@@ -620,12 +638,12 @@ const PROBLEMS = {
 // Function to generate problem content with proper LeetCode formatting
 function generateProblemContent(problem, language, langConfig) {
   const signature = problem.functionSignature && problem.functionSignature[language];
-  
+
   if (!signature) {
     // Fallback to old template if no signature data
     const functionName = generateFunctionName(problem.name, language);
     const className = generateClassName(problem.name);
-    
+
     return langConfig.template
       .replace(/\{\{id\}\}/g, problem.id)
       .replace(/\{\{title\}\}/g, problem.title)
@@ -655,13 +673,13 @@ function generateProblemContent(problem, language, langConfig) {
 function generateJavaScriptProblem(problem, signature) {
   const params = signature.params.map(p => p.name).join(', ');
   const paramTypes = signature.params.map(p => `@param {${p.type}} ${p.name}`).join('\n * ');
-  
-  const examples = problem.examples.map((ex, i) => 
+
+  const examples = problem.examples.map((ex, i) =>
     `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}${ex.explanation ? '\nExplanation: ' + ex.explanation : ''}`
   ).join('\n\n');
-  
+
   const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
-  
+
   // Check if we need ListNode definition
   const needsListNode = signature.params.some(p => p.type.includes('ListNode')) || signature.returnType.includes('ListNode');
   const listNodeDef = needsListNode ? `/**
@@ -673,7 +691,7 @@ function generateJavaScriptProblem(problem, signature) {
  */
 
 ` : '';
-  
+
   return `${listNodeDef}/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
@@ -700,32 +718,32 @@ module.exports = ${signature.name};`;
 
 function generatePythonProblem(problem, signature) {
   const params = signature.params.map(p => `${p.name}: ${p.type}`).join(', ');
-  
-  const examples = problem.examples.map((ex, i) => 
+
+  const examples = problem.examples.map((ex, i) =>
     `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}${ex.explanation ? '\nExplanation: ' + ex.explanation : ''}`
   ).join('\n\n');
-  
+
   const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
-  
+
   // Check if we need ListNode definition
   const needsListNode = signature.params.some(p => p.type.includes('ListNode')) || signature.returnType.includes('ListNode');
   const listNodeDef = needsListNode ? `# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\n\n` : '';
-  
+
   const imports = needsListNode ? 'from typing import List, Optional\n' : 'from typing import List\n';
-  
+
   return `"""\n${problem.id}. ${problem.title}\nhttps://leetcode.com/problems/${problem.name}/\n\n${problem.description}\n\n${examples}\n\nConstraints:\n${constraints}${problem.followUp ? '\n\nFollow-up: ' + problem.followUp : ''}\n"""\n\n${listNodeDef}${imports}\nclass Solution:\n    def ${signature.name}(self, ${params}) -> ${signature.returnType}:\n        pass\n\n# For testing\nif __name__ == "__main__":\n    solution = Solution()\n    # Test your solution here`;
 }
 
 function generateJavaProblem(problem, signature) {
   const className = generateClassName(problem.name);
   const functionParams = signature.params.map(p => `${p.type} ${p.name}`).join(', ');
-  
-  const examples = problem.examples ? problem.examples.map((ex, i) => 
+
+  const examples = problem.examples ? problem.examples.map((ex, i) =>
     ` * Example ${i + 1}:\n * Input: ${ex.input}\n * Output: ${ex.output}\n * Explanation: ${ex.explanation}`
   ).join('\n *\n') : '';
-  
+
   const constraints = problem.constraints ? problem.constraints.map(c => ` * ${c}`).join('\n') : '';
-  
+
   return `/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
@@ -752,13 +770,13 @@ public class ${className} {
 
 function generateCppProblem(problem, signature) {
   const functionParams = signature.params.map(p => `${p.type} ${p.name}`).join(', ');
-  
-  const examples = problem.examples ? problem.examples.map((ex, i) => 
+
+  const examples = problem.examples ? problem.examples.map((ex, i) =>
     ` * Example ${i + 1}:\n * Input: ${ex.input}\n * Output: ${ex.output}\n * Explanation: ${ex.explanation}`
   ).join('\n *\n') : '';
-  
+
   const constraints = problem.constraints ? problem.constraints.map(c => ` * ${c}`).join('\n') : '';
-  
+
   return `/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
@@ -943,25 +961,25 @@ function createProblemFiles(difficulty, problem) {
   const projectRoot = process.cwd();
   const language = getCurrentLanguage();
   const langConfig = getLanguageConfig(language);
-  
+
   const dir = path.join(projectRoot, difficulty, problem.name);
   const problemFile = path.join(dir, `${problem.name}${langConfig.extension}`);
   const testFile = path.join(dir, `${problem.name}.test${getTestExtension(language)}`);
-  
+
   // Create directory if it doesn't exist
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  
+
   // Skip if files already exist
   if (fs.existsSync(problemFile)) {
     return false;
   }
-  
+
   // Generate function name based on language
   const functionName = generateFunctionName(problem.name, language);
   const className = generateClassName(problem.name);
-  
+
   // Create the main problem file with proper LeetCode formatting
   const problemContent = generateProblemContent(problem, language, langConfig);
 
@@ -992,13 +1010,13 @@ function getTestExtension(language) {
 function generateFunctionName(problemName, language) {
   // Convert kebab-case to camelCase for JS/Java, snake_case for Python
   const words = problemName.split('-');
-  
+
   if (language === 'python') {
     return words.join('_').toLowerCase();
   }
-  
+
   // camelCase for JS, Java, C++
-  return words[0].toLowerCase() + words.slice(1).map(word => 
+  return words[0].toLowerCase() + words.slice(1).map(word =>
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join('');
 }
@@ -1006,7 +1024,7 @@ function generateFunctionName(problemName, language) {
 function generateClassName(problemName) {
   // Convert kebab-case to PascalCase
   const words = problemName.split('-');
-  return words.map(word => 
+  return words.map(word =>
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join('');
 }
@@ -1015,7 +1033,7 @@ function generateClassName(problemName) {
 function getExistingProblems() {
   const existing = { easy: [], medium: [], hard: [] };
   const projectRoot = process.cwd();
-  
+
   ['easy', 'medium', 'hard'].forEach(difficulty => {
     // Check active problems
     const activePath = path.join(projectRoot, difficulty);
@@ -1028,7 +1046,7 @@ function getExistingProblems() {
         }
       });
     }
-    
+
     // Check completed problems within difficulty folder
     const completedPath = path.join(projectRoot, difficulty, 'completed');
     if (fs.existsSync(completedPath)) {
@@ -1044,30 +1062,130 @@ function getExistingProblems() {
       });
     }
   });
-  
+
   return existing;
 }
 
+// Generate problems using dynamic system
+async function generateDynamicProblems(difficulty, count) {
+  const problems = [];
+
+  for (let i = 0; i < count; i++) {
+    try {
+      const problem = await dynamicSystem.problemManager.getRandomProblem(difficulty, {
+        language: getCurrentLanguage(),
+        includeHints: false
+      });
+
+      // Check if problem already exists
+      const existing = getExistingProblems();
+      if (existing[difficulty].includes(problem.name)) {
+        console.log(`⚠️  Problem already exists: ${problem.name}, trying another...`);
+        i--; // Try again
+        continue;
+      }
+
+      problems.push(problem);
+    } catch (error) {
+      throw new Error(`Failed to fetch problem ${i + 1}: ${error.message}`);
+    }
+  }
+
+  return problems;
+}
+
+// Generate problems using static system (fallback)
+function generateStaticProblems(difficulty, count) {
+  const existing = getExistingProblems();
+  const availableProblems = PROBLEMS[difficulty].filter(p =>
+    !existing[difficulty].includes(p.name)
+  );
+
+  if (availableProblems.length === 0) {
+    console.log(`🎉 Wow! You've completed all available ${difficulty} problems!`);
+    console.log('💪 Time to move to the next difficulty level!');
+    return [];
+  }
+
+  // Randomly select problems
+  const selectedProblems = [];
+  const actualCount = Math.min(count, availableProblems.length);
+
+  for (let i = 0; i < actualCount; i++) {
+    const randomIndex = Math.floor(Math.random() * availableProblems.length);
+    const problem = availableProblems.splice(randomIndex, 1)[0];
+    selectedProblems.push(problem);
+  }
+
+  return selectedProblems;
+}
+
+// Create problem files (enhanced for dynamic problems)
+function createProblemFiles(difficulty, problem) {
+  const language = getCurrentLanguage();
+  const langConfig = getLanguageConfig(language);
+
+  // Create directory
+  const problemDir = path.join(difficulty, problem.name);
+  if (!fs.existsSync(problemDir)) {
+    fs.mkdirSync(problemDir, { recursive: true });
+  }
+
+  // Create problem file
+  const problemContent = generateProblemContent(problem, language, langConfig);
+  const problemFile = path.join(problemDir, `${problem.name}${langConfig.extension}`);
+
+  if (!fs.existsSync(problemFile)) {
+    fs.writeFileSync(problemFile, problemContent);
+  }
+
+  // Create test file
+  const testContent = generateTestContent(problem, language, langConfig);
+  const testFile = path.join(problemDir, `${problem.name}.test${langConfig.extension}`);
+
+  if (!fs.existsSync(testFile)) {
+    fs.writeFileSync(testFile, testContent);
+  }
+
+  return !fs.existsSync(problemFile);
+}
+
 // Main function
-function main() {
+async function main() {
   const args = process.argv.slice(2);
   const input = args.join(' ').toLowerCase();
-  
+
   // Parse the request
   let difficulty = null;
   let count = 1;
-  
+  let specificProblem = null;
+
   if (input.includes('easy')) difficulty = 'easy';
   else if (input.includes('medium')) difficulty = 'medium';
   else if (input.includes('hard')) difficulty = 'hard';
-  
+
   // Extract number if specified
   const numberMatch = input.match(/(\d+)/);
   if (numberMatch) {
     count = parseInt(numberMatch[1]);
   }
-  
-  if (!difficulty) {
+
+  // Check if user specified a specific problem name
+  const problemNameMatch = input.match(/([a-z-]+(?:-[a-z]+)*)/);
+  if (problemNameMatch && !['easy', 'medium', 'hard'].includes(problemNameMatch[1])) {
+    specificProblem = problemNameMatch[1];
+    // Try to infer difficulty from dynamic system if available
+    if (dynamicSystem && !difficulty) {
+      try {
+        const problem = await dynamicSystem.problemManager.getProblem(specificProblem);
+        difficulty = problem.difficulty;
+      } catch (error) {
+        // Will handle error later
+      }
+    }
+  }
+
+  if (!difficulty && !specificProblem) {
     console.log('🎯 LeetCode Challenge Generator');
     console.log('');
     console.log('💡 Usage:');
@@ -1076,75 +1194,79 @@ function main() {
     console.log('  yarn challenge hard          # Get 1 hard problem');
     console.log('  yarn challenge 3 easy        # Get 3 easy problems');
     console.log('');
-    
+
     const existing = getExistingProblems();
     const projectRoot = process.cwd();
-    
+
     console.log('📊 Current Progress:');
-    
+
     ['easy', 'medium', 'hard'].forEach(difficulty => {
       const activePath = path.join(projectRoot, difficulty);
       const completedPath = path.join(projectRoot, difficulty, 'completed');
-      
+
       let activeCount = 0;
       let completedCount = 0;
-      
+
       if (fs.existsSync(activePath)) {
         activeCount = fs.readdirSync(activePath).filter(item => {
           const itemPath = path.join(activePath, item);
           return fs.statSync(itemPath).isDirectory() && item !== 'completed';
         }).length;
       }
-      
+
       if (fs.existsSync(completedPath)) {
-        completedCount = fs.readdirSync(completedPath).filter(item => 
+        completedCount = fs.readdirSync(completedPath).filter(item =>
           fs.statSync(path.join(completedPath, item)).isDirectory()
         ).length;
       }
-      
+
       const total = activeCount + completedCount;
       console.log(`  ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}: ${total} total (${activeCount} active, ${completedCount} completed)`);
     });
     return;
   }
-  
-  const existing = getExistingProblems();
-  const availableProblems = PROBLEMS[difficulty].filter(p => 
-    !existing[difficulty].includes(p.name)
-  );
-  
-  if (availableProblems.length === 0) {
-    console.log(`🎉 Wow! You've completed all available ${difficulty} problems!`);
-    console.log('💪 Time to move to the next difficulty level!');
+
+  // Try dynamic system first, fallback to static
+  let selectedProblems = [];
+
+  if (dynamicSystem) {
+    try {
+      selectedProblems = await generateDynamicProblems(difficulty, count);
+    } catch (error) {
+      console.log(`⚠️  Dynamic system failed: ${error.message}`);
+      console.log('🔄 Falling back to static problem database...');
+      selectedProblems = generateStaticProblems(difficulty, count);
+    }
+  } else {
+    selectedProblems = generateStaticProblems(difficulty, count);
+  }
+
+  if (selectedProblems.length === 0) {
+    console.log(`❌ No problems could be generated. Please try again.`);
     return;
   }
-  
-  // Randomly select problems
-  const selectedProblems = [];
-  const actualCount = Math.min(count, availableProblems.length);
-  
-  for (let i = 0; i < actualCount; i++) {
-    const randomIndex = Math.floor(Math.random() * availableProblems.length);
-    const problem = availableProblems.splice(randomIndex, 1)[0];
-    selectedProblems.push(problem);
-  }
-  
-  console.log(`🎯 Generated ${actualCount} ${difficulty} challenge${actualCount > 1 ? 's' : ''}:`);
+
+  console.log(`🎯 Generated ${selectedProblems.length} ${difficulty} challenge${selectedProblems.length > 1 ? 's' : ''}:`);
   console.log('');
-  
+
   selectedProblems.forEach((problem, index) => {
     const created = createProblemFiles(difficulty, problem);
     const status = created ? '✨ NEW' : '📁 EXISTS';
-    
+
     // Show absolute path for new challenges
     const projectRoot = process.cwd();
     const language = getCurrentLanguage();
     const langConfig = getLanguageConfig(language);
     const problemDir = path.join(projectRoot, difficulty, problem.name);
     const problemFile = path.join(problemDir, `${problem.name}${langConfig.extension}`);
-    
+
+    // Truncate description for display
+    const description = problem.description.length > 100
+      ? problem.description.substring(0, 100) + '...'
+      : problem.description;
+
     console.log(`${index + 1}. ${status} ${problem.title}`);
-    console.log(`   📝 ${problem.description}`);
+    console.log(`   📝 ${description}`);
     console.log(`   🏷️  ${problem.topics.join(', ')}`);
     console.log(`   🏢 ${problem.companies.slice(0, 3).join(', ')}`);
     if (created) {
@@ -1152,6 +1274,13 @@ function main() {
     }
     console.log(`   🧪 Test: yarn test ${difficulty}/${problem.name}`);
     console.log(`   🔗 Open: yarn open ${difficulty}/${problem.name}`);
+
+    // Show source information
+    if (dynamicSystem && problem.metadata) {
+      const sourceIcon = problem.metadata.source === 'cache' ? '📱' : '🌐';
+      const sourceText = problem.metadata.source === 'cache' ? 'Cache' : 'LeetCode';
+      console.log(`   ${sourceIcon} Source: ${sourceText}`);
+    }
     console.log('');
   });
 
@@ -1160,6 +1289,12 @@ function main() {
   console.log('  2. Think about edge cases');
   console.log('  3. Start with brute force, then optimize');
   console.log('  4. Test locally before submitting');
+
+  // Ensure script exits properly
+  process.exit(0);
 }
 
-main();
+main().catch(error => {
+  console.error(`❌ Challenge generation failed: ${error.message}`);
+  process.exit(1);
+});
