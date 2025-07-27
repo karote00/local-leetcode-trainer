@@ -6,6 +6,7 @@ const https = require('https');
 const { URL } = require('url');
 const { LeetCodeAPI } = require('./interfaces');
 const { config } = require('./config');
+const { getEnhancedFallbackProblem, getAllEnhancedFallbackProblems } = require('./enhanced-fallback-database');
 
 class LeetCodeAPIImpl extends LeetCodeAPI {
   constructor() {
@@ -158,7 +159,14 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
   getFallbackProblemData(identifier) {
     const problemSlug = this.normalizeProblemIdentifier(identifier);
     
-    // Find the problem in our fallback list
+    // Try to get enhanced fallback problem first
+    const enhancedProblem = getEnhancedFallbackProblem(problemSlug);
+    if (enhancedProblem) {
+      console.log(`📱 Using enhanced fallback data for: ${problemSlug}`);
+      return enhancedProblem;
+    }
+    
+    // Fall back to basic fallback list if not in enhanced database
     const fallbackProblems = this.getFallbackProblems();
     const problem = fallbackProblems.find(p => 
       p.name === problemSlug || 
@@ -167,10 +175,12 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
     );
     
     if (!problem) {
-      throw new Error(`Problem "${identifier}" not available in fallback data. Try: two-sum, valid-parentheses, palindrome-number, etc.`);
+      // Get list of available enhanced problems for better error message
+      const availableProblems = getAllEnhancedFallbackProblems().map(p => p.name).slice(0, 10);
+      throw new Error(`Problem "${identifier}" not available in fallback data. Available problems: ${availableProblems.join(', ')}, etc.`);
     }
     
-    // Return enhanced problem data with LeetCode-accurate format
+    // Return basic enhanced problem data
     return this.enhanceFallbackProblem(problem);
   }
 
@@ -275,6 +285,103 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
             name: "isPalindrome",
             params: [{ name: "x", type: "int" }],
             returnType: "bool"
+          }
+        }
+      },
+      'best-time-to-buy-and-sell-stock': {
+        description: "You are given an array prices where prices[i] is the price of a given stock on the ith day.\n\nYou want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.\n\nReturn the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.",
+        examples: [
+          {
+            input: "prices = [7,1,5,3,6,4]",
+            output: "5",
+            explanation: "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5."
+          },
+          {
+            input: "prices = [7,6,4,3,1]",
+            output: "0",
+            explanation: "In this case, no transactions are done and the max profit = 0."
+          }
+        ],
+        constraints: [
+          "1 <= prices.length <= 10^5",
+          "0 <= prices[i] <= 10^4"
+        ],
+        topics: ["Array", "Dynamic Programming"],
+        companies: ["Amazon", "Microsoft", "Facebook"],
+        functionSignatures: {
+          javascript: {
+            name: "maxProfit",
+            params: [{ name: "prices", type: "number[]" }],
+            returnType: "number"
+          },
+          python: {
+            name: "maxProfit",
+            params: [{ name: "prices", type: "List[int]" }],
+            returnType: "int"
+          }
+        }
+      },
+      'climbing-stairs': {
+        description: "You are climbing a staircase. It takes n steps to reach the top.\n\nEach time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+        examples: [
+          {
+            input: "n = 2",
+            output: "2",
+            explanation: "There are two ways to climb to the top.\n1. 1 step + 1 step\n2. 2 steps"
+          },
+          {
+            input: "n = 3",
+            output: "3",
+            explanation: "There are three ways to climb to the top.\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step"
+          }
+        ],
+        constraints: ["1 <= n <= 45"],
+        topics: ["Math", "Dynamic Programming", "Memoization"],
+        companies: ["Amazon", "Adobe", "Apple"],
+        functionSignatures: {
+          javascript: {
+            name: "climbStairs",
+            params: [{ name: "n", type: "number" }],
+            returnType: "number"
+          },
+          python: {
+            name: "climbStairs",
+            params: [{ name: "n", type: "int" }],
+            returnType: "int"
+          }
+        }
+      },
+      'maximum-subarray': {
+        description: "Given an integer array nums, find the subarray with the largest sum, and return its sum.",
+        examples: [
+          {
+            input: "nums = [-2,1,-3,4,-1,2,1,-5,4]",
+            output: "6",
+            explanation: "The subarray [4,-1,2,1] has the largest sum 6."
+          },
+          {
+            input: "nums = [1]",
+            output: "1",
+            explanation: "The subarray [1] has the largest sum 1."
+          }
+        ],
+        constraints: [
+          "1 <= nums.length <= 10^5",
+          "-10^4 <= nums[i] <= 10^4"
+        ],
+        followUp: "If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach, which is more subtle.",
+        topics: ["Array", "Divide and Conquer", "Dynamic Programming"],
+        companies: ["Amazon", "Microsoft", "LinkedIn"],
+        functionSignatures: {
+          javascript: {
+            name: "maxSubArray",
+            params: [{ name: "nums", type: "number[]" }],
+            returnType: "number"
+          },
+          python: {
+            name: "maxSubArray",
+            params: [{ name: "nums", type: "List[int]" }],
+            returnType: "int"
           }
         }
       }

@@ -7,6 +7,8 @@ const { LeetCodeAPIImpl } = require('./leetcode-api');
 const { CacheManagerImpl } = require('./cache-manager');
 const { OfflineManager } = require('./offline-manager');
 const { ProblemParser } = require('./problem-parser');
+const { TestCaseGenerator } = require('./test-case-generator');
+const { FallbackValidator } = require('./fallback-validator');
 const { config } = require('./config');
 
 class ProblemManagerImpl extends ProblemManager {
@@ -48,8 +50,11 @@ class ProblemManagerImpl extends ProblemManager {
         console.log(`🌐 Fetching problem from LeetCode: ${identifier}`);
         problemData = await this.api.fetchProblem(identifier);
         
-        // Validate fetched data
-        const validation = ProblemParser.validateProblemData(problemData);
+        // Validate fetched data using enhanced fallback validator
+        const validation = problemData.metadata?.source === 'enhanced-fallback' || problemData.metadata?.source === 'fallback' ?
+          FallbackValidator.validateProblemData(problemData) :
+          ProblemParser.validateProblemData(problemData);
+          
         if (!validation.isValid) {
           throw new Error(`Invalid problem data: ${validation.errors.join(', ')}`);
         }
@@ -58,12 +63,20 @@ class ProblemManagerImpl extends ProblemManager {
           console.warn(`⚠️  Problem warnings: ${validation.warnings.join(', ')}`);
         }
 
+        // Display fallback mode information
+        if (problemData.metadata?.source === 'enhanced-fallback') {
+          console.log(`📱 Using enhanced fallback data (${validation.completenessScore}% complete)`);
+        } else if (problemData.metadata?.source === 'fallback') {
+          console.log(`📱 Using basic fallback data`);
+        }
+
         // Cache the fetched problem
         await this.cache.set(cacheKey, problemData, {
-          source: 'leetcode-api',
-          version: '1.0',
+          source: problemData.metadata?.source || 'leetcode-api',
+          version: '2.0',
           language: language,
-          fetchedAt: new Date().toISOString()
+          fetchedAt: new Date().toISOString(),
+          completeness: validation.completenessScore || 100
         });
 
         console.log(`✅ Problem cached: ${identifier}`);
@@ -559,6 +572,10 @@ class ProblemManagerImpl extends ProblemManager {
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
+    // Add fallback mode indicator
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+    
     const listNodeDef = template.needsListNode ? `/**
  * Definition for singly-linked list.
  * function ListNode(val, next) {
@@ -569,10 +586,21 @@ class ProblemManagerImpl extends ProblemManager {
 
 ` : '';
     
-    return `${listNodeDef}/**
+    const treeNodeDef = template.needsTreeNode ? `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+
+` : '';
+    
+    return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
- * 
+ *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
  * ${examples.replace(/\n/g, '\n * ')}
@@ -606,6 +634,10 @@ module.exports = ${signature.name};`;
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
+    // Add fallback mode indicator
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `\n📱 OFFLINE MODE: This problem data is from fallback database\nFor the latest version, try again when online\n` : '';
+    
     const listNodeDef = template.needsListNode ? `# Definition for singly-linked list.
 # class ListNode:
 #     def __init__(self, val=0, next=None):
@@ -614,12 +646,21 @@ module.exports = ${signature.name};`;
 
 ` : '';
     
-    const imports = template.imports.join('\n') + '\n';
+    const treeNodeDef = template.needsTreeNode ? `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+` : '';
+    
+    const imports = template.imports.length > 0 ? template.imports.join('\n') + '\n' : '';
     
     return `"""
 ${problem.id}. ${problem.title}
 https://leetcode.com/problems/${problem.name}/
-
+${fallbackNotice}
 ${problem.description}
 
 ${examples}
@@ -628,7 +669,7 @@ Constraints:
 ${constraints}${problem.followUp ? '\n\nFollow-up: ' + problem.followUp : ''}
 """
 
-${listNodeDef}${imports}
+${listNodeDef}${treeNodeDef}${imports}
 class Solution:
     def ${signature.name}(self, ${params}) -> ${signature.returnType}:
         pass
@@ -652,10 +693,45 @@ if __name__ == "__main__":
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    return `/**
+    // Add fallback mode indicator
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+    
+    const listNodeDef = template.needsListNode ? `/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+
+` : '';
+    
+    const treeNodeDef = template.needsTreeNode ? `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+` : '';
+    
+    return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
- * 
+ *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
  * ${examples.replace(/\n/g, '\n * ')}
@@ -685,10 +761,41 @@ class Solution {
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    return `/**
+    // Add fallback mode indicator
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+    
+    const listNodeDef = template.needsListNode ? `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+
+` : '';
+    
+    const treeNodeDef = template.needsTreeNode ? `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+` : '';
+    
+    return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
  * https://leetcode.com/problems/${problem.name}/
- * 
+ *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
  * ${examples.replace(/\n/g, '\n * ')}
@@ -714,9 +821,198 @@ public:
    * Generate test file
    */
   async generateTestFile(problem, language) {
-    // Use existing test generation logic from challenge.js
-    // This would be integrated with the existing test system
-    return `// Test file for ${problem.title}\n// Implementation would integrate with existing test system`;
+    // Generate comprehensive test cases using TestCaseGenerator
+    const testCases = TestCaseGenerator.generateTestCases(problem);
+    
+    switch (language) {
+      case 'javascript':
+        return this.generateJavaScriptTestFile(problem, testCases);
+      case 'python':
+        return this.generatePythonTestFile(problem, testCases);
+      case 'java':
+        return this.generateJavaTestFile(problem, testCases);
+      case 'cpp':
+        return this.generateCppTestFile(problem, testCases);
+      default:
+        throw new Error(`Unsupported language for test generation: ${language}`);
+    }
+  }
+
+  /**
+   * Generate JavaScript test file
+   */
+  generateJavaScriptTestFile(problem, testCases) {
+    const signature = problem.functionSignatures?.javascript;
+    if (!signature) {
+      return `// Test file for ${problem.title}\n// No function signature available for testing`;
+    }
+
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+
+    const testCaseCode = testCases.map((testCase, index) => {
+      const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
+      const expectedStr = JSON.stringify(testCase.expected);
+      const category = testCase.category || 'basic';
+      const categoryEmoji = category === 'edge' ? '⚠️' : category === 'stress' ? '🔥' : '✅';
+      
+      return `  // ${categoryEmoji} ${testCase.description || `Test case ${index + 1}`} (${category})
+  test('${testCase.description || `Test case ${index + 1}`}', () => {
+    const result = ${signature.name}(${inputStr});
+    ${testCase.expected !== null ? `expect(result).toEqual(${expectedStr});` : `// Expected result: ${expectedStr || 'To be determined'}`}
+  });`;
+    }).join('\n\n');
+
+    return `${fallbackNotice}const ${signature.name} = require('./${problem.name}');
+
+describe('${problem.id}. ${problem.title}', () => {
+${testCaseCode}
+});
+
+// Additional test utilities
+function runAllTests() {
+  console.log('Running all tests for ${problem.title}...');
+  // Add custom test runner logic here
+}
+
+// Export for external test runners
+module.exports = {
+  ${signature.name},
+  runAllTests
+};`;
+  }
+
+  /**
+   * Generate Python test file
+   */
+  generatePythonTestFile(problem, testCases) {
+    const signature = problem.functionSignatures?.python;
+    if (!signature) {
+      return `# Test file for ${problem.title}\n# No function signature available for testing`;
+    }
+
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `# 📱 OFFLINE MODE: This test file uses fallback problem data\n# For the latest version, try again when online\n\n` : '';
+
+    const testCaseCode = testCases.map((testCase, index) => {
+      const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
+      const expectedStr = JSON.stringify(testCase.expected);
+      const category = testCase.category || 'basic';
+      const categoryEmoji = category === 'edge' ? '⚠️' : category === 'stress' ? '🔥' : '✅';
+      
+      return `    def test_${index + 1}_${category}(self):
+        """${categoryEmoji} ${testCase.description || `Test case ${index + 1}`} (${category})"""
+        solution = Solution()
+        result = solution.${signature.name}(${inputStr})
+        ${testCase.expected !== null ? `self.assertEqual(result, ${expectedStr})` : `# Expected result: ${expectedStr || 'To be determined'}`}`;
+    }).join('\n\n');
+
+    return `${fallbackNotice}import unittest
+from ${problem.name} import Solution
+
+class Test${problem.title.replace(/\s+/g, '')}(unittest.TestCase):
+${testCaseCode}
+
+    def run_all_tests(self):
+        """Run all test cases"""
+        print(f"Running all tests for ${problem.title}...")
+        # Add custom test runner logic here
+
+if __name__ == '__main__':
+    unittest.main()`;
+  }
+
+  /**
+   * Generate Java test file
+   */
+  generateJavaTestFile(problem, testCases) {
+    const signature = problem.functionSignatures?.java;
+    if (!signature) {
+      return `// Test file for ${problem.title}\n// No function signature available for testing`;
+    }
+
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+
+    const testCaseCode = testCases.map((testCase, index) => {
+      const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
+      const expectedStr = JSON.stringify(testCase.expected);
+      const category = testCase.category || 'basic';
+      const categoryEmoji = category === 'edge' ? '⚠️' : category === 'stress' ? '🔥' : '✅';
+      
+      return `    @Test
+    public void test${index + 1}_${category}() {
+        // ${categoryEmoji} ${testCase.description || `Test case ${index + 1}`} (${category})
+        Solution solution = new Solution();
+        ${signature.returnType} result = solution.${signature.name}(${inputStr});
+        ${testCase.expected !== null ? `assertEquals(${expectedStr}, result);` : `// Expected result: ${expectedStr || 'To be determined'}`}
+    }`;
+    }).join('\n\n');
+
+    return `${fallbackNotice}import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ${problem.title.replace(/\s+/g, '')}Test {
+${testCaseCode}
+
+    public void runAllTests() {
+        System.out.println("Running all tests for ${problem.title}...");
+        // Add custom test runner logic here
+    }
+}`;
+  }
+
+  /**
+   * Generate C++ test file
+   */
+  generateCppTestFile(problem, testCases) {
+    const signature = problem.functionSignatures?.cpp;
+    if (!signature) {
+      return `// Test file for ${problem.title}\n// No function signature available for testing`;
+    }
+
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+
+    const testCaseCode = testCases.map((testCase, index) => {
+      const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
+      const expectedStr = JSON.stringify(testCase.expected);
+      const category = testCase.category || 'basic';
+      const categoryEmoji = category === 'edge' ? '⚠️' : category === 'stress' ? '🔥' : '✅';
+      
+      return `    // ${categoryEmoji} ${testCase.description || `Test case ${index + 1}`} (${category})
+    void test${index + 1}_${category}() {
+        Solution solution;
+        ${signature.returnType} result = solution.${signature.name}(${inputStr});
+        ${testCase.expected !== null ? `assert(result == ${expectedStr});` : `// Expected result: ${expectedStr || 'To be determined'}`}
+        cout << "Test ${index + 1} (${category}): PASSED" << endl;
+    }`;
+    }).join('\n\n');
+
+    return `${fallbackNotice}#include <iostream>
+#include <cassert>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Include the solution
+#include "${problem.name}.cpp"
+
+class ${problem.title.replace(/\s+/g, '')}Test {
+public:
+${testCaseCode}
+
+    void runAllTests() {
+        cout << "Running all tests for ${problem.title}..." << endl;
+        // Add test execution logic here
+    }
+};
+
+int main() {
+    ${problem.title.replace(/\s+/g, '')}Test tester;
+    tester.runAllTests();
+    return 0;
+}`;
   }
 
   /**
@@ -729,12 +1025,20 @@ public:
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
+    // Add fallback mode notice
+    const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
+      `\n## 📱 Offline Mode Notice\n\n**This problem data is from the fallback database** because LeetCode API is currently unavailable.\n\n**Limitations:**\n- Problem data may not be the most recent version\n- Some advanced features may be limited\n- Test cases are generated based on available examples\n\n**To get the latest data:** Try again when you have internet connectivity and LeetCode is accessible.\n\n**Completeness Score:** ${problem.metadata?.completeness || 'N/A'}%\n` : '';
+    
+    // Add hints section if available
+    const hintsSection = problem.hints && problem.hints.length > 0 ? 
+      `\n## Hints\n\n${problem.hints.map((hint, i) => `**Level ${hint.level}:** ${hint.text}`).join('\n\n')}\n` : '';
+    
     return `# ${problem.id}. ${problem.title}
 
 **Difficulty:** ${problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
 **Topics:** ${problem.topics.join(', ')}
 **Companies:** ${problem.companies.join(', ')}
-
+${fallbackNotice}
 ## Problem Description
 
 ${problem.description}
@@ -748,7 +1052,7 @@ ${examples}
 ${constraints}
 
 ${problem.followUp ? `## Follow-up\n\n${problem.followUp}` : ''}
-
+${hintsSection}
 ## Links
 
 - [LeetCode Problem](https://leetcode.com/problems/${problem.name}/)
