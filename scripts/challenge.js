@@ -9,9 +9,66 @@ const PROBLEMS = {
       id: 1,
       name: "two-sum",
       title: "Two Sum",
-      description: "Find two numbers that add up to target",
+      description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
       topics: ["Array", "Hash Table"],
       companies: ["Amazon", "Google", "Apple"],
+      examples: [
+        {
+          input: "nums = [2,7,11,15], target = 9",
+          output: "[0,1]",
+          explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+        },
+        {
+          input: "nums = [3,2,4], target = 6", 
+          output: "[1,2]",
+          explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
+        },
+        {
+          input: "nums = [3,3], target = 6",
+          output: "[0,1]",
+          explanation: "Because nums[0] + nums[1] == 6, we return [0, 1]."
+        }
+      ],
+      constraints: [
+        "2 <= nums.length <= 10^4",
+        "-10^9 <= nums[i] <= 10^9", 
+        "-10^9 <= target <= 10^9",
+        "Only one valid answer exists."
+      ],
+      functionSignature: {
+        javascript: {
+          name: "twoSum",
+          params: [
+            { name: "nums", type: "number[]" },
+            { name: "target", type: "number" }
+          ],
+          returnType: "number[]"
+        },
+        python: {
+          name: "twoSum",
+          params: [
+            { name: "nums", type: "List[int]" },
+            { name: "target", type: "int" }
+          ],
+          returnType: "List[int]"
+        },
+        java: {
+          name: "twoSum",
+          params: [
+            { name: "nums", type: "int[]" },
+            { name: "target", type: "int" }
+          ],
+          returnType: "int[]"
+        },
+        cpp: {
+          name: "twoSum",
+          params: [
+            { name: "nums", type: "vector<int>&" },
+            { name: "target", type: "int" }
+          ],
+          returnType: "vector<int>"
+        }
+      },
       testCases: [
         { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
         { input: [[3, 2, 4], 6], expected: [1, 2] },
@@ -31,9 +88,60 @@ const PROBLEMS = {
       id: 9,
       name: "palindrome-number",
       title: "Palindrome Number",
-      description: "Check if integer is palindrome without string conversion",
+      description: "Given an integer x, return true if x is a palindrome, and false otherwise.",
       topics: ["Math"],
       companies: ["Amazon", "Apple"],
+      examples: [
+        {
+          input: "x = 121",
+          output: "true",
+          explanation: "121 reads as 121 from left to right and from right to left."
+        },
+        {
+          input: "x = -121",
+          output: "false",
+          explanation: "From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome."
+        },
+        {
+          input: "x = 10",
+          output: "false",
+          explanation: "Reads 01 from right to left. Therefore it is not a palindrome."
+        }
+      ],
+      constraints: [
+        "-2^31 <= x <= 2^31 - 1"
+      ],
+      followUp: "Could you solve it without converting the integer to a string?",
+      functionSignature: {
+        javascript: {
+          name: "isPalindrome",
+          params: [
+            { name: "x", type: "number" }
+          ],
+          returnType: "boolean"
+        },
+        python: {
+          name: "isPalindrome",
+          params: [
+            { name: "x", type: "int" }
+          ],
+          returnType: "bool"
+        },
+        java: {
+          name: "isPalindrome",
+          params: [
+            { name: "x", type: "int" }
+          ],
+          returnType: "boolean"
+        },
+        cpp: {
+          name: "isPalindrome",
+          params: [
+            { name: "x", type: "int" }
+          ],
+          returnType: "bool"
+        }
+      },
       testCases: [
         { input: [121], expected: true },
         { input: [-121], expected: false },
@@ -53,9 +161,61 @@ const PROBLEMS = {
       id: 13,
       name: "roman-to-integer",
       title: "Roman to Integer",
-      description: "Convert roman numerals to integer",
+      description: "Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.\n\nSymbol       Value\nI             1\nV             5\nX             10\nL             50\nC             100\nD             500\nM             1000\n\nFor example, 2 is written as II in Roman numeral, just two ones added together. 12 is written as XII, which is simply X + II. The number 27 is written as XXVII, which is XX + V + II.\n\nRoman numerals are usually written largest to smallest from left to right. However, the numeral for four is not IIII. Instead, the number four is written as IV. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as IX. There are six instances where subtraction is used:\n\nI can be placed before V (5) and X (10) to make 4 and 9.\nX can be placed before L (50) and C (100) to make 40 and 90.\nC can be placed before D (500) and M (1000) to make 400 and 900.\n\nGiven a roman numeral, convert it to an integer.",
       topics: ["Hash Table", "Math", "String"],
       companies: ["Facebook", "Microsoft", "Yahoo"],
+      examples: [
+        {
+          input: "s = \"III\"",
+          output: "3",
+          explanation: "III = 3."
+        },
+        {
+          input: "s = \"LVIII\"",
+          output: "58",
+          explanation: "L = 50, V= 5, III = 3."
+        },
+        {
+          input: "s = \"MCMXC\"",
+          output: "1990",
+          explanation: "M = 1000, CM = 900, XC = 90."
+        }
+      ],
+      constraints: [
+        "1 <= s.length <= 15",
+        "s contains only the characters ('I', 'V', 'X', 'L', 'C', 'D', 'M').",
+        "It is guaranteed that s is a valid roman numeral in the range [1, 3999]."
+      ],
+      functionSignature: {
+        javascript: {
+          name: "romanToInt",
+          params: [
+            { name: "s", type: "string" }
+          ],
+          returnType: "number"
+        },
+        python: {
+          name: "romanToInt",
+          params: [
+            { name: "s", type: "str" }
+          ],
+          returnType: "int"
+        },
+        java: {
+          name: "romanToInt",
+          params: [
+            { name: "s", type: "String" }
+          ],
+          returnType: "int"
+        },
+        cpp: {
+          name: "romanToInt",
+          params: [
+            { name: "s", type: "string" }
+          ],
+          returnType: "int"
+        }
+      },
       testCases: [
         { input: ["III"], expected: 3 },
         { input: ["LVIII"], expected: 58 },
@@ -75,9 +235,56 @@ const PROBLEMS = {
       id: 14,
       name: "longest-common-prefix",
       title: "Longest Common Prefix",
-      description: "Find longest common prefix among array of strings",
+      description: "Write a function to find the longest common prefix string amongst an array of strings.\n\nIf there is no common prefix, return an empty string \"\".",
       topics: ["String"],
       companies: ["Google", "Yelp"],
+      examples: [
+        {
+          input: "strs = [\"flower\",\"flow\",\"flight\"]",
+          output: "\"fl\"",
+          explanation: "The longest common prefix is \"fl\"."
+        },
+        {
+          input: "strs = [\"dog\",\"racecar\",\"car\"]",
+          output: "\"\"",
+          explanation: "There is no common prefix among the input strings."
+        }
+      ],
+      constraints: [
+        "1 <= strs.length <= 200",
+        "0 <= strs[i].length <= 200",
+        "strs[i] consists of only lowercase English letters."
+      ],
+      functionSignature: {
+        javascript: {
+          name: "longestCommonPrefix",
+          params: [
+            { name: "strs", type: "string[]" }
+          ],
+          returnType: "string"
+        },
+        python: {
+          name: "longestCommonPrefix",
+          params: [
+            { name: "strs", type: "List[str]" }
+          ],
+          returnType: "str"
+        },
+        java: {
+          name: "longestCommonPrefix",
+          params: [
+            { name: "strs", type: "String[]" }
+          ],
+          returnType: "String"
+        },
+        cpp: {
+          name: "longestCommonPrefix",
+          params: [
+            { name: "strs", type: "vector<string>&" }
+          ],
+          returnType: "string"
+        }
+      },
       testCases: [
         { input: [["flower","flow","flight"]], expected: "fl" },
         { input: [["dog","racecar","car"]], expected: "" },
@@ -97,9 +304,60 @@ const PROBLEMS = {
       id: 20,
       name: "valid-parentheses",
       title: "Valid Parentheses",
-      description: "Check if parentheses are properly matched",
+      description: "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.",
       topics: ["String", "Stack"],
       companies: ["Amazon", "Google", "Facebook"],
+      examples: [
+        {
+          input: "s = \"()\"",
+          output: "true",
+          explanation: "The string contains valid parentheses."
+        },
+        {
+          input: "s = \"()[]{}\"",
+          output: "true",
+          explanation: "All brackets are properly matched and closed."
+        },
+        {
+          input: "s = \"(]\"",
+          output: "false",
+          explanation: "The brackets are not properly matched."
+        }
+      ],
+      constraints: [
+        "1 <= s.length <= 10^4",
+        "s consists of parentheses only '()[]{}'."
+      ],
+      functionSignature: {
+        javascript: {
+          name: "isValid",
+          params: [
+            { name: "s", type: "string" }
+          ],
+          returnType: "boolean"
+        },
+        python: {
+          name: "isValid",
+          params: [
+            { name: "s", type: "str" }
+          ],
+          returnType: "bool"
+        },
+        java: {
+          name: "isValid",
+          params: [
+            { name: "s", type: "String" }
+          ],
+          returnType: "boolean"
+        },
+        cpp: {
+          name: "isValid",
+          params: [
+            { name: "s", type: "string" }
+          ],
+          returnType: "bool"
+        }
+      },
       testCases: [
         { input: ["()"], expected: true },
         { input: ["()[]{}"], expected: true },
@@ -119,9 +377,65 @@ const PROBLEMS = {
       id: 21,
       name: "merge-two-sorted-lists",
       title: "Merge Two Sorted Lists",
-      description: "Merge two sorted linked lists",
+      description: "You are given the heads of two sorted linked lists list1 and list2.\n\nMerge the two lists into one sorted list. The list should be made by splicing together the nodes of the first two lists.\n\nReturn the head of the merged linked list.",
       topics: ["Linked List", "Recursion"],
       companies: ["Amazon", "Apple", "Adobe"],
+      examples: [
+        {
+          input: "list1 = [1,2,4], list2 = [1,3,4]",
+          output: "[1,1,2,3,4,4]",
+          explanation: "The merged list is [1,1,2,3,4,4]."
+        },
+        {
+          input: "list1 = [], list2 = []",
+          output: "[]",
+          explanation: "Both lists are empty, so the merged list is also empty."
+        },
+        {
+          input: "list1 = [], list2 = [0]",
+          output: "[0]",
+          explanation: "Only list2 has elements, so the merged list is [0]."
+        }
+      ],
+      constraints: [
+        "The number of nodes in both lists is in the range [0, 50].",
+        "-100 <= Node.val <= 100",
+        "Both list1 and list2 are sorted in non-decreasing order."
+      ],
+      functionSignature: {
+        javascript: {
+          name: "mergeTwoLists",
+          params: [
+            { name: "list1", type: "ListNode" },
+            { name: "list2", type: "ListNode" }
+          ],
+          returnType: "ListNode"
+        },
+        python: {
+          name: "mergeTwoLists",
+          params: [
+            { name: "list1", type: "Optional[ListNode]" },
+            { name: "list2", type: "Optional[ListNode]" }
+          ],
+          returnType: "Optional[ListNode]"
+        },
+        java: {
+          name: "mergeTwoLists",
+          params: [
+            { name: "list1", type: "ListNode" },
+            { name: "list2", type: "ListNode" }
+          ],
+          returnType: "ListNode"
+        },
+        cpp: {
+          name: "mergeTwoLists",
+          params: [
+            { name: "list1", type: "ListNode*" },
+            { name: "list2", type: "ListNode*" }
+          ],
+          returnType: "ListNode*"
+        }
+      },
       testCases: [
         { input: [[1,2,4], [1,3,4]], expected: [1,1,2,3,4,4] },
         { input: [[], []], expected: [] },
@@ -165,9 +479,66 @@ const PROBLEMS = {
       id: 3,
       name: "longest-substring-without-repeating-characters",
       title: "Longest Substring Without Repeating Characters",
-      description: "Find length of longest substring without repeating chars",
+      description: "Given a string s, find the length of the longest substring without repeating characters.",
+      examples: [
+        {
+          input: 's = "abcabcbb"',
+          output: "3",
+          explanation: 'The answer is "abc", with the length of 3.'
+        },
+        {
+          input: 's = "bbbbb"',
+          output: "1",
+          explanation: 'The answer is "b", with the length of 1.'
+        },
+        {
+          input: 's = "pwwkew"',
+          output: "3",
+          explanation: 'The answer is "wke", with the length of 3. Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.'
+        }
+      ],
+      constraints: [
+        "0 <= s.length <= 5 * 10^4",
+        "s consists of English letters, digits, symbols and spaces."
+      ],
       topics: ["Hash Table", "String", "Sliding Window"],
-      companies: ["Amazon", "Adobe", "Bloomberg"]
+      companies: ["Amazon", "Adobe", "Bloomberg"],
+      functionSignature: {
+        javascript: {
+          name: "lengthOfLongestSubstring",
+          params: [{name: "s", type: "string"}],
+          returnType: "number"
+        },
+        python: {
+          name: "lengthOfLongestSubstring",
+          params: [{name: "s", type: "str"}],
+          returnType: "int"
+        },
+        java: {
+          name: "lengthOfLongestSubstring",
+          params: [{name: "s", type: "String"}],
+          returnType: "int"
+        },
+        cpp: {
+          name: "lengthOfLongestSubstring",
+          params: [{name: "s", type: "string"}],
+          returnType: "int"
+        }
+      },
+      testCases: [
+        { input: ["abcabcbb"], expected: 3 },
+        { input: ["bbbbb"], expected: 1 },
+        { input: ["pwwkew"], expected: 3 },
+        { input: [""], expected: 0 },
+        { input: [" "], expected: 1 },
+        { input: ["au"], expected: 2 },
+        { input: ["dvdf"], expected: 3 },
+        { input: ["anviaj"], expected: 5 },
+        { input: ["abcdef"], expected: 6 },
+        { input: ["aab"], expected: 2 },
+        { input: ["cdd"], expected: 2 },
+        { input: ["abba"], expected: 2 }
+      ]
     },
     {
       id: 5,
@@ -245,6 +616,176 @@ const PROBLEMS = {
     }
   ]
 };
+
+// Function to generate problem content with proper LeetCode formatting
+function generateProblemContent(problem, language, langConfig) {
+  const signature = problem.functionSignature && problem.functionSignature[language];
+  
+  if (!signature) {
+    // Fallback to old template if no signature data
+    const functionName = generateFunctionName(problem.name, language);
+    const className = generateClassName(problem.name);
+    
+    return langConfig.template
+      .replace(/\{\{id\}\}/g, problem.id)
+      .replace(/\{\{title\}\}/g, problem.title)
+      .replace(/\{\{name\}\}/g, problem.name)
+      .replace(/\{\{description\}\}/g, problem.description)
+      .replace(/\{\{topics\}\}/g, problem.topics.join(', '))
+      .replace(/\{\{companies\}\}/g, problem.companies.join(', '))
+      .replace(/\{\{functionName\}\}/g, functionName)
+      .replace(/\{\{function_name\}\}/g, functionName.toLowerCase().replace(/([A-Z])/g, '_$1').replace(/^_/, ''))
+      .replace(/\{\{ClassName\}\}/g, className);
+  }
+
+  switch (language) {
+    case 'javascript':
+      return generateJavaScriptProblem(problem, signature);
+    case 'python':
+      return generatePythonProblem(problem, signature);
+    case 'java':
+      return generateJavaProblem(problem, signature);
+    case 'cpp':
+      return generateCppProblem(problem, signature);
+    default:
+      return generateJavaScriptProblem(problem, signature);
+  }
+}
+
+function generateJavaScriptProblem(problem, signature) {
+  const params = signature.params.map(p => p.name).join(', ');
+  const paramTypes = signature.params.map(p => `@param {${p.type}} ${p.name}`).join('\n * ');
+  
+  const examples = problem.examples.map((ex, i) => 
+    `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}${ex.explanation ? '\nExplanation: ' + ex.explanation : ''}`
+  ).join('\n\n');
+  
+  const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
+  
+  // Check if we need ListNode definition
+  const needsListNode = signature.params.some(p => p.type.includes('ListNode')) || signature.returnType.includes('ListNode');
+  const listNodeDef = needsListNode ? `/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+
+` : '';
+  
+  return `${listNodeDef}/**
+ * ${problem.description.replace(/\n/g, '\n * ')}
+ * 
+ * ${examples.replace(/\n/g, '\n * ')}
+ * 
+ * Constraints:
+ * ${constraints.replace(/\n/g, '\n * ')}
+${problem.followUp ? ' * \n * Follow-up: ' + problem.followUp : ''}
+ */
+
+/**
+ * ${paramTypes}
+ * @return {${signature.returnType}}
+ */
+var ${signature.name} = function(${params}) {
+    
+};
+
+module.exports = ${signature.name};`;
+}
+
+function generatePythonProblem(problem, signature) {
+  const params = signature.params.map(p => `${p.name}: ${p.type}`).join(', ');
+  
+  const examples = problem.examples.map((ex, i) => 
+    `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}${ex.explanation ? '\nExplanation: ' + ex.explanation : ''}`
+  ).join('\n\n');
+  
+  const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
+  
+  // Check if we need ListNode definition
+  const needsListNode = signature.params.some(p => p.type.includes('ListNode')) || signature.returnType.includes('ListNode');
+  const listNodeDef = needsListNode ? `# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\n\n` : '';
+  
+  const imports = needsListNode ? 'from typing import List, Optional\n' : 'from typing import List\n';
+  
+  return `"""\n${problem.description}\n\n${examples}\n\nConstraints:\n${constraints}${problem.followUp ? '\n\nFollow-up: ' + problem.followUp : ''}\n"""\n\n${listNodeDef}${imports}\nclass Solution:\n    def ${signature.name}(self, ${params}) -> ${signature.returnType}:\n        pass\n\n# For testing\nif __name__ == "__main__":\n    solution = Solution()\n    # Test your solution here`;
+}
+
+function generateJavaProblem(problem, signature) {
+  const className = generateClassName(problem.name);
+  const functionParams = signature.params.map(p => `${p.type} ${p.name}`).join(', ');
+  
+  const examples = problem.examples ? problem.examples.map((ex, i) => 
+    ` * Example ${i + 1}:\n * Input: ${ex.input}\n * Output: ${ex.output}\n * Explanation: ${ex.explanation}`
+  ).join('\n *\n') : '';
+  
+  const constraints = problem.constraints ? problem.constraints.map(c => ` * ${c}`).join('\n') : '';
+  
+  return `/**
+ * ${problem.id}. ${problem.title}
+ * https://leetcode.com/problems/${problem.name}/
+ * 
+ * ${problem.description}
+ * 
+${examples}
+ * 
+ * Constraints:
+${constraints}
+ */
+
+public class ${className} {
+    public ${signature.returnType} ${signature.name}(${functionParams}) {
+        
+    }
+    
+    public static void main(String[] args) {
+        ${className} solution = new ${className}();
+        // Test your solution here
+    }
+}`;
+}
+
+function generateCppProblem(problem, signature) {
+  const functionParams = signature.params.map(p => `${p.type} ${p.name}`).join(', ');
+  
+  const examples = problem.examples ? problem.examples.map((ex, i) => 
+    ` * Example ${i + 1}:\n * Input: ${ex.input}\n * Output: ${ex.output}\n * Explanation: ${ex.explanation}`
+  ).join('\n *\n') : '';
+  
+  const constraints = problem.constraints ? problem.constraints.map(c => ` * ${c}`).join('\n') : '';
+  
+  return `/**
+ * ${problem.id}. ${problem.title}
+ * https://leetcode.com/problems/${problem.name}/
+ * 
+ * ${problem.description}
+ * 
+${examples}
+ * 
+ * Constraints:
+${constraints}
+ */
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    ${signature.returnType} ${signature.name}(${functionParams}) {
+        
+    }
+};
+
+int main() {
+    Solution solution;
+    // Test your solution here
+    return 0;
+}`;
+}
 
 // Function to generate test content with actual test cases
 function generateTestContent(problem, language, langConfig) {
@@ -418,17 +959,8 @@ function createProblemFiles(difficulty, problem) {
   const functionName = generateFunctionName(problem.name, language);
   const className = generateClassName(problem.name);
   
-  // Create the main problem file
-  const problemContent = langConfig.template
-    .replace(/\{\{id\}\}/g, problem.id)
-    .replace(/\{\{title\}\}/g, problem.title)
-    .replace(/\{\{name\}\}/g, problem.name)
-    .replace(/\{\{description\}\}/g, problem.description)
-    .replace(/\{\{topics\}\}/g, problem.topics.join(', '))
-    .replace(/\{\{companies\}\}/g, problem.companies.join(', '))
-    .replace(/\{\{functionName\}\}/g, functionName)
-    .replace(/\{\{function_name\}\}/g, functionName.toLowerCase().replace(/([A-Z])/g, '_$1').replace(/^_/, ''))
-    .replace(/\{\{ClassName\}\}/g, className);
+  // Create the main problem file with proper LeetCode formatting
+  const problemContent = generateProblemContent(problem, language, langConfig);
 
   // Create test file with actual test cases
   const testContent = generateTestContent(problem, language, langConfig);

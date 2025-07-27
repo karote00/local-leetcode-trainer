@@ -8,21 +8,22 @@ const LANGUAGE_CONFIGS = {
     extension: '.js',
     testCommand: 'node',
     template: `/**
- * LeetCode {{id}}: {{title}}
- * Link: https://leetcode.com/problems/{{name}}/
+ * {{id}}. {{title}}
+ * {{leetcodeUrl}}
  * 
  * {{description}}
  * 
- * Topics: {{topics}}
- * Companies: {{companies}}
+ * {{examples}}
  * 
- * TODO: Add problem description, examples, and constraints from LeetCode
+ * Constraints:
+{{constraints}}
+ * 
+ * @param {{jsDocParams}}
+ * @return {{jsDocReturn}}
  */
-
-function {{functionName}}() {
-    // Your solution here
+var {{functionName}} = function({{functionParams}}) {
     
-}
+};
 
 module.exports = {{functionName}};`,
     testTemplate: `// Test cases for {{title}}
