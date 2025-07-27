@@ -161,6 +161,16 @@ yarn complete undo easy/two-sum # Move back to active
 - **Clean switching** - Archives current work when changing languages
 - **Language-specific templates** - Proper syntax and structure for each language
 
+### 🎯 LeetCode-Accurate Problem Format
+- **Exact LeetCode formatting** - Problems look identical to the official website
+- **Complete problem descriptions** - Full descriptions matching LeetCode exactly
+- **Proper examples** - Input/output/explanation format just like LeetCode
+- **Real constraints** - Actual constraints from LeetCode problems
+- **Follow-up questions** - Includes follow-up challenges where applicable
+- **Perfect function signatures** - JSDoc for JavaScript, type hints for Python
+- **Automatic definitions** - ListNode definitions for linked list problems
+- **Solution class format** - Python uses LeetCode's Solution class structure
+
 ### 🤖 AI-Friendly Environment
 - **Full IDE integration** - Use your favorite editor with AI assistants
 - **Debugging support** - Add breakpoints, console.logs, step through code
