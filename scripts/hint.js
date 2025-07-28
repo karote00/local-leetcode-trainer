@@ -419,16 +419,16 @@ Please guide my thinking process rather than giving me the complete solution.`);
   
   console.log(`## Problem: ${pattern.title} (${pattern.category} - ${pattern.difficulty})`);
   console.log('');
-  console.log(`**Current hint level ${level}:** "${currentHint}"`);
+  console.log(`**I'm working on this problem and just received hint level ${level}:**`);
+  console.log(`"${currentHint}"`);
   console.log('');
-  console.log('**Please help me understand:**');
-  console.log('1. What does this hint mean in practical terms?');
-  console.log('2. How should I apply this hint to solve the problem?');
-  console.log('3. What\'s the reasoning behind this approach?');
-  console.log('4. Can you walk me through how to think about this step by step?');
-  console.log(level < pattern.hints.length ? '5. What should I consider for the next step?' : '5. How do I implement this approach?');
+  console.log('**As my Algorithm Mentor, please help me:**');
+  console.log('- Understand what this hint means in practical terms');
+  console.log('- Figure out how to apply this hint to my approach');
+  console.log('- Walk through the reasoning step by step');
+  console.log('- Guide me toward the next insight without giving away the solution');
   console.log('');
-  console.log('Please guide my understanding using the teaching methodology above rather than just giving me the code.');
+  console.log('Please use the teaching methodology above to help me discover the solution rather than just telling me the answer.');
   console.log('```');
 
   if (level < pattern.hints.length) {
@@ -468,86 +468,7 @@ I want to understand the problem deeply, not just get a solution.`);
   console.log(`🎯 Problem Analysis: ${pattern.category} - ${pattern.difficulty}`);
   console.log(`📚 Patterns: ${pattern.patterns.join(', ')}`);
   console.log('');
-
-  // Step 1: Problem Understanding
-  if (pattern.problemAnalysis) {
-    console.log(`🔍 **Step 1: What is this problem really asking?**`);
-    console.log(`   ${pattern.problemAnalysis.coreQuestion}`);
-    console.log('');
-
-    console.log(`🎯 **Step 2: What are the key constraints?**`);
-    pattern.problemAnalysis.keyConstraints.forEach(constraint => {
-      console.log(`   • ${constraint}`);
-    });
-    console.log('');
-
-    console.log(`🧠 **Step 3: What patterns do you recognize?**`);
-    pattern.problemAnalysis.patternRecognition.forEach(recognition => {
-      console.log(`   • ${recognition}`);
-    });
-    console.log('');
-  }
-
-  // Step 2: Thinking Process
-  if (pattern.thinkingProcess) {
-    console.log(`💭 **Step 4: How to approach this systematically:**`);
-    pattern.thinkingProcess.forEach((step, index) => {
-      console.log(`   ${index + 1}. ${step}`);
-    });
-    console.log('');
-  }
-
-  // Step 3: Multiple Approaches with Trade-offs
-  if (pattern.approaches) {
-    console.log(`⚖️  **Step 5: Different approaches and their trade-offs:**`);
-    console.log('');
-
-    pattern.approaches.forEach((approach, index) => {
-      console.log(`${index + 1}. **${approach.name}** (${approach.timeComplexity} time, ${approach.spaceComplexity} space)`);
-      console.log(`   💡 When to use: ${approach.whenToUse || approach.description}`);
-      if (approach.tradeoffs) {
-        console.log(`   ⚖️  Trade-offs: ${approach.tradeoffs}`);
-      }
-      console.log('');
-    });
-  }
-
-  // Step 4: Key Insights and Generalizable Concepts
-  if (pattern.keyInsights) {
-    console.log(`🔑 **Step 6: Key insights you can apply to other problems:**`);
-    pattern.keyInsights.forEach(insight => {
-      console.log(`   • ${insight}`);
-    });
-    console.log('');
-  }
-
-  // Step 5: Pattern Recognition Signals
-  if (pattern.patternSignals) {
-    console.log(`🎯 **Step 7: How to recognize this pattern in future problems:**`);
-    pattern.patternSignals.forEach(signal => {
-      console.log(`   • ${signal}`);
-    });
-    console.log('');
-  }
-
-  // Step 6: Related Problems for Practice
-  if (pattern.relatedProblems) {
-    console.log(`🔗 **Step 8: Practice the same pattern with these problems:**`);
-    pattern.relatedProblems.forEach(problem => {
-      console.log(`   • ${problem}`);
-    });
-    console.log('');
-  }
-
-  // Step 7: Common Mistakes
-  if (pattern.commonMistakes) {
-    console.log(`⚠️  **Step 9: Common mistakes to avoid:**`);
-    pattern.commonMistakes.forEach(mistake => {
-      console.log(`   • ${mistake}`);
-    });
-    console.log('');
-  }
-
+  
   console.log('🤖 **Copy this complete prompt for comprehensive analysis:**');
   console.log('```');
   
@@ -558,51 +479,14 @@ I want to understand the problem deeply, not just get a solution.`);
   
   console.log(`## Problem: ${pattern.title} (${pattern.category} - ${pattern.difficulty})`);
   console.log('');
-  console.log('**What I know so far:**');
-  console.log(`- Problem type: ${pattern.category}`);
-  console.log(`- Patterns involved: ${pattern.patterns?.join(', ')}`);
-  if (pattern.problemAnalysis) {
-    console.log(`- Core challenge: ${pattern.problemAnalysis.coreQuestion}`);
-  }
-  if (pattern.approaches) {
-    console.log(`- Known approaches: ${pattern.approaches.map(a => `${a.name} (${a.timeComplexity})`).join(', ')}`);
-  }
+  console.log('**I want to deeply understand this problem and would like your help as my Algorithm Mentor.**');
   console.log('');
-  console.log('**Please help me understand:**');
+  console.log('Please start by asking me:');
+  console.log('- What do I understand about this problem so far?');
+  console.log('- What specific aspects am I confused about?');
+  console.log('- Have I identified any patterns or approaches yet?');
   console.log('');
-  console.log('**1. Problem Understanding:**');
-  console.log('- What is this problem really asking me to do?');
-  console.log('- What are the key inputs, outputs, and constraints?');
-  console.log('- What makes this problem challenging?');
-  console.log('');
-  console.log('**2. Pattern Recognition:**');
-  console.log(`- Why is this categorized as a ${pattern.category} problem?`);
-  console.log(`- What signals in the problem statement suggest using ${pattern.patterns?.[0] || 'specific techniques'}?`);
-  console.log('- How can I recognize similar problems in the future?');
-  console.log('');
-  console.log('**3. Approach Analysis:**');
-  if (pattern.approaches) {
-    pattern.approaches.forEach(approach => {
-      console.log(`- For the ${approach.name} approach (${approach.timeComplexity} time, ${approach.spaceComplexity} space):`);
-      console.log('  - When should I use this approach?');
-      console.log('  - What are the trade-offs?');
-      console.log('  - How does it work conceptually?');
-    });
-  } else {
-    console.log('- What are different ways to solve this problem and their trade-offs?');
-  }
-  console.log('');
-  console.log('**4. Implementation Strategy:**');
-  console.log('- What\'s the step-by-step thinking process I should follow?');
-  console.log('- What data structures and algorithms should I consider?');
-  console.log('- What are the key implementation details I need to be careful about?');
-  console.log('');
-  console.log('**5. Learning Connections:**');
-  console.log('- What other problems use similar techniques?');
-  console.log('- What are the key insights I can apply elsewhere?');
-  console.log('- How does this connect to broader algorithmic concepts?');
-  console.log('');
-  console.log('Please help me build deep understanding using the teaching methodology above, not just solve this specific problem.');
+  console.log('Based on my responses, guide me through a comprehensive analysis using the teaching methodology above. Help me understand the problem deeply, recognize patterns, compare different approaches, and connect this to broader algorithmic concepts.');
   console.log('```');
 
   console.log('');

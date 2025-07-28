@@ -200,7 +200,7 @@ function showAILearningSession(problemPath) {
   
   console.log(condensedGuide);
   console.log('');
-  console.log(`## Problem: ${problemTitle}`);
+  console.log(`## Problem: ${problemTitle} (${pattern?.category} - ${pattern?.difficulty})`);
   console.log('');
   if (problemContent) {
     console.log('Here\'s the problem description:');
@@ -209,18 +209,14 @@ function showAILearningSession(problemPath) {
     console.log('');
   }
   
-  if (pattern) {
-    console.log(`**Problem Info:**`);
-    console.log(`- Category: ${pattern.category}`);
-    console.log(`- Difficulty: ${pattern.difficulty}`);
-    console.log(`- Patterns: ${pattern.patterns?.join(', ')}`);
-    if (pattern.approaches) {
-      console.log(`- Known approaches: ${pattern.approaches.map(a => `${a.name} (${a.timeComplexity})`).join(', ')}`);
-    }
-    console.log('');
-  }
-  
-  console.log('**Please teach me about this problem following the methodology above. Start by helping me understand what the problem is really asking, then guide me through pattern recognition and approach development.**');
+  console.log('**I\'m working on this problem and would like your help as my Algorithm Mentor.**');
+  console.log('');
+  console.log('Please start by asking me:');
+  console.log('- What do I understand about this problem so far?');
+  console.log('- Where am I getting stuck or confused?');
+  console.log('- Have I attempted any solutions yet?');
+  console.log('');
+  console.log('Based on my responses, guide me through understanding the problem, recognizing patterns, and developing an approach using the teaching methodology above.');
   console.log('```');
   console.log('');
   
