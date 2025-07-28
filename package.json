@@ -1,6 +1,6 @@
 {
   "name": "local-leetcode-trainer",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "A complete local LeetCode practice environment with multi-language support - use your IDE, collaborate with AI, submit with confidence",
   "main": "scripts/index.js",
   "bin": {
