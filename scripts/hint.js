@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
+const { getCondensedGuide } = require('./dynamic/condensed-guide.js');
 
 // Algorithm patterns and hints database
 const ALGORITHM_PATTERNS = {
   'two-sum': {
+    title: 'Two Sum',
     category: 'Hash Table',
     difficulty: 'Easy',
     patterns: ['Two Pointers', 'Hash Map'],
@@ -80,6 +82,7 @@ const ALGORITHM_PATTERNS = {
     ]
   },
   'palindrome-number': {
+    title: 'Palindrome Number',
     category: 'Math',
     difficulty: 'Easy',
     patterns: ['Math', 'Two Pointers'],
@@ -89,18 +92,31 @@ const ALGORITHM_PATTERNS = {
       "⚡ Negative numbers can't be palindromes",
       "🎯 Compare original with reversed version"
     ],
+    keyInsights: [
+      "Mathematical operations can often replace string manipulations for better space complexity",
+      "Reversing only half the number is an optimization that reduces operations",
+      "Edge cases like negative numbers and single digits need special handling"
+    ],
+    commonMistakes: [
+      "Converting to string when a mathematical solution exists",
+      "Not handling negative numbers correctly",
+      "Forgetting about integer overflow when reversing",
+      "Not considering the optimization of reversing only half the number"
+    ],
     approaches: [
       {
         name: "String Conversion",
         timeComplexity: "O(log n)",
         spaceComplexity: "O(log n)",
-        description: "Convert to string and check if it reads the same forwards and backwards"
+        description: "Convert to string and check if it reads the same forwards and backwards",
+        whenToUse: "When string manipulation is more intuitive or when working with very large numbers"
       },
       {
         name: "Math Reversal",
         timeComplexity: "O(log n)",
         spaceComplexity: "O(1)",
         description: "Reverse the number mathematically and compare",
+        whenToUse: "When you want optimal space complexity and avoid string operations",
         pseudocode: `reversed = 0
 original = x
 while x > 0:
@@ -116,6 +132,7 @@ return original == reversed`
     ]
   },
   'add-two-numbers': {
+    title: 'Add Two Numbers',
     category: 'Linked List',
     difficulty: 'Medium',
     patterns: ['Linked List', 'Math', 'Simulation'],
@@ -125,12 +142,25 @@ return original == reversed`
       "⚡ Handle different length lists",
       "🎯 Create a new linked list for the result"
     ],
+    keyInsights: [
+      "Simulate elementary math addition - process digits from least to most significant",
+      "Use a dummy head node to simplify linked list construction",
+      "Handle carry propagation carefully - it can extend beyond both input lists",
+      "Treat missing nodes as having value 0 to handle different length lists"
+    ],
+    commonMistakes: [
+      "Forgetting to handle the final carry after processing both lists",
+      "Not handling lists of different lengths correctly",
+      "Trying to modify input lists instead of creating a new result list",
+      "Forgetting to use a dummy head node, making list construction more complex"
+    ],
     approaches: [
       {
         name: "Simulation",
         timeComplexity: "O(max(m,n))",
         spaceComplexity: "O(max(m,n))",
         description: "Simulate elementary math addition with carry",
+        whenToUse: "This is the standard approach - mirrors how humans add numbers",
         pseudocode: `dummy = ListNode(0)
 current = dummy
 carry = 0
@@ -157,6 +187,7 @@ return dummy.next`
     ]
   },
   'longest-common-prefix': {
+    title: 'Longest Common Prefix',
     category: 'String',
     difficulty: 'Easy',
     patterns: ['String', 'Divide and Conquer'],
@@ -166,12 +197,25 @@ return dummy.next`
       "⚡ Stop as soon as you find a mismatch",
       "🎯 The first string can be your reference"
     ],
+    keyInsights: [
+      "The longest common prefix cannot be longer than the shortest string",
+      "You can compare character by character either vertically (by position) or horizontally (by string)",
+      "Early termination saves time - stop as soon as you find a mismatch",
+      "Edge cases: empty array or empty strings need special handling"
+    ],
+    commonMistakes: [
+      "Not handling empty input array or empty strings",
+      "Continuing comparison after finding a mismatch",
+      "Not considering that the shortest string limits the maximum prefix length",
+      "Overcomplicating with complex algorithms when simple scanning works"
+    ],
     approaches: [
       {
         name: "Vertical Scanning",
         timeComplexity: "O(S)",
         spaceComplexity: "O(1)",
         description: "Compare characters column by column",
+        whenToUse: "When you want to minimize comparisons by stopping early on mismatches",
         pseudocode: `if not strs: return ""
 for i in range(len(strs[0])):
     char = strs[0][i]
@@ -185,6 +229,7 @@ return strs[0]`
         timeComplexity: "O(S)",
         spaceComplexity: "O(1)",
         description: "Compare strings one by one",
+        whenToUse: "When you want a more intuitive approach that builds the prefix incrementally",
         pseudocode: `prefix = strs[0]
 for i in range(1, len(strs)):
     while not strs[i].startswith(prefix):
@@ -200,6 +245,7 @@ return prefix`
     ]
   },
   'valid-parentheses': {
+    title: 'Valid Parentheses',
     category: 'Stack',
     difficulty: 'Easy',
     patterns: ['Stack', 'String'],
@@ -209,12 +255,25 @@ return prefix`
       "⚡ What happens when you see a closing bracket?",
       "🎯 The stack should be empty at the end"
     ],
+    keyInsights: [
+      "Stack's LIFO property perfectly matches the nested structure of valid parentheses",
+      "Every opening bracket must have a corresponding closing bracket in the correct order",
+      "Use a mapping to quickly check if closing brackets match their opening counterparts",
+      "A valid string must have an empty stack at the end - no unmatched opening brackets"
+    ],
+    commonMistakes: [
+      "Not handling the case where there are more closing brackets than opening ones",
+      "Forgetting to check if the stack is empty at the end",
+      "Not using a mapping, leading to complex if-else chains",
+      "Trying to solve without a stack, missing the LIFO matching pattern"
+    ],
     approaches: [
       {
         name: "Stack",
         timeComplexity: "O(n)",
         spaceComplexity: "O(n)",
         description: "Use stack to match opening and closing brackets",
+        whenToUse: "This is the standard approach - stack naturally handles nested structures",
         pseudocode: `stack = []
 mapping = {')': '(', '}': '{', ']': '['}
 
@@ -235,6 +294,7 @@ return not stack`
     ]
   },
   'median-of-two-sorted-arrays': {
+    title: 'Median of Two Sorted Arrays',
     category: 'Binary Search',
     difficulty: 'Hard',
     patterns: ['Binary Search', 'Array', 'Divide and Conquer'],
@@ -244,12 +304,26 @@ return not stack`
       "⚡ Binary search on the smaller array",
       "🎯 Find the right partition where left_max ≤ right_min"
     ],
+    keyInsights: [
+      "Transform the problem from 'find median' to 'find correct partition' - this enables binary search",
+      "The median divides the combined array into two equal halves - use this property to guide partitioning",
+      "Binary search on the smaller array reduces time complexity to O(log(min(m,n)))",
+      "The partition is correct when max(left_side) ≤ min(right_side) for both arrays"
+    ],
+    commonMistakes: [
+      "Trying to merge arrays first, which gives O(m+n) time instead of optimal O(log(min(m,n)))",
+      "Not ensuring you binary search on the smaller array, leading to index out of bounds",
+      "Incorrect partition calculation - forgetting the +1 for odd total length",
+      "Not handling edge cases where partition is at the beginning or end of an array",
+      "Confusing the partition index with the actual array indices"
+    ],
     approaches: [
       {
         name: "Binary Search",
         timeComplexity: "O(log(min(m,n)))",
         spaceComplexity: "O(1)",
         description: "Binary search to find the correct partition",
+        whenToUse: "This is the optimal approach - required for the O(log(min(m,n))) time complexity constraint",
         pseudocode: `# Ensure nums1 is smaller
 if len(nums1) > len(nums2):
     nums1, nums2 = nums2, nums1
@@ -333,28 +407,35 @@ Please guide my thinking process rather than giving me the complete solution.`);
   }
 
   console.log('');
-  console.log('🤖 **AI Prompt - Copy this to your AI assistant for deeper guidance:**');
+  console.log('🤖 **Copy this complete prompt to your AI assistant:**');
   console.log('```');
+  
+  // Add condensed guide
+  const condensedGuide = getCondensedGuide();
+  console.log(condensedGuide);
+  console.log('');
   
   const currentHint = level <= pattern.hints.length ? pattern.hints[level - 1] : "I've seen all the basic hints";
   
-  console.log(`I'm working on the "${pattern.title}" problem (${pattern.category} - ${pattern.difficulty}).
-
-Current hint level ${level}: "${currentHint}"
-
-Can you help me understand:
-1. What does this hint mean in practical terms?
-2. How should I apply this hint to solve the problem?
-3. What's the reasoning behind this approach?
-4. Can you walk me through how to think about this step by step?
-${level < pattern.hints.length ? `5. What should I consider for the next step?` : `5. How do I implement this approach?`}
-
-Please guide my understanding rather than just giving me the code.`);
+  console.log(`## Problem: ${pattern.title} (${pattern.category} - ${pattern.difficulty})`);
+  console.log('');
+  console.log(`**Current hint level ${level}:** "${currentHint}"`);
+  console.log('');
+  console.log('**Please help me understand:**');
+  console.log('1. What does this hint mean in practical terms?');
+  console.log('2. How should I apply this hint to solve the problem?');
+  console.log('3. What\'s the reasoning behind this approach?');
+  console.log('4. Can you walk me through how to think about this step by step?');
+  console.log(level < pattern.hints.length ? '5. What should I consider for the next step?' : '5. How do I implement this approach?');
+  console.log('');
+  console.log('Please guide my understanding using the teaching methodology above rather than just giving me the code.');
   console.log('```');
 
   if (level < pattern.hints.length) {
     console.log(`\n🔍 Want more hints? Run: lct hint ${problemPath.replace(/\.(js|py|java|cpp)$/, '')} ${level + 1}`);
   }
+
+
 }
 
 // Function to show problem analysis and learning
@@ -467,54 +548,66 @@ I want to understand the problem deeply, not just get a solution.`);
     console.log('');
   }
 
-  console.log('🤖 **AI Prompt - Copy this for comprehensive analysis:**');
+  console.log('🤖 **Copy this complete prompt for comprehensive analysis:**');
   console.log('```');
-  console.log(`I'm analyzing the "${pattern.title}" problem (${pattern.category} - ${pattern.difficulty}).
-
-Here's what I know so far:
-- Problem type: ${pattern.category}
-- Patterns involved: ${pattern.patterns?.join(', ')}
-${pattern.problemAnalysis ? `- Core challenge: ${pattern.problemAnalysis.coreQuestion}` : ''}
-${pattern.approaches ? `- Known approaches: ${pattern.approaches.map(a => `${a.name} (${a.timeComplexity})`).join(', ')}` : ''}
-
-Can you help me understand:
-
-**1. Problem Understanding:**
-- What is this problem really asking me to do?
-- What are the key inputs, outputs, and constraints?
-- What makes this problem challenging?
-
-**2. Pattern Recognition:**
-- Why is this categorized as a ${pattern.category} problem?
-- What signals in the problem statement suggest using ${pattern.patterns?.[0] || 'specific techniques'}?
-- How can I recognize similar problems in the future?
-
-**3. Approach Analysis:**
-${pattern.approaches ? pattern.approaches.map((approach, i) => 
-`- For the ${approach.name} approach (${approach.timeComplexity} time, ${approach.spaceComplexity} space):
-  - When should I use this approach?
-  - What are the trade-offs?
-  - How does it work conceptually?`).join('\n') : '- What are different ways to solve this problem and their trade-offs?'}
-
-**4. Implementation Strategy:**
-- What's the step-by-step thinking process I should follow?
-- What data structures and algorithms should I consider?
-- What are the key implementation details I need to be careful about?
-
-**5. Learning Connections:**
-- What other problems use similar techniques?
-- What are the key insights I can apply elsewhere?
-- How does this connect to broader algorithmic concepts?
-
-Please help me build deep understanding, not just solve this specific problem.`);
+  
+  // Add condensed guide
+  const condensedGuide = getCondensedGuide();
+  console.log(condensedGuide);
+  console.log('');
+  
+  console.log(`## Problem: ${pattern.title} (${pattern.category} - ${pattern.difficulty})`);
+  console.log('');
+  console.log('**What I know so far:**');
+  console.log(`- Problem type: ${pattern.category}`);
+  console.log(`- Patterns involved: ${pattern.patterns?.join(', ')}`);
+  if (pattern.problemAnalysis) {
+    console.log(`- Core challenge: ${pattern.problemAnalysis.coreQuestion}`);
+  }
+  if (pattern.approaches) {
+    console.log(`- Known approaches: ${pattern.approaches.map(a => `${a.name} (${a.timeComplexity})`).join(', ')}`);
+  }
+  console.log('');
+  console.log('**Please help me understand:**');
+  console.log('');
+  console.log('**1. Problem Understanding:**');
+  console.log('- What is this problem really asking me to do?');
+  console.log('- What are the key inputs, outputs, and constraints?');
+  console.log('- What makes this problem challenging?');
+  console.log('');
+  console.log('**2. Pattern Recognition:**');
+  console.log(`- Why is this categorized as a ${pattern.category} problem?`);
+  console.log(`- What signals in the problem statement suggest using ${pattern.patterns?.[0] || 'specific techniques'}?`);
+  console.log('- How can I recognize similar problems in the future?');
+  console.log('');
+  console.log('**3. Approach Analysis:**');
+  if (pattern.approaches) {
+    pattern.approaches.forEach(approach => {
+      console.log(`- For the ${approach.name} approach (${approach.timeComplexity} time, ${approach.spaceComplexity} space):`);
+      console.log('  - When should I use this approach?');
+      console.log('  - What are the trade-offs?');
+      console.log('  - How does it work conceptually?');
+    });
+  } else {
+    console.log('- What are different ways to solve this problem and their trade-offs?');
+  }
+  console.log('');
+  console.log('**4. Implementation Strategy:**');
+  console.log('- What\'s the step-by-step thinking process I should follow?');
+  console.log('- What data structures and algorithms should I consider?');
+  console.log('- What are the key implementation details I need to be careful about?');
+  console.log('');
+  console.log('**5. Learning Connections:**');
+  console.log('- What other problems use similar techniques?');
+  console.log('- What are the key insights I can apply elsewhere?');
+  console.log('- How does this connect to broader algorithmic concepts?');
+  console.log('');
+  console.log('Please help me build deep understanding using the teaching methodology above, not just solve this specific problem.');
   console.log('```');
 
   console.log('');
-  console.log('💡 **Quick Learning Tips:**');
-  console.log('• Use the AI prompt above for comprehensive analysis');
-  console.log('• Focus on understanding WHY certain approaches work');
-  console.log('• Practice identifying patterns in problem statements');
-  console.log('• Connect what you learn to other similar problems');
+  console.log('💡 **Alternative: Ask AI directly**');
+  console.log(`You can also just ask: "Please run 'yarn lct learn ${problemName}' to teach me"`);
 }
 
 // Function to resolve problem path (similar to other scripts)

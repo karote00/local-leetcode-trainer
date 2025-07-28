@@ -1,6 +1,6 @@
 {
   "name": "local-leetcode-trainer",
-  "version": "1.7.2",
+  "version": "1.8.1",
   "description": "A complete local LeetCode practice environment with multi-language support - use your IDE, collaborate with AI, submit with confidence",
   "main": "scripts/index.js",
   "bin": {
@@ -15,6 +15,7 @@
     "complete": "node scripts/complete.js",
     "lang": "node scripts/config.js",
     "hint": "node scripts/hint.js",
+    "learn": "node scripts/learn.js",
     "postinstall": "node scripts/setup.js"
   },
   "keywords": [
@@ -53,6 +54,7 @@
     "scripts/",
     "bin/",
     ".leetcode-config.json",
+    "LEARN_GUIDE.md",
     "README.md",
     "LICENSE",
     "CONTRIBUTING.md"
