@@ -304,12 +304,19 @@ function provideHints(problemPath, level = 1) {
 
   if (!pattern) {
     console.log(`🤔 No hints available for ${problemName} yet.`);
-    console.log(`💡 Try these general problem-solving steps:`);
-    console.log(`   1. Understand the problem completely`);
-    console.log(`   2. Think of brute force solution first`);
-    console.log(`   3. Identify bottlenecks and optimize`);
-    console.log(`   4. Consider different data structures`);
-    console.log(`   5. Think about edge cases`);
+    console.log('');
+    console.log('🤖 **AI Prompt - Copy this to your AI assistant:**');
+    console.log('```');
+    console.log(`I'm working on the "${problemName}" problem and need some hints to guide my thinking.
+
+Can you help me with:
+1. What type of problem is this and what patterns might apply?
+2. What should I think about first when approaching this problem?
+3. What data structures or algorithms might be useful?
+4. Can you give me a hint about the approach without spoiling the solution?
+
+Please guide my thinking process rather than giving me the complete solution.`);
+    console.log('```');
     return;
   }
 
@@ -325,6 +332,26 @@ function provideHints(problemPath, level = 1) {
     console.log(`   🎉 You've seen all hints! Time to implement.`);
   }
 
+  console.log('');
+  console.log('🤖 **AI Prompt - Copy this to your AI assistant for deeper guidance:**');
+  console.log('```');
+  
+  const currentHint = level <= pattern.hints.length ? pattern.hints[level - 1] : "I've seen all the basic hints";
+  
+  console.log(`I'm working on the "${pattern.title}" problem (${pattern.category} - ${pattern.difficulty}).
+
+Current hint level ${level}: "${currentHint}"
+
+Can you help me understand:
+1. What does this hint mean in practical terms?
+2. How should I apply this hint to solve the problem?
+3. What's the reasoning behind this approach?
+4. Can you walk me through how to think about this step by step?
+${level < pattern.hints.length ? `5. What should I consider for the next step?` : `5. How do I implement this approach?`}
+
+Please guide my understanding rather than just giving me the code.`);
+  console.log('```');
+
   if (level < pattern.hints.length) {
     console.log(`\n🔍 Want more hints? Run: lct hint ${problemPath.replace(/\.(js|py|java|cpp)$/, '')} ${level + 1}`);
   }
@@ -337,10 +364,28 @@ function showProblemAnalysis(problemPath) {
 
   if (!pattern) {
     console.log(`📚 No analysis available for ${problemName} yet.`);
+    console.log('');
+    console.log('🤖 **AI Prompt - Copy this to your AI assistant:**');
+    console.log('```');
+    console.log(`I want to deeply understand the "${problemName}" problem. Can you help me analyze it?
+
+Please help me with:
+1. What is this problem really asking me to do?
+2. What are the key constraints and edge cases I should consider?
+3. What algorithmic patterns or techniques apply to this problem?
+4. What's the systematic thinking process I should follow?
+5. What are different approaches to solve this and their trade-offs?
+6. What are the key insights I can apply to similar problems?
+7. How can I recognize this pattern in future problems?
+8. What are common mistakes people make with this type of problem?
+
+I want to understand the problem deeply, not just get a solution.`);
+    console.log('```');
     return;
   }
 
   console.log(`🎯 Problem Analysis: ${pattern.category} - ${pattern.difficulty}`);
+  console.log(`📚 Patterns: ${pattern.patterns.join(', ')}`);
   console.log('');
 
   // Step 1: Problem Understanding
@@ -364,7 +409,7 @@ function showProblemAnalysis(problemPath) {
 
   // Step 2: Thinking Process
   if (pattern.thinkingProcess) {
-    console.log(`💭 **How to approach this systematically:**`);
+    console.log(`💭 **Step 4: How to approach this systematically:**`);
     pattern.thinkingProcess.forEach((step, index) => {
       console.log(`   ${index + 1}. ${step}`);
     });
@@ -373,7 +418,7 @@ function showProblemAnalysis(problemPath) {
 
   // Step 3: Multiple Approaches with Trade-offs
   if (pattern.approaches) {
-    console.log(`⚖️  **Different approaches and their trade-offs:**`);
+    console.log(`⚖️  **Step 5: Different approaches and their trade-offs:**`);
     console.log('');
 
     pattern.approaches.forEach((approach, index) => {
@@ -388,16 +433,16 @@ function showProblemAnalysis(problemPath) {
 
   // Step 4: Key Insights and Generalizable Concepts
   if (pattern.keyInsights) {
-    console.log(`🔑 **Key insights you can apply to other problems:**`);
+    console.log(`🔑 **Step 6: Key insights you can apply to other problems:**`);
     pattern.keyInsights.forEach(insight => {
       console.log(`   • ${insight}`);
     });
     console.log('');
   }
 
-  // Step 5: Pattern Recognition for Future Problems
+  // Step 5: Pattern Recognition Signals
   if (pattern.patternSignals) {
-    console.log(`🎯 **How to recognize this pattern in future problems:**`);
+    console.log(`🎯 **Step 7: How to recognize this pattern in future problems:**`);
     pattern.patternSignals.forEach(signal => {
       console.log(`   • ${signal}`);
     });
@@ -406,7 +451,7 @@ function showProblemAnalysis(problemPath) {
 
   // Step 6: Related Problems for Practice
   if (pattern.relatedProblems) {
-    console.log(`🔗 **Practice the same pattern with these problems:**`);
+    console.log(`🔗 **Step 8: Practice the same pattern with these problems:**`);
     pattern.relatedProblems.forEach(problem => {
       console.log(`   • ${problem}`);
     });
@@ -415,11 +460,61 @@ function showProblemAnalysis(problemPath) {
 
   // Step 7: Common Mistakes
   if (pattern.commonMistakes) {
-    console.log(`⚠️  **Common mistakes to avoid:**`);
+    console.log(`⚠️  **Step 9: Common mistakes to avoid:**`);
     pattern.commonMistakes.forEach(mistake => {
       console.log(`   • ${mistake}`);
     });
+    console.log('');
   }
+
+  console.log('🤖 **AI Prompt - Copy this for comprehensive analysis:**');
+  console.log('```');
+  console.log(`I'm analyzing the "${pattern.title}" problem (${pattern.category} - ${pattern.difficulty}).
+
+Here's what I know so far:
+- Problem type: ${pattern.category}
+- Patterns involved: ${pattern.patterns?.join(', ')}
+${pattern.problemAnalysis ? `- Core challenge: ${pattern.problemAnalysis.coreQuestion}` : ''}
+${pattern.approaches ? `- Known approaches: ${pattern.approaches.map(a => `${a.name} (${a.timeComplexity})`).join(', ')}` : ''}
+
+Can you help me understand:
+
+**1. Problem Understanding:**
+- What is this problem really asking me to do?
+- What are the key inputs, outputs, and constraints?
+- What makes this problem challenging?
+
+**2. Pattern Recognition:**
+- Why is this categorized as a ${pattern.category} problem?
+- What signals in the problem statement suggest using ${pattern.patterns?.[0] || 'specific techniques'}?
+- How can I recognize similar problems in the future?
+
+**3. Approach Analysis:**
+${pattern.approaches ? pattern.approaches.map((approach, i) => 
+`- For the ${approach.name} approach (${approach.timeComplexity} time, ${approach.spaceComplexity} space):
+  - When should I use this approach?
+  - What are the trade-offs?
+  - How does it work conceptually?`).join('\n') : '- What are different ways to solve this problem and their trade-offs?'}
+
+**4. Implementation Strategy:**
+- What's the step-by-step thinking process I should follow?
+- What data structures and algorithms should I consider?
+- What are the key implementation details I need to be careful about?
+
+**5. Learning Connections:**
+- What other problems use similar techniques?
+- What are the key insights I can apply elsewhere?
+- How does this connect to broader algorithmic concepts?
+
+Please help me build deep understanding, not just solve this specific problem.`);
+  console.log('```');
+
+  console.log('');
+  console.log('💡 **Quick Learning Tips:**');
+  console.log('• Use the AI prompt above for comprehensive analysis');
+  console.log('• Focus on understanding WHY certain approaches work');
+  console.log('• Practice identifying patterns in problem statements');
+  console.log('• Connect what you learn to other similar problems');
 }
 
 // Function to resolve problem path (similar to other scripts)
