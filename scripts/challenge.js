@@ -248,25 +248,18 @@ async function main() {
   );
   
   if (words.length > 0) {
-    // If it's a single number, treat it as a problem ID
-    if (words.length === 1 && words[0].match(/^\d+$/)) {
+    // Only treat numbers as problem IDs if no difficulty is specified
+    if (!difficulty && words.length === 1 && words[0].match(/^\d+$/)) {
       specificProblem = parseInt(words[0]);
-    } else {
-      // Otherwise, treat it as a problem name
+    } else if (!difficulty) {
+      // Otherwise, treat it as a problem name (only if no difficulty)
       specificProblem = words.join('-').toLowerCase();
     }
+    // If difficulty is specified, ignore the words (they're likely counts)
   }
 
-  // Special case: if we have difficulty + number, check if it should be treated as problem ID
-  if (difficulty && numberMatch && args.length === 2) {
-    // If user typed "easy 1", they might mean problem ID 1, not 1 easy problem
-    // Let's be smart about this - if they want multiple problems, they'd likely say "easy 2" or more
-    if (count === 1 && !input.includes('random') && !input.includes('problem')) {
-      specificProblem = count;
-      difficulty = null;
-      count = 1;
-    }
-  }
+  // Special case: only treat as problem ID if user explicitly uses format like "lct challenge 1" (without difficulty)
+  // "lct challenge easy 1" should mean "1 easy problem", not "problem ID 1"
 
   // Show help if no difficulty and no specific problem
   if (!difficulty && !specificProblem) {

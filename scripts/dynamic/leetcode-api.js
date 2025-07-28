@@ -778,7 +778,7 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
   }
 
   /**
-   * Get fallback problems list (popular problems)
+   * Get fallback problems list (popular problems) with proper randomization
    */
   getFallbackProblems(filters = {}) {
     const fallbackProblems = [
@@ -854,29 +854,24 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
   }
 
   /**
-   * Get random problem by difficulty
+   * Get random problem by difficulty with proper variety
    */
   async getRandomProblem(difficulty) {
     try {
-      // First try to search LeetCode
-      const problems = await this.searchProblems({ difficulty, limit: 100 });
-      if (problems.length === 0) {
-        throw new Error(`No problems found for difficulty: ${difficulty}`);
-      }
-      
-      const randomIndex = Math.floor(Math.random() * problems.length);
-      return problems[randomIndex];
-    } catch (error) {
-      // If search fails (403 errors), use fallback problems directly
-      console.log(`🔄 LeetCode search failed, using fallback problems...`);
+      // Skip the failing search and go directly to fallback with proper randomization
+      console.log(`🔄 Using fallback problems for variety...`);
       const fallbackProblems = this.getFallbackProblems({ difficulty });
       
       if (fallbackProblems.length === 0) {
         throw new Error(`No fallback problems available for difficulty: ${difficulty}`);
       }
       
-      const randomIndex = Math.floor(Math.random() * fallbackProblems.length);
-      return fallbackProblems[randomIndex];
+      // Ensure proper randomization by shuffling the array
+      const shuffled = [...fallbackProblems].sort(() => Math.random() - 0.5);
+      const randomIndex = Math.floor(Math.random() * shuffled.length);
+      return shuffled[randomIndex];
+    } catch (error) {
+      throw new Error(`Failed to get random ${difficulty} problem: ${error.message}`);
     }
   }
 

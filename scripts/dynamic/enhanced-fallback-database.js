@@ -395,6 +395,243 @@ const ENHANCED_FALLBACK_PROBLEMS = {
       { level: 2, text: "To reach step n, you can come from step n-1 or step n-2", category: "implementation" },
       { level: 3, text: "Use dynamic programming or optimize space to O(1)", category: "optimization" }
     ]
+  },
+
+  // Additional Easy Problems for more variety
+  'reverse-integer': {
+    id: 7,
+    title: 'Reverse Integer',
+    name: 'reverse-integer',
+    difficulty: 'easy',
+    description: "Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^31 - 1], then return 0.\n\nAssume the environment does not allow you to store 64-bit integers (signed or unsigned).",
+    examples: [
+      {
+        input: "x = 123",
+        output: "321",
+        explanation: ""
+      },
+      {
+        input: "x = -123",
+        output: "-321",
+        explanation: ""
+      },
+      {
+        input: "x = 120",
+        output: "21",
+        explanation: ""
+      }
+    ],
+    constraints: ["-2^31 <= x <= 2^31 - 1"],
+    topics: ["Math"],
+    companies: ["Amazon", "Apple", "Bloomberg"],
+    functionSignatures: {
+      javascript: { name: "reverse", params: [{ name: "x", type: "number" }], returnType: "number" },
+      python: { name: "reverse", params: [{ name: "x", type: "int" }], returnType: "int" },
+      java: { name: "reverse", params: [{ name: "x", type: "int" }], returnType: "int" },
+      cpp: { name: "reverse", params: [{ name: "x", type: "int" }], returnType: "int" }
+    },
+    testCases: [
+      { input: [123], expected: 321, category: "basic" },
+      { input: [-123], expected: -321, category: "basic" },
+      { input: [120], expected: 21, category: "basic" },
+      { input: [0], expected: 0, category: "edge" },
+      { input: [1534236469], expected: 0, category: "edge" }
+    ]
+  },
+
+  'roman-to-integer': {
+    id: 13,
+    title: 'Roman to Integer',
+    name: 'roman-to-integer',
+    difficulty: 'easy',
+    description: "Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.\n\nGiven a roman numeral, convert it to an integer.",
+    examples: [
+      {
+        input: 's = "III"',
+        output: "3",
+        explanation: "III = 3."
+      },
+      {
+        input: 's = "LVIII"',
+        output: "58",
+        explanation: "L = 50, V= 5, III = 3."
+      },
+      {
+        input: 's = "MCMXC"',
+        output: "1994",
+        explanation: "M = 1000, CM = 900, XC = 90."
+      }
+    ],
+    constraints: ["1 <= s.length <= 15", "s contains only the characters ('I', 'V', 'X', 'L', 'C', 'D', 'M')"],
+    topics: ["Hash Table", "Math", "String"],
+    companies: ["Amazon", "Microsoft", "Facebook"],
+    functionSignatures: {
+      javascript: { name: "romanToInt", params: [{ name: "s", type: "string" }], returnType: "number" },
+      python: { name: "romanToInt", params: [{ name: "s", type: "str" }], returnType: "int" },
+      java: { name: "romanToInt", params: [{ name: "s", type: "String" }], returnType: "int" },
+      cpp: { name: "romanToInt", params: [{ name: "s", type: "string" }], returnType: "int" }
+    },
+    testCases: [
+      { input: ["III"], expected: 3, category: "basic" },
+      { input: ["LVIII"], expected: 58, category: "basic" },
+      { input: ["MCMXC"], expected: 1994, category: "basic" },
+      { input: ["IV"], expected: 4, category: "edge" },
+      { input: ["IX"], expected: 9, category: "edge" }
+    ]
+  },
+
+  'longest-common-prefix': {
+    id: 14,
+    title: 'Longest Common Prefix',
+    name: 'longest-common-prefix',
+    difficulty: 'easy',
+    description: "Write a function to find the longest common prefix string amongst an array of strings.\n\nIf there is no common prefix, return an empty string \"\".",
+    examples: [
+      {
+        input: 'strs = ["flower","flow","flight"]',
+        output: '"fl"',
+        explanation: ""
+      },
+      {
+        input: 'strs = ["dog","racecar","car"]',
+        output: '""',
+        explanation: "There is no common prefix among the input strings."
+      }
+    ],
+    constraints: ["1 <= strs.length <= 200", "0 <= strs[i].length <= 200"],
+    topics: ["String"],
+    companies: ["Amazon", "Microsoft", "Google"],
+    functionSignatures: {
+      javascript: { name: "longestCommonPrefix", params: [{ name: "strs", type: "string[]" }], returnType: "string" },
+      python: { name: "longestCommonPrefix", params: [{ name: "strs", type: "List[str]" }], returnType: "str" },
+      java: { name: "longestCommonPrefix", params: [{ name: "strs", type: "String[]" }], returnType: "String" },
+      cpp: { name: "longestCommonPrefix", params: [{ name: "strs", type: "vector<string>" }], returnType: "string" }
+    },
+    testCases: [
+      { input: [["flower","flow","flight"]], expected: "fl", category: "basic" },
+      { input: [["dog","racecar","car"]], expected: "", category: "basic" },
+      { input: [["interspecies","interstellar","interstate"]], expected: "inters", category: "basic" },
+      { input: [[""]], expected: "", category: "edge" },
+      { input: [["a"]], expected: "a", category: "edge" }
+    ]
+  },
+
+  'merge-two-sorted-lists': {
+    id: 21,
+    title: 'Merge Two Sorted Lists',
+    name: 'merge-two-sorted-lists',
+    difficulty: 'easy',
+    description: "You are given the heads of two sorted linked lists list1 and list2.\n\nMerge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.\n\nReturn the head of the merged linked list.",
+    examples: [
+      {
+        input: "list1 = [1,2,4], list2 = [1,3,4]",
+        output: "[1,1,2,3,4,4]",
+        explanation: ""
+      },
+      {
+        input: "list1 = [], list2 = []",
+        output: "[]",
+        explanation: ""
+      },
+      {
+        input: "list1 = [], list2 = [0]",
+        output: "[0]",
+        explanation: ""
+      }
+    ],
+    constraints: ["The number of nodes in both lists is in the range [0, 50]", "-100 <= Node.val <= 100"],
+    topics: ["Linked List", "Recursion"],
+    companies: ["Amazon", "Microsoft", "Apple"],
+    functionSignatures: {
+      javascript: { name: "mergeTwoLists", params: [{ name: "list1", type: "ListNode" }, { name: "list2", type: "ListNode" }], returnType: "ListNode" },
+      python: { name: "mergeTwoLists", params: [{ name: "list1", type: "Optional[ListNode]" }, { name: "list2", type: "Optional[ListNode]" }], returnType: "Optional[ListNode]" },
+      java: { name: "mergeTwoLists", params: [{ name: "list1", type: "ListNode" }, { name: "list2", type: "ListNode" }], returnType: "ListNode" },
+      cpp: { name: "mergeTwoLists", params: [{ name: "list1", type: "ListNode*" }, { name: "list2", type: "ListNode*" }], returnType: "ListNode*" }
+    },
+    testCases: [
+      { input: [[1,2,4], [1,3,4]], expected: [1,1,2,3,4,4], category: "basic" },
+      { input: [[], []], expected: [], category: "edge" },
+      { input: [[], [0]], expected: [0], category: "edge" },
+      { input: [[1], [2]], expected: [1,2], category: "basic" },
+      { input: [[2], [1]], expected: [1,2], category: "basic" }
+    ]
+  },
+
+  'remove-duplicates-from-sorted-array': {
+    id: 26,
+    title: 'Remove Duplicates from Sorted Array',
+    name: 'remove-duplicates-from-sorted-array',
+    difficulty: 'easy',
+    description: "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same.\n\nReturn k after placing the final result in the first k slots of nums.",
+    examples: [
+      {
+        input: "nums = [1,1,2]",
+        output: "2, nums = [1,2,_]",
+        explanation: "Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively."
+      },
+      {
+        input: "nums = [0,0,1,1,1,2,2,3,3,4]",
+        output: "5, nums = [0,1,2,3,4,_,_,_,_,_]",
+        explanation: "Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively."
+      }
+    ],
+    constraints: ["1 <= nums.length <= 3 * 10^4", "-100 <= nums[i] <= 100"],
+    topics: ["Array", "Two Pointers"],
+    companies: ["Amazon", "Microsoft", "Facebook"],
+    functionSignatures: {
+      javascript: { name: "removeDuplicates", params: [{ name: "nums", type: "number[]" }], returnType: "number" },
+      python: { name: "removeDuplicates", params: [{ name: "nums", type: "List[int]" }], returnType: "int" },
+      java: { name: "removeDuplicates", params: [{ name: "nums", type: "int[]" }], returnType: "int" },
+      cpp: { name: "removeDuplicates", params: [{ name: "nums", type: "vector<int>&" }], returnType: "int" }
+    },
+    testCases: [
+      { input: [[1,1,2]], expected: 2, category: "basic" },
+      { input: [[0,0,1,1,1,2,2,3,3,4]], expected: 5, category: "basic" },
+      { input: [[1]], expected: 1, category: "edge" },
+      { input: [[1,2]], expected: 2, category: "basic" },
+      { input: [[1,1,1]], expected: 1, category: "basic" }
+    ]
+  },
+
+  'search-insert-position': {
+    id: 35,
+    title: 'Search Insert Position',
+    name: 'search-insert-position',
+    difficulty: 'easy',
+    description: "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.\n\nYou must write an algorithm with O(log n) runtime complexity.",
+    examples: [
+      {
+        input: "nums = [1,3,5,6], target = 5",
+        output: "2",
+        explanation: ""
+      },
+      {
+        input: "nums = [1,3,5,6], target = 2",
+        output: "1",
+        explanation: ""
+      },
+      {
+        input: "nums = [1,3,5,6], target = 7",
+        output: "4",
+        explanation: ""
+      }
+    ],
+    constraints: ["1 <= nums.length <= 10^4", "-10^4 <= nums[i] <= 10^4"],
+    topics: ["Array", "Binary Search"],
+    companies: ["Amazon", "Microsoft", "Apple"],
+    functionSignatures: {
+      javascript: { name: "searchInsert", params: [{ name: "nums", type: "number[]" }, { name: "target", type: "number" }], returnType: "number" },
+      python: { name: "searchInsert", params: [{ name: "nums", type: "List[int]" }, { name: "target", type: "int" }], returnType: "int" },
+      java: { name: "searchInsert", params: [{ name: "nums", type: "int[]" }, { name: "target", type: "int" }], returnType: "int" },
+      cpp: { name: "searchInsert", params: [{ name: "nums", type: "vector<int>&" }, { name: "target", type: "int" }], returnType: "int" }
+    },
+    testCases: [
+      { input: [[1,3,5,6], 5], expected: 2, category: "basic" },
+      { input: [[1,3,5,6], 2], expected: 1, category: "basic" },
+      { input: [[1,3,5,6], 7], expected: 4, category: "basic" },
+      { input: [[1,3,5,6], 0], expected: 0, category: "edge" },
+      { input: [[1], 1], expected: 0, category: "edge" }
+    ]
   }
 };
 
