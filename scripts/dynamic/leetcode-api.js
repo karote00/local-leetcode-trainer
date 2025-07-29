@@ -6,7 +6,7 @@ const https = require('https');
 const { URL } = require('url');
 const { LeetCodeAPI } = require('./interfaces');
 const { config } = require('./config');
-const { getEnhancedFallbackProblem, getAllEnhancedFallbackProblems } = require('./enhanced-fallback-database');
+const { getProblem, getProblemsByDifficulty, getAllProblems } = require('./problems/index.js');
 const { LeetCodeScraper } = require('./leetcode-scraper');
 
 class LeetCodeAPIImpl extends LeetCodeAPI {
@@ -171,10 +171,18 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
     const problemSlug = this.normalizeProblemIdentifier(identifier);
     
     // Try to get enhanced fallback problem first (pass original identifier for ID lookup)
-    const enhancedProblem = getEnhancedFallbackProblem(identifier);
+    const enhancedProblem = getProblem(identifier);
     if (enhancedProblem) {
-      console.log(`📱 Using enhanced fallback data for: ${identifier}`);
-      return enhancedProblem;
+      console.log(`📱 Using comprehensive fallback data for: ${identifier}`);
+      return {
+        ...enhancedProblem,
+        metadata: {
+          source: 'comprehensive-fallback',
+          version: '3.0',
+          fetchedAt: new Date().toISOString(),
+          completeness: 100
+        }
+      };
     }
     
     // Fall back to basic fallback list if not in enhanced database
@@ -186,8 +194,8 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
     );
     
     if (!problem) {
-      // Get list of available enhanced problems for better error message
-      const availableProblems = getAllEnhancedFallbackProblems().map(p => p.name).slice(0, 10);
+      // Get list of available comprehensive problems for better error message
+      const availableProblems = getAllProblems().map(p => p.name).slice(0, 10);
       throw new Error(`Problem "${identifier}" not available in fallback data. Available problems: ${availableProblems.join(', ')}, etc.`);
     }
     
@@ -858,18 +866,26 @@ class LeetCodeAPIImpl extends LeetCodeAPI {
    */
   async getRandomProblem(difficulty) {
     try {
-      // Skip the failing search and go directly to fallback with proper randomization
-      console.log(`🔄 Using fallback problems for variety...`);
-      const fallbackProblems = this.getFallbackProblems({ difficulty });
+      // Use comprehensive fallback problems that have complete data
+      console.log(`🔄 Using comprehensive fallback problems for variety...`);
+      const comprehensiveProblems = getProblemsByDifficulty(difficulty);
       
-      if (fallbackProblems.length === 0) {
-        throw new Error(`No fallback problems available for difficulty: ${difficulty}`);
+      if (comprehensiveProblems.length === 0) {
+        throw new Error(`No comprehensive fallback problems available for difficulty: ${difficulty}`);
       }
       
       // Ensure proper randomization by shuffling the array
-      const shuffled = [...fallbackProblems].sort(() => Math.random() - 0.5);
+      const shuffled = [...comprehensiveProblems].sort(() => Math.random() - 0.5);
       const randomIndex = Math.floor(Math.random() * shuffled.length);
-      return shuffled[randomIndex];
+      const selectedProblem = shuffled[randomIndex];
+      
+      // Return in the format expected by the system
+      return {
+        id: selectedProblem.id,
+        name: selectedProblem.slug,
+        title: selectedProblem.title,
+        difficulty: selectedProblem.difficulty
+      };
     } catch (error) {
       throw new Error(`Failed to get random ${difficulty} problem: ${error.message}`);
     }

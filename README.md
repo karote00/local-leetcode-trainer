@@ -230,7 +230,7 @@ yarn complete undo easy/two-sum # Move back to active
 - **Auto-detection**: Commands work whether problem is active or completed
 - **Progress tracking**: See completion stats per difficulty
 - **Company insights**: Know which companies ask each question
-- **Random challenges**: Never run out of problems to solve
+- **Random challenges**: 60 diverse problems with true variety - no more repetition!
 
 ## 🎨 Features
 
@@ -252,13 +252,15 @@ yarn complete undo easy/two-sum # Move back to active
 - **Automatic definitions** - ListNode definitions for linked list problems
 - **Solution class format** - Python uses LeetCode's Solution class structure
 
-### 🌐 Pure Dynamic LeetCode Integration (v1.6.1)
-- **Always fetches from LeetCode** - Every problem comes directly from leetcode.com
-- **Access to ALL problems** - 2000+ LeetCode problems available instantly
-- **Real-time accuracy** - Problem descriptions, examples, constraints always current
-- **Intelligent caching** - Works offline with previously fetched problems
-- **AI learning assistant** - Progressive hints and step-by-step guidance
-- **No static database** - No more hardcoded problems or maintenance needed
+### 🌐 Comprehensive Problems Database (v1.9.0)
+- **60 High-Quality Problems** - Comprehensive database with complete problem data
+- **True Variety** - Fixed critical bug - no more repeated "Two Sum" problems!
+- **Perfect Distribution** - 30 Easy, 20 Medium, 10 Hard problems across all topics
+- **Smart Fallback System** - Works seamlessly when LeetCode scraping fails
+- **Rich Problem Data** - Complete descriptions, examples, constraints, and company tags
+- **Intelligent Selection** - Advanced randomization with duplicate avoidance
+- **Offline Reliability** - Full functionality even without internet connection
+- **AI Learning Assistant** - Progressive hints and step-by-step guidance
 
 ### 🤖 AI-Friendly Environment
 - **Full IDE integration** - Use your favorite editor with AI assistants
@@ -288,7 +290,7 @@ yarn complete undo easy/two-sum # Move back to active
 - **Company insights** - See which companies ask each problem
 - **Topic categorization** - Practice specific algorithm types
 - **Difficulty progression** - Start easy, build up to hard problems
-- **Real problem database** - Curated list of popular LeetCode problems
+- **Comprehensive problem database** - 60 carefully curated problems with complete data
 
 ## 🤖 For AI Assistants
 
