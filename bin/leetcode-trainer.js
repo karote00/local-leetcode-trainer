@@ -112,6 +112,15 @@ program
     executeScript('hint.js', ['patterns']);
   });
 
+// Progress command
+program
+  .command('progress')
+  .alias('stats')
+  .description('Check your progress and completion statistics')
+  .action(() => {
+    executeScript('progress-check.js');
+  });
+
 // Init command
 program
   .command('init')
@@ -124,6 +133,7 @@ program
 if (process.argv.length === 2) {
   console.log('🎯 Welcome to Local LeetCode Trainer!\n');
   console.log('🚀 Quick start: lct challenge easy');
+  console.log('📊 Check progress: lct progress');
   console.log('📚 Get help: lct --help');
   console.log('🧠 Learn: lct patterns\n');
 }
