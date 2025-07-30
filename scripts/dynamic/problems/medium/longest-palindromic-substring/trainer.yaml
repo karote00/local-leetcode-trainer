@@ -1,0 +1,119 @@
+id: longest-palindromic-substring
+title: Longest Palindromic Substring
+difficulty: medium
+tags: [string, dynamic-programming, expand-around-centers]
+language: javascript
+
+steps:
+  - type: intro
+    content: |
+      🎯 **Longest Palindromic Substring**
+      
+      This is a classic string problem that teaches multiple algorithmic approaches!
+      Your goal is to find the longest palindromic substring in a given string.
+      
+      💡 **Key Insights:**
+      - A palindrome reads the same forwards and backwards
+      - There are multiple ways to solve this: brute force, expand around centers, DP
+      - Think about odd vs even length palindromes
+
+  - type: pre_prompt
+    content: |
+      🚀 **Approach Strategies**
+      
+      Consider these approaches in order of complexity:
+      1. **Brute Force**: Check every substring (O(n³))
+      2. **Expand Around Centers**: For each position, expand outward (O(n²))
+      3. **Dynamic Programming**: Build up solutions for smaller substrings (O(n²))
+      4. **Manacher's Algorithm**: Linear time solution (advanced)
+      
+      Start with expand around centers - it's intuitive and efficient!
+
+  - type: hint
+    trigger: code.includes('substring') && code.includes('for') && !code.includes('expand')
+    content: |
+      💡 **Optimization Opportunity**
+      
+      I see you're checking substrings in a loop. This might be O(n³)!
+      
+      Try the "expand around centers" approach:
+      - For each position i, treat it as a potential center
+      - Expand left and right while characters match
+      - Handle both odd and even length palindromes
+      
+      This reduces complexity to O(n²) with better constants!
+
+  - type: hint
+    trigger: code.includes('charAt') || code.includes('[') && !code.includes('left') && !code.includes('right')
+    content: |
+      🎯 **Expand Around Centers Pattern**
+      
+      You're accessing characters - great! For expand around centers:
+      
+      ```javascript
+      function expandAroundCenter(s, left, right) {
+          while (left >= 0 && right < s.length && s[left] === s[right]) {
+              left--;
+              right++;
+          }
+          return right - left - 1; // length of palindrome
+      }
+      ```
+      
+      Remember to check both odd (center = i) and even (center between i and i+1) cases!
+
+  - type: on_run
+    trigger: stderr.match(/out of bounds|undefined/)
+    content: |
+      🐛 **Boundary Check Needed**
+      
+      Looks like you're accessing array indices that don't exist!
+      
+      Common issues in palindrome problems:
+      - Not checking `left >= 0` when expanding left
+      - Not checking `right < s.length` when expanding right
+      - Off-by-one errors in substring extraction
+      
+      Always validate your boundaries before accessing array elements!
+
+  - type: on_run
+    trigger: passed === false && attempts > 2
+    content: |
+      🤔 **Still debugging?**
+      
+      Here's a systematic approach:
+      1. **Handle edge cases**: empty string, single character
+      2. **For each position**: try it as center of odd-length palindrome
+      3. **For each gap**: try it as center of even-length palindrome
+      4. **Track the longest**: keep start index and max length
+      
+      The key insight: every palindrome has a center!
+
+  - type: on_run
+    trigger: passed === true
+    content: |
+      🎉 **Palindrome Master!**
+      
+      Excellent work! You've solved a classic DP/string problem.
+      
+      **What you learned:**
+      - Expand around centers technique
+      - Handling odd vs even length palindromes
+      - String manipulation and boundary checking
+      
+      **Similar problems to try:**
+      - Palindromic Substrings (count all palindromes)
+      - Valid Palindrome (checking if string is palindrome)
+      
+      Ready for more string challenges? 🚀
+
+  - type: after_success
+    content: |
+      🏆 **Algorithm Analysis**
+      
+      **Time Complexity:** O(n²) - expand around each of n centers
+      **Space Complexity:** O(1) - only using a few variables
+      
+      **Key Pattern:** "Expand around centers" is useful for many palindrome problems!
+      
+      **Advanced Challenge:** Can you implement Manacher's algorithm for O(n) solution? 🤓

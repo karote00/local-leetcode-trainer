@@ -1,0 +1,155 @@
+id: merge-k-sorted-lists
+title: Merge k Sorted Lists
+difficulty: hard
+tags: [linked-list, divide-and-conquer, heap, merge-sort]
+language: javascript
+
+steps:
+  - type: intro
+    content: |
+      🎯 **Merge k Sorted Lists - Hard Challenge**
+      
+      This is a classic divide-and-conquer problem that appears frequently in interviews!
+      You need to merge k sorted linked lists into one sorted list.
+      
+      💡 **Multiple Approaches:**
+      - Brute force: Compare all heads repeatedly (O(kN))
+      - Min-heap: Use priority queue (O(N log k))
+      - Divide & conquer: Merge pairs recursively (O(N log k))
+      
+      This problem tests your understanding of data structures and algorithm optimization!
+
+  - type: pre_prompt
+    content: |
+      🚀 **Strategy Planning**
+      
+      Think about these approaches:
+      
+      1. **Brute Force**: Compare all k list heads, pick minimum (inefficient)
+      2. **Min-Heap**: Use a priority queue to always get the smallest node
+      3. **Divide & Conquer**: Merge lists in pairs, like merge sort
+      4. **Sequential Merge**: Merge lists one by one
+      
+      **Recommended**: Start with divide & conquer - it's elegant and efficient!
+
+  - type: hint
+    trigger: code.includes('while') && code.includes('lists') && !code.includes('merge') && attempts > 1
+    content: |
+      💡 **Divide & Conquer Hint**
+      
+      Instead of comparing all k heads repeatedly, try this pattern:
+      
+      ```
+      Round 1: [1,2,3] [4,5,6] [7,8,9] [10,11,12]
+               ↓ merge pairs ↓
+      Round 2: [1,2,3,4,5,6] [7,8,9,10,11,12]
+               ↓ merge pairs ↓
+      Result:  [1,2,3,4,5,6,7,8,9,10,11,12]
+      ```
+      
+      This reduces k lists to k/2, then k/4, etc. - just like merge sort!
+
+  - type: hint
+    trigger: code.includes('merge') && !code.includes('function merge')
+    content: |
+      🔧 **Helper Function Needed**
+      
+      Great! You're thinking about merging. You'll need a helper function:
+      
+      ```javascript
+      function mergeTwoLists(l1, l2) {
+          // Merge two sorted linked lists
+          // This is the classic "Merge Two Sorted Lists" problem
+      }
+      ```
+      
+      Once you have this, you can use it to merge pairs of lists!
+
+  - type: hint
+    trigger: code.includes('new ListNode') && !code.includes('dummy')
+    content: |
+      🎯 **Linked List Pattern**
+      
+      When merging linked lists, use the "dummy head" pattern:
+      
+      ```javascript
+      let dummy = new ListNode(0);
+      let current = dummy;
+      
+      // Build the merged list
+      while (l1 && l2) {
+          if (l1.val <= l2.val) {
+              current.next = l1;
+              l1 = l1.next;
+          } else {
+              current.next = l2;
+              l2 = l2.next;
+          }
+          current = current.next;
+      }
+      
+      return dummy.next; // Skip the dummy head
+      ```
+
+  - type: on_run
+    trigger: stderr.match(/Cannot read property|TypeError/)
+    content: |
+      🐛 **Null Pointer Issues**
+      
+      Common linked list bugs:
+      - Accessing `.next` or `.val` on null nodes
+      - Not handling empty lists in the input array
+      - Forgetting to check if lists[i] exists
+      
+      **Debug tips:**
+      - Always check `if (node)` before accessing properties
+      - Handle the case where some lists might be null/empty
+      - Use dummy nodes to simplify edge cases
+
+  - type: on_run
+    trigger: passed === false && attempts > 3
+    content: |
+      🤔 **Complex Problem - Let's Break It Down**
+      
+      This is a hard problem! Here's a step-by-step approach:
+      
+      1. **Base cases**: Handle empty array, single list
+      2. **Merge function**: Write a helper to merge 2 sorted lists
+      3. **Divide & conquer**: 
+         - While more than 1 list remains
+         - Merge lists in pairs: (0,1), (2,3), (4,5)...
+         - Continue until only 1 list remains
+      
+      Focus on getting the merge helper right first! 🎯
+
+  - type: on_run
+    trigger: passed === true
+    content: |
+      🎉 **Hard Problem Conquered!**
+      
+      Outstanding work! You've mastered a challenging divide-and-conquer problem.
+      
+      **What you accomplished:**
+      - Implemented divide & conquer strategy
+      - Handled complex linked list operations
+      - Optimized from O(kN) to O(N log k) complexity
+      
+      **Related problems:**
+      - Merge Two Sorted Lists (easier version)
+      - Sort List (merge sort on linked lists)
+      
+      You're ready for more advanced algorithms! 🚀
+
+  - type: after_success
+    content: |
+      🏆 **Algorithm Mastery**
+      
+      **Time Complexity:** O(N log k) where N = total nodes, k = number of lists
+      **Space Complexity:** O(1) if done iteratively, O(log k) for recursion
+      
+      **Key Insights:**
+      - Divide & conquer reduces problem size logarithmically
+      - Merging sorted structures is a fundamental operation
+      - Dummy nodes simplify linked list manipulation
+      
+      **Advanced**: Try implementing with a min-heap for comparison! 🤓

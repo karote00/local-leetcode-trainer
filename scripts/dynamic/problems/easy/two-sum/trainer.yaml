@@ -1,0 +1,105 @@
+id: two-sum
+title: Two Sum
+difficulty: easy
+tags: [array, hash-table]
+language: javascript
+
+steps:
+  - type: intro
+    content: |
+      🎯 **Two Sum Challenge**
+      
+      This is one of the most fundamental problems in coding interviews!
+      Your goal is to find two numbers in an array that add up to a target sum.
+      
+      💡 Think about different approaches:
+      - Brute force: Check every pair
+      - Optimized: Use a hash map for O(n) solution
+
+  - type: pre_prompt
+    content: |
+      🚀 **Getting Started**
+      
+      Try implementing a solution step by step:
+      1. First, think about the brute force approach (nested loops)
+      2. Then consider: "What if I could remember what numbers I've seen?"
+      3. A hash map can help you find the complement instantly!
+
+  - type: on_run
+    trigger: stderr.match(/TypeError|undefined/)
+    content: |
+      🐛 **Debugging Help**
+      
+      Looks like you're accessing something that doesn't exist!
+      Common issues:
+      - Accessing array index that's out of bounds
+      - Using a variable before declaring it
+      - Trying to access properties of undefined
+      
+      Double-check your array indices and variable declarations.
+
+  - type: on_run
+    trigger: passed === false && attempts > 1
+    content: |
+      🤔 **Still working on it?**
+      
+      No worries! Here's a hint:
+      - For each number, calculate what its "complement" should be (target - current)
+      - Check if you've seen that complement before
+      - A Map or object can help you remember previous numbers
+      
+      You're on the right track! Keep going! 💪
+
+  - type: hint
+    trigger: code.includes('for') && code.includes('for') && !code.includes('Map') && !code.includes('{}')
+    content: |
+      💡 **Optimization Hint**
+      
+      I see you're using nested loops - that works but it's O(n²)!
+      
+      Try this approach:
+      1. Create a Map to store numbers you've seen
+      2. For each number, check if (target - number) exists in the Map
+      3. If yes, return the indices. If no, add current number to Map
+      
+      This reduces time complexity to O(n)!
+
+  - type: hint
+    trigger: code.includes('Map') && !code.includes('has')
+    content: |
+      🗺️ **Map Usage Tip**
+      
+      Great! You're using a Map. Remember these key methods:
+      - `map.has(key)` - Check if key exists
+      - `map.get(key)` - Get value for key
+      - `map.set(key, value)` - Store key-value pair
+      
+      You'll need `has()` to check for the complement!
+
+  - type: on_run
+    trigger: passed === true
+    content: |
+      🎉 **Excellent work!**
+      
+      You solved Two Sum! This problem teaches fundamental concepts:
+      - Hash tables for O(1) lookups
+      - Trading space for time complexity
+      - The "complement" pattern
+      
+      **Next challenges to try:**
+      - Three Sum (medium)
+      - Two Sum II - Input array is sorted (easy)
+      
+      Ready for the next problem? 🚀
+
+  - type: after_success
+    content: |
+      🏆 **Problem Mastered!**
+      
+      **Time Complexity:** O(n) with hash map approach
+      **Space Complexity:** O(n) for the hash map
+      
+      **Key Takeaway:** When you need to find pairs that satisfy a condition,
+      think about storing complements in a hash table!
+      
+      This pattern appears in many interview problems. Well done! ⭐

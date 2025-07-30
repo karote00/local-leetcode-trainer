@@ -104,6 +104,25 @@ program
     executeScript('hint.js', ['learn', problem]);
   });
 
+// AI Challenge command
+program
+  .command('ai-challenge')
+  .alias('ai')
+  .description('🤖 Start AI-guided coding challenge with intelligent tutoring')
+  .argument('<problem>', 'Problem to practice (e.g., two-sum)')
+  .action((problem) => {
+    executeScript('ai-challenge.js', ['start', problem]);
+  });
+
+// AI Help command
+program
+  .command('ai-help')
+  .description('🤖 Get AI assistance for current problem')
+  .argument('[query]', 'Specific question or area you need help with')
+  .action((query) => {
+    executeScript('ai-challenge.js', ['help', query || '']);
+  });
+
 // Patterns command
 program
   .command('patterns')
