@@ -1,6 +1,65 @@
 # 🎯 Local LeetCode Trainer
 
-A complete local LeetCode practice environment designed for **deep learning and algorithmic understanding** - not just solving problems.
+A complete local LeetCode practice environment with **revolutionary AI teaching system** - designed for deep learning and algorithmic mastery, not just solving problems.
+
+## 🤖 **NEW: AI Teaching System - Your Personal Coding Tutor**
+
+**Experience the future of coding education with intelligent, adaptive guidance that learns with you!**
+
+### ✨ **What Makes This Special:**
+
+- 🧠 **Proactive AI Guidance** - Get contextual hints without asking, based on your code patterns
+- 🎯 **Adaptive Learning** - AI adjusts difficulty and guidance based on your progress and attempts
+- 💡 **Smart Code Analysis** - AI understands your approach and suggests optimizations intelligently
+- 🔄 **Progressive Hints** - From gentle nudges to detailed explanations, escalating as needed
+- 🎓 **Concept Teaching** - Learn algorithms and patterns, not just solutions
+- ⚡ **Seamless Integration** - AI teaching is built into every command, no special "AI mode"
+
+### 🚀 **AI-Enhanced Commands (No Prefixes Needed!)**
+
+```bash
+# Intelligent hints that adapt to your skill level
+lct hint two-sum 1              # AI analyzes your approach and provides contextual guidance
+lct hint valid-parentheses 2    # Progressive hints that build on each other
+
+# Deep learning analysis with AI insights
+lct learn two-sum               # Comprehensive algorithm analysis and complexity insights
+lct learn longest-palindromic-substring  # Multiple approach comparisons
+
+# AI assistant for any coding question
+lct ask "when should I use a hash map?"     # Get intelligent explanations
+lct help-me "I don't understand stacks"    # Natural language AI assistance
+```
+
+### 🎯 **AI Teaching in Action:**
+
+**Traditional Hint System:**
+```
+💡 Hint: Try using a hash map for O(1) lookups
+```
+
+**AI Teaching System:**
+```
+🤖 **AI-Enhanced Hints for Two Sum**
+
+🎯 **Problem Overview:**
+This is one of the most fundamental problems in coding interviews!
+Your goal is to find two numbers that add up to a target sum.
+
+💡 **Key Insights:**
+- Think about the "complement" pattern
+- What if you could remember numbers you've seen?
+
+💡 **Optimization Hint:**
+I see you're using nested loops - that works but it's O(n²)!
+
+Try this approach:
+1. Create a Map to store numbers you've seen
+2. For each number, check if (target - number) exists
+3. This reduces time complexity to O(n)!
+
+💫 **Next:** Try `lct hint two-sum 2` for implementation details
+```
 
 ## 🧠 **LEARN, Don't Just Solve**
 
@@ -37,50 +96,52 @@ A complete local LeetCode practice environment designed for **deep learning and 
 - 🎯 **Algorithmic Insights** - Built-in explanations of why certain approaches work
 - 📊 **Complexity Analysis** - Understand the performance implications of your solutions
 
-### 🎓 **Learning Methodology:**
+### 🎓 **AI-Powered Learning Methodology:**
 
-#### **Step 1: Understand the Problem**
+#### **Step 1: Get AI-Guided Problem Introduction**
 ```bash
 lct challenge easy 1                # Get Two Sum problem
-# Read the problem description carefully
-# Identify: What are the inputs? What should I return?
-# Ask AI: "Can you help me understand what this problem is asking?"
+lct hint two-sum 1                  # AI provides problem overview and strategic guidance
+# AI explains: What is this problem really asking?
+# AI suggests: What approaches should you consider?
 ```
 
-#### **Step 2: Analyze Patterns & Constraints**
+#### **Step 2: Explore with AI Code Analysis**
 ```bash
-# Look at examples and constraints in the generated file
-# Ask yourself: What patterns do I see?
-# Ask AI: "What algorithmic patterns apply to this type of problem?"
+# Start coding your approach
+lct hint two-sum 2                  # AI analyzes your code patterns
+# AI detects: "I see you're using nested loops..."
+# AI suggests: "Try using a hash map for O(1) lookups"
 ```
 
-#### **Step 3: Explore Approaches**
+#### **Step 3: Get Contextual Debugging Help**
 ```bash
-lct hint easy/two-sum 1            # Get first hint about approach
-# Think: What data structures could help?
-# Ask AI: "What are different ways to solve this? What are the trade-offs?"
+# When you encounter errors
+lct test two-sum                    # Run tests
+# AI automatically provides: "Looks like a null pointer issue..."
+# AI explains: "This happens when you access undefined properties"
 ```
 
-#### **Step 4: Implement & Debug**
+#### **Step 4: Receive Progressive Guidance**
 ```bash
-# Write your solution with console.logs
-# Test with: lct test easy/two-sum
-# Debug: Add breakpoints, trace through logic
-# Ask AI: "Why is my solution failing this test case?"
+lct hint two-sum 3                  # More specific implementation hints
+# AI escalates help based on your attempts
+# AI provides: Step-by-step implementation guidance
 ```
 
-#### **Step 5: Optimize & Understand Complexity**
+#### **Step 5: Master the Concept**
 ```bash
-lct hint easy/two-sum 3            # Get optimization hints
-# Ask AI: "How can I improve the time/space complexity?"
-# Understand: Why is this approach better?
+lct learn two-sum                   # Deep algorithmic analysis
+# AI explains: Time/space complexity trade-offs
+# AI connects: "This pattern appears in these other problems..."
 ```
 
-#### **Step 6: Generalize the Learning**
+#### **Step 6: Ask Follow-up Questions**
 ```bash
-# Ask AI: "What other problems use similar techniques?"
-# Document: What did I learn that applies elsewhere?
-# Practice: Find related problems to reinforce the pattern
+lct ask "why use hash maps instead of arrays?"
+lct help-me "when should I use two pointers?"
+# AI provides: Detailed explanations and comparisons
+# AI suggests: Related concepts and problems to explore
 ```
 
 ## ✨ Why Practice Locally?
@@ -194,46 +255,66 @@ yarn complete medium/problem-name  # Track your progress
 └── scripts/                    # All the magic happens here
 ```
 
-## 🛠️ Available Commands
+## 🛠️ **AI-Enhanced Commands**
 
-### Core Practice
+### **🤖 AI Teaching & Learning (NEW!)**
 ```bash
-yarn challenge easy             # Get 1 easy problem
-yarn challenge medium 2         # Get 2 medium problems
-yarn test easy/two-sum          # Test your solution
-yarn open easy/two-sum          # Open LeetCode link
+# Intelligent hints with contextual AI guidance
+lct hint two-sum 1              # AI analyzes your approach, provides strategic guidance
+lct hint valid-parentheses 2    # Progressive hints that build understanding
+lct hint merge-k-sorted-lists 3 # Advanced guidance for complex problems
+
+# Deep learning analysis with AI insights
+lct learn two-sum               # Comprehensive algorithm analysis
+lct learn longest-palindromic-substring  # Multiple approach comparisons
+lct learn merge-k-sorted-lists  # Advanced algorithmic concepts
+
+# AI assistant for any coding question
+lct ask "when should I use a hash map?"     # Get intelligent explanations
+lct help-me "I don't understand stacks"    # Natural language assistance
+lct ask "how to optimize nested loops"     # Algorithm optimization guidance
 ```
 
-### Language Management
+### **🎯 Core Practice**
 ```bash
-yarn lang                       # Show current language & stats
-yarn lang python              # Switch to Python (archives current work)
-yarn lang javascript          # Switch to JavaScript
-yarn lang java                # Switch to Java
-yarn lang cpp                 # Switch to C++
+lct challenge easy              # Get 1 easy problem with AI teaching available
+lct challenge medium 2          # Get 2 medium problems
+lct test two-sum               # Test your solution locally
+lct open two-sum               # Open LeetCode for final submission
 ```
 
-### AI-Powered Learning Assistant
+### **🌍 Language Management**
 ```bash
-lct hint easy/two-sum          # Get progressive hints
-lct hint easy/two-sum 2        # Get more advanced hints
-lct learn easy/two-sum         # Show algorithm approaches & complexity
-lct patterns                   # List all available algorithm patterns
+lct lang                       # Show current language & stats
+lct lang python               # Switch to Python (archives current work)
+lct lang javascript           # Switch to JavaScript
+lct lang java                 # Switch to Java
+lct lang cpp                  # Switch to C++
 ```
 
-### Progress Tracking
+### **📊 Progress Tracking**
 ```bash
-lct progress                    # Check your completion progress & get congratulated!
-lct complete easy/two-sum       # Mark as completed
-lct complete list               # See all completed problems
-lct complete undo easy/two-sum  # Move back to active
+lct progress                   # Check completion progress with AI insights
+lct complete two-sum           # Mark as completed
+lct complete list              # See all completed problems
+lct complete undo two-sum      # Move back to active
 ```
 
-### Smart Features
+### **🤖 AI Teaching Features**
+- **Contextual Code Analysis**: AI understands your approach and provides relevant hints
+- **Progressive Learning**: Hints escalate from gentle nudges to detailed explanations
+- **Smart Error Interpretation**: AI explains runtime errors and debugging strategies
+- **Concept Teaching**: Focus on understanding algorithms, not just solving problems
+- **Adaptive Guidance**: AI adjusts help based on your attempts and progress
+- **Natural Language Assistant**: Ask questions about any coding concept
+
+### **⚡ Smart Features**
+- **Seamless AI Integration**: AI teaching built into every command, no special modes
+- **Graceful Fallback**: Traditional hints when AI teaching scripts aren't available
 - **Auto-detection**: Commands work whether problem is active or completed
-- **Progress tracking**: See completion stats per difficulty
+- **Progress tracking**: See completion stats per difficulty with AI insights
 - **Company insights**: Know which companies ask each question
-- **Random challenges**: 60 diverse problems with true variety - no more repetition!
+- **True variety**: 125+ diverse problems with intelligent randomization
 
 ## 🎨 Features
 
@@ -255,15 +336,25 @@ lct complete undo easy/two-sum  # Move back to active
 - **Automatic definitions** - ListNode definitions for linked list problems
 - **Solution class format** - Python uses LeetCode's Solution class structure
 
-### 🌐 Comprehensive Problems Database (v1.9.0+)
-- **200+ High-Quality Problems** - Carefully curated database with complete problem data
+### 🤖 **Revolutionary AI Teaching System (v1.11.0+)**
+- **Intelligent Tutoring Engine** - YAML-based teaching scripts that adapt to your learning style
+- **Contextual Code Analysis** - AI understands your approach and provides relevant guidance
+- **Progressive Hint System** - From gentle nudges to detailed explanations based on attempts
+- **Smart Error Interpretation** - AI explains runtime errors and suggests debugging strategies
+- **Concept-First Learning** - Focus on understanding algorithms and patterns, not just solutions
+- **Natural Language Assistant** - Ask questions about any coding concept in plain English
+- **Seamless Integration** - AI teaching built into existing commands, no special "AI mode"
+- **Graceful Fallback** - Traditional hints when AI teaching scripts aren't available
+
+### 🌐 **Comprehensive Problems Database (v1.9.0+)**
+- **125+ High-Quality Problems** - Carefully curated database with complete problem data
+- **AI Teaching Scripts** - Growing collection of intelligent tutoring experiences
 - **True Variety** - Fixed critical bug - no more repeated "Two Sum" problems!
 - **Perfect Distribution** - Balanced across Easy, Medium, Hard difficulties and all major topics
 - **Smart Fallback System** - Works seamlessly when LeetCode scraping fails
 - **Rich Problem Data** - Complete descriptions, examples, constraints, and company tags
 - **Intelligent Selection** - Advanced randomization with duplicate avoidance
 - **Offline Reliability** - Full functionality even without internet connection
-- **AI Learning Assistant** - Progressive hints and step-by-step guidance
 
 ### 🎓 Completed All Challenges? Congratulations!
 
@@ -435,22 +526,31 @@ cd local-leetcode-trainer
 yarn install
 ```
 
-### Your First Problem
+### **Your First AI-Guided Problem**
 ```bash
-# Get a challenge
-yarn challenge easy
+# Get a challenge with AI teaching
+lct challenge easy
 
-# This creates: easy/problem-name/problem-name.js
-# Start coding your solution!
+# Get AI-powered introduction and strategic guidance
+lct hint two-sum 1
 
-# Test it
-yarn test easy/problem-name
+# Start coding with AI watching your approach
+# The AI will provide contextual hints based on your code patterns
+
+# Test your solution
+lct test two-sum
+
+# Get AI analysis of your solution
+lct learn two-sum
+
+# Ask the AI assistant any questions
+lct ask "why is this O(n) instead of O(n²)?"
 
 # When ready, open LeetCode to submit
-yarn open easy/problem-name
+lct open two-sum
 
-# Mark as completed
-yarn complete easy/problem-name
+# Mark as completed with AI celebration
+lct complete two-sum
 ```
 
 ## 🤝 Contributing
