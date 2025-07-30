@@ -1,0 +1,83 @@
+id: validate-binary-search-tree
+title: Validate Binary Search Tree
+difficulty: medium
+tags:
+  - Tree
+  - Depth-First Search
+  - Binary Search Tree
+  - Binary Tree
+language: javascript
+steps:
+  - type: intro
+    content: |-
+      🎯 **{{title}}**
+                
+      This {{difficulty}} problem covers important algorithmic concepts.
+      Focus on understanding the problem constraints and examples before implementing.
+  - type: pre_prompt
+    content: |-
+      🚀 **Strategy Planning**
+                
+      Consider multiple approaches:
+      1. **Brute force**: What's the straightforward solution?
+      2. **Optimization**: Can you reduce time/space complexity?
+      3. **Edge cases**: What special cases need handling?
+      4. **Data structures**: Which ones might be helpful?
+  - type: hint
+    trigger: attempts > 2 && passed === false
+    content: |-
+      💡 **Need a hint?**
+                
+      You've been working on this for a while. Here's some guidance:
+      - Review the problem examples carefully
+      - Consider if you're handling all edge cases
+      - Think about the most efficient data structure for this problem
+  - type: on_run
+    trigger: stderr.match(/TypeError|ReferenceError/)
+    content: |-
+      🐛 **Runtime Error Help**
+                
+      Common issues to check:
+      - Accessing undefined variables or properties
+      - Array index out of bounds
+      - Null pointer exceptions
+      - Incorrect function calls
+  - type: on_run
+    trigger: passed === false && attempts > 1
+    content: |-
+      🤔 **Still working on it?**
+                
+      That's okay! Debugging is part of learning:
+      - Add console.log statements to trace execution
+      - Test with the provided examples manually
+      - Check your logic step by step
+  - type: on_run
+    trigger: passed === true
+    content: |-
+      🎉 **Excellent work!**
+                
+      You solved it! Reflect on:
+      - What approach did you use?
+      - What was the time/space complexity?
+      - Could it be optimized further?
+      - What similar problems could you solve now?
+  - type: after_success
+    content: |-
+      🏆 **Problem Complete!**
+                
+      **Next steps:**
+      - Try explaining your solution out loud
+      - Consider alternative approaches
+      - Look for similar problems to practice
+      - Review the time/space complexity analysis
+  - type: hint
+    trigger: code.includes("TreeNode") && !code.includes("recursive")
+    content: |-
+      🌳 **Tree Traversal Hint**
+            
+      Tree problems often use recursion! Consider:
+      - **Base case**: What happens with null nodes?
+      - **Recursive case**: How do you process left and right subtrees?
+      - **Return value**: What should each recursive call return?
+
+      Common patterns: DFS (preorder, inorder, postorder) or BFS (level-order)

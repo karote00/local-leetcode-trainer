@@ -1,0 +1,55 @@
+id: maximum-depth-of-binary-tree
+title: Maximum Depth of Binary Tree
+difficulty: easy
+tags:
+  - Tree
+  - Depth-First Search
+  - Breadth-First Search
+  - Binary Tree
+language: javascript
+steps:
+  - type: intro
+    content: >-
+      🎯 **{{title}}**
+                
+      This is a {{difficulty}} level problem that will help you practice fundamental programming
+      concepts.
+
+      Take your time to understand the problem before coding!
+  - type: pre_prompt
+    content: |-
+      🚀 **Getting Started**
+                
+      Think about the approach:
+      1. What's the simplest solution you can think of?
+      2. Are there any edge cases to consider?
+      3. Can you optimize the time or space complexity?
+  - type: on_run
+    trigger: stderr.match(/Error|undefined/)
+    content: |-
+      🐛 **Debugging Help**
+                
+      Looks like there's an error in your code!
+      - Check for typos and syntax errors
+      - Verify array bounds and null checks
+      - Make sure all variables are properly declared
+  - type: on_run
+    trigger: passed === true
+    content: |-
+      🎉 **Great job!**
+                
+      You solved the problem! Consider:
+      - Is there a more efficient solution?
+      - What's the time and space complexity?
+      - What did you learn from this problem?
+  - type: hint
+    trigger: code.includes("TreeNode") && !code.includes("recursive")
+    content: |-
+      🌳 **Tree Traversal Hint**
+            
+      Tree problems often use recursion! Consider:
+      - **Base case**: What happens with null nodes?
+      - **Recursive case**: How do you process left and right subtrees?
+      - **Return value**: What should each recursive call return?
+
+      Common patterns: DFS (preorder, inorder, postorder) or BFS (level-order)

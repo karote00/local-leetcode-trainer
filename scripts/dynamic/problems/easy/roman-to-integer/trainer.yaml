@@ -1,0 +1,54 @@
+id: roman-to-integer
+title: Roman to Integer
+difficulty: easy
+tags:
+  - Hash Table
+  - Math
+  - String
+language: javascript
+steps:
+  - type: intro
+    content: >-
+      🎯 **{{title}}**
+                
+      This is a {{difficulty}} level problem that will help you practice fundamental programming
+      concepts.
+
+      Take your time to understand the problem before coding!
+  - type: pre_prompt
+    content: |-
+      🚀 **Getting Started**
+                
+      Think about the approach:
+      1. What's the simplest solution you can think of?
+      2. Are there any edge cases to consider?
+      3. Can you optimize the time or space complexity?
+  - type: on_run
+    trigger: stderr.match(/Error|undefined/)
+    content: |-
+      🐛 **Debugging Help**
+                
+      Looks like there's an error in your code!
+      - Check for typos and syntax errors
+      - Verify array bounds and null checks
+      - Make sure all variables are properly declared
+  - type: on_run
+    trigger: passed === true
+    content: |-
+      🎉 **Great job!**
+                
+      You solved the problem! Consider:
+      - Is there a more efficient solution?
+      - What's the time and space complexity?
+      - What did you learn from this problem?
+  - type: hint
+    trigger: code.includes("for") && !code.includes("Map") && !code.includes("Set")
+    content: |-
+      🗺️ **Hash Table Optimization**
+            
+      This problem might benefit from a hash table!
+      - **Map**: Store key-value pairs for O(1) lookup
+      - **Set**: Store unique values for O(1) membership testing
+      - **Pattern**: Often used to trade space for time complexity
+
+      Consider what you need to "remember" as you iterate!

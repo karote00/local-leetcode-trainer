@@ -1,0 +1,86 @@
+id: largest-rectangle-in-histogram
+title: Largest Rectangle in Histogram
+difficulty: hard
+tags:
+  - Array
+  - Stack
+  - Monotonic Stack
+language: javascript
+steps:
+  - type: intro
+    content: |-
+      🎯 **{{title}} - Advanced Challenge**
+                
+      This is a sophisticated problem that requires deep algorithmic thinking.
+      Take time to understand the problem thoroughly and consider multiple solution approaches.
+  - type: pre_prompt
+    content: |-
+      🚀 **Advanced Strategy**
+                
+      Approach this systematically:
+      1. **Problem analysis**: What's the core challenge?
+      2. **Algorithm selection**: Which technique fits best?
+      3. **Complexity analysis**: What are the time/space trade-offs?
+      4. **Implementation strategy**: How to code it cleanly?
+  - type: hint
+    trigger: code.length < 50
+    content: |-
+      🤔 **Getting Started?**
+                
+      Complex problems need careful planning:
+      - Break the problem into smaller subproblems
+      - Consider what data structures you'll need
+      - Think about the algorithm before coding
+      - Start with a working solution, then optimize
+  - type: hint
+    trigger: attempts > 3 && passed === false
+    content: |-
+      💡 **Advanced Hint**
+                
+      You're tackling a challenging problem! Consider:
+      - Are you using the most appropriate algorithm?
+      - Have you considered all edge cases?
+      - Is there a mathematical insight you're missing?
+      - Would a different data structure help?
+  - type: on_run
+    trigger: passed === false && attempts > 5
+    content: |-
+      🎯 **Persistence Pays Off**
+                
+      Hard problems require patience! Try:
+      - Stepping back and re-reading the problem
+      - Looking at the examples more carefully
+      - Considering a completely different approach
+      - Breaking the problem into smaller pieces
+  - type: on_run
+    trigger: passed === true
+    content: |-
+      🎉 **Outstanding Achievement!**
+                
+      You conquered a challenging problem! This demonstrates:
+      - Advanced problem-solving skills
+      - Algorithmic thinking
+      - Persistence and debugging ability
+      - Deep understanding of data structures
+  - type: after_success
+    content: |-
+      🏆 **Mastery Achieved!**
+                
+      **Advanced Analysis:**
+      - What was the key insight that led to the solution?
+      - How does this problem relate to other advanced algorithms?
+      - What variations of this problem exist?
+      - How would you explain this solution in an interview?
+  - type: on_run
+    trigger: passed === false && attempts > 5
+    content: |-
+      🎯 **Hard Problem Strategy**
+            
+      This is a challenging problem! Break it down:
+      1. **Understand the problem**: Read examples carefully
+      2. **Identify patterns**: What algorithmic technique applies?
+      3. **Start simple**: Implement brute force first
+      4. **Optimize**: Look for redundant computations
+      5. **Edge cases**: Handle boundary conditions
+
+      Don't give up! Hard problems teach the most valuable lessons. 💪

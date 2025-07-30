@@ -1,0 +1,83 @@
+id: longest-increasing-subsequence
+title: Longest Increasing Subsequence
+difficulty: medium
+tags:
+  - Array
+  - Binary Search
+  - Dynamic Programming
+language: javascript
+steps:
+  - type: intro
+    content: |-
+      🎯 **{{title}}**
+                
+      This {{difficulty}} problem covers important algorithmic concepts.
+      Focus on understanding the problem constraints and examples before implementing.
+  - type: pre_prompt
+    content: |-
+      🚀 **Strategy Planning**
+                
+      Consider multiple approaches:
+      1. **Brute force**: What's the straightforward solution?
+      2. **Optimization**: Can you reduce time/space complexity?
+      3. **Edge cases**: What special cases need handling?
+      4. **Data structures**: Which ones might be helpful?
+  - type: hint
+    trigger: attempts > 2 && passed === false
+    content: |-
+      💡 **Need a hint?**
+                
+      You've been working on this for a while. Here's some guidance:
+      - Review the problem examples carefully
+      - Consider if you're handling all edge cases
+      - Think about the most efficient data structure for this problem
+  - type: on_run
+    trigger: stderr.match(/TypeError|ReferenceError/)
+    content: |-
+      🐛 **Runtime Error Help**
+                
+      Common issues to check:
+      - Accessing undefined variables or properties
+      - Array index out of bounds
+      - Null pointer exceptions
+      - Incorrect function calls
+  - type: on_run
+    trigger: passed === false && attempts > 1
+    content: |-
+      🤔 **Still working on it?**
+                
+      That's okay! Debugging is part of learning:
+      - Add console.log statements to trace execution
+      - Test with the provided examples manually
+      - Check your logic step by step
+  - type: on_run
+    trigger: passed === true
+    content: |-
+      🎉 **Excellent work!**
+                
+      You solved it! Reflect on:
+      - What approach did you use?
+      - What was the time/space complexity?
+      - Could it be optimized further?
+      - What similar problems could you solve now?
+  - type: after_success
+    content: |-
+      🏆 **Problem Complete!**
+                
+      **Next steps:**
+      - Try explaining your solution out loud
+      - Consider alternative approaches
+      - Look for similar problems to practice
+      - Review the time/space complexity analysis
+  - type: hint
+    trigger: code.includes("for") && !code.includes("dp")
+    content: |-
+      💡 **Dynamic Programming Hint**
+            
+      This looks like a DP problem! Consider:
+      1. **State definition**: What does dp[i] represent?
+      2. **Recurrence relation**: How does dp[i] relate to previous states?
+      3. **Base cases**: What are the initial values?
+      4. **Bottom-up vs Top-down**: Which approach fits better?
+
+      Try defining your DP array first!
