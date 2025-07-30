@@ -1,0 +1,142 @@
+id: valid-parentheses
+title: Valid Parentheses
+difficulty: easy
+tags: [string, stack]
+language: javascript
+
+steps:
+  - type: intro
+    content: |
+      🎯 **Valid Parentheses Challenge**
+      
+      This is a fundamental problem that teaches the power of the Stack data structure!
+      Your goal is to determine if a string of brackets is properly balanced and nested.
+      
+      💡 **Key Insights:**
+      - Every opening bracket must have a matching closing bracket
+      - Brackets must be closed in the correct order
+      - Think about "Last In, First Out" (LIFO) behavior
+
+  - type: pre_prompt
+    content: |
+      🚀 **Strategy Thinking**
+      
+      Consider these approaches:
+      1. **Brute Force**: Try to match brackets manually (complex!)
+      2. **Stack Approach**: Use LIFO to match opening/closing pairs
+      3. **Counter Method**: Count brackets (doesn't handle nesting!)
+      
+      **Recommended**: The stack approach is elegant and handles all cases perfectly!
+
+  - type: hint
+    trigger: code.includes('for') && !code.includes('stack') && !code.includes('push') && !code.includes('pop')
+    content: |
+      💡 **Stack Data Structure Hint**
+      
+      This problem is perfect for a stack! Here's the pattern:
+      - When you see an opening bracket `(`, `[`, `{` → push it onto the stack
+      - When you see a closing bracket `)`, `]`, `}` → pop from stack and check if they match
+      - At the end, the stack should be empty for valid parentheses
+      
+      Try using an array as a stack with `push()` and `pop()` methods!
+
+  - type: hint
+    trigger: code.includes('stack') && code.includes('push') && !code.includes('pop')
+    content: |
+      🔄 **Don't Forget to Pop!**
+      
+      Great! You're pushing opening brackets onto the stack. Now you need to:
+      1. **Pop** when you encounter closing brackets
+      2. **Check** if the popped bracket matches the current closing bracket
+      3. **Handle** the case when stack is empty but you need to pop
+      
+      Remember: `(` matches `)`, `[` matches `]`, `{` matches `}`
+
+  - type: hint
+    trigger: code.includes('pop') && !code.includes('length') && !code.includes('empty')
+    content: |
+      ⚠️ **Edge Case Alert!**
+      
+      You're popping from the stack - good! But don't forget to check:
+      - **Empty stack**: What if you try to pop from an empty stack?
+      - **Final check**: After processing all characters, is the stack empty?
+      
+      Use `stack.length === 0` to check if the stack is empty!
+
+  - type: on_run
+    trigger: stderr.match(/Cannot read property|TypeError/)
+    content: |
+      🐛 **Stack Underflow Error**
+      
+      Looks like you're trying to pop from an empty stack!
+      
+      **Common fixes:**
+      - Check `if (stack.length === 0)` before popping
+      - Return `false` immediately if you need to pop but stack is empty
+      - This happens when you have more closing brackets than opening ones
+      
+      Example: `")"` or `"(()"` would cause this error.
+
+  - type: on_run
+    trigger: passed === false && attempts > 1
+    content: |
+      🤔 **Debugging Stack Logic**
+      
+      Stack problems can be tricky! Let's trace through an example:
+      
+      **Input: `"([)]"`**
+      1. `(` → push `(` → stack: `['(']`
+      2. `[` → push `[` → stack: `['(', '[']`
+      3. `)` → pop `[`, but `)` doesn't match `[` → return `false`
+      
+      The key is matching the **most recent** opening bracket!
+
+  - type: on_run
+    trigger: passed === false && attempts > 2
+    content: |
+      💪 **Step-by-Step Approach**
+      
+      Let's break this down systematically:
+      
+      1. **Create a stack** (empty array)
+      2. **For each character** in the string:
+         - If opening bracket `(`, `[`, `{` → push to stack
+         - If closing bracket `)`, `]`, `}` → check if stack is empty, then pop and verify match
+         - If no match or stack empty when needed → return `false`
+      3. **After loop** → return `stack.length === 0`
+      
+      You've got this! 🎯
+
+  - type: on_run
+    trigger: passed === true
+    content: |
+      🎉 **Stack Master!**
+      
+      Excellent work! You've mastered the stack approach for bracket matching!
+      
+      **What you learned:**
+      - Stack (LIFO) data structure usage
+      - Handling edge cases (empty stack, unmatched brackets)
+      - The power of "most recent" matching
+      
+      **Similar problems to try:**
+      - Generate Parentheses (medium)
+      - Remove Invalid Parentheses (hard)
+      - Minimum Remove to Make Valid Parentheses (medium)
+      
+      Ready for more stack challenges? 🚀
+
+  - type: after_success
+    content: |
+      🏆 **Algorithm Analysis**
+      
+      **Time Complexity:** O(n) - single pass through the string
+      **Space Complexity:** O(n) - worst case, all opening brackets
+      
+      **Key Pattern:** Stack is perfect for problems involving:
+      - Matching pairs (brackets, quotes)
+      - Nested structures
+      - "Most recent" relationships
+      - Undo operations
+      
+      **Pro Tip:** This same pattern works for HTML tag validation, expression evaluation, and many parsing problems! 🤓

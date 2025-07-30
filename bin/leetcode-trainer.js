@@ -35,16 +35,7 @@ function executeScript(scriptName, args = []) {
   });
 }
 
-// Challenge command
-program
-  .command('challenge')
-  .alias('c')
-  .description('Generate new LeetCode problems')
-  .argument('<difficulty>', 'Problem difficulty (easy/medium/hard)')
-  .argument('[count]', 'Number of problems to generate', '1')
-  .action((difficulty, count) => {
-    executeScript('challenge.js', [difficulty, count]);
-  });
+
 
 // Test command
 program
@@ -85,42 +76,53 @@ program
     executeScript('config.js', language ? [language] : []);
   });
 
-// Hint command
+// Enhanced Hint command with AI integration
 program
   .command('hint')
-  .description('Get progressive hints for a problem')
-  .argument('<problem>', 'Problem to get hints for (e.g., easy/two-sum)')
+  .description('Get intelligent hints with AI guidance')
+  .argument('<problem>', 'Problem to get hints for (e.g., two-sum)')
   .argument('[level]', 'Hint level (1-4)', '1')
   .action((problem, level) => {
-    executeScript('hint.js', ['hint', problem, level]);
+    executeScript('enhanced-hint.js', ['hint', problem, level]);
   });
 
-// Learn command
+// Enhanced Learn command with AI analysis
 program
   .command('learn')
-  .description('Show algorithm approaches and complexity analysis')
-  .argument('<problem>', 'Problem to learn about (e.g., easy/two-sum)')
+  .description('Deep learning analysis with AI insights')
+  .argument('<problem>', 'Problem to learn about (e.g., two-sum)')
   .action((problem) => {
-    executeScript('hint.js', ['learn', problem]);
+    executeScript('enhanced-hint.js', ['learn', problem]);
   });
 
-// AI Challenge command
+// Enhanced Help command with AI assistant
 program
-  .command('ai-challenge')
-  .alias('ai')
-  .description('🤖 Start AI-guided coding challenge with intelligent tutoring')
-  .argument('<problem>', 'Problem to practice (e.g., two-sum)')
-  .action((problem) => {
-    executeScript('ai-challenge.js', ['start', problem]);
-  });
-
-// AI Help command
-program
-  .command('ai-help')
-  .description('🤖 Get AI assistance for current problem')
-  .argument('[query]', 'Specific question or area you need help with')
+  .command('help-me')
+  .alias('ask')
+  .description('Ask AI assistant about algorithms and problem-solving')
+  .argument('[query...]', 'Your question about coding, algorithms, or data structures')
   .action((query) => {
-    executeScript('ai-challenge.js', ['help', query || '']);
+    const queryString = Array.isArray(query) ? query.join(' ') : (query || '');
+    executeScript('enhanced-hint.js', ['help', queryString]);
+  });
+
+// Enhanced Challenge command with AI teaching
+program
+  .command('challenge')
+  .alias('c')
+  .description('Generate new LeetCode problems with intelligent AI guidance')
+  .argument('<difficulty>', 'Problem difficulty (easy/medium/hard) or specific problem name')
+  .argument('[count]', 'Number of problems to generate (default: 1) or "guided" for AI tutoring')
+  .action((difficulty, count) => {
+    // If second argument is "guided" or if it's a specific problem name, use AI teaching
+    if (count === 'guided' || (!['1', '2', '3', '4', '5'].includes(count) && count)) {
+      executeScript('enhanced-challenge.js', ['guided', difficulty]);
+    } else if (isNaN(difficulty) || ['easy', 'medium', 'hard'].includes(difficulty)) {
+      executeScript('challenge.js', [difficulty, count || '1']);
+    } else {
+      // Specific problem name provided
+      executeScript('enhanced-challenge.js', ['guided', difficulty]);
+    }
   });
 
 // Patterns command
