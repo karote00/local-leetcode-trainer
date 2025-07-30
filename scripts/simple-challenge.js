@@ -257,17 +257,84 @@ module.exports = solution;`;
    */
   generateTestFile(problemData, language, langConfig) {
     if (language === 'javascript') {
-      const testCases = problemData.examples.map((ex, i) => `
-  test('Example ${i + 1}', () => {
-    // Input: ${ex.input}
-    // Expected: ${ex.output}
-    // TODO: Implement test case
-  });`).join('\n');
+      // Convert examples to test case array format
+      const testCaseArray = problemData.examples.map((ex, i) => {
+        return `  {
+    description: "Example ${i + 1}",
+    input: [${ex.input}], // TODO: Parse input properly
+    expected: ${ex.output}, // TODO: Parse output properly
+    category: "basic"
+  }`;
+      }).join(',\n');
 
-      return `const solution = require('./${problemData.slug}');
+      return `const ${problemData.slug.replace(/-/g, '')} = require('./${problemData.slug}');
 
-describe('${problemData.id}. ${problemData.title}', () => {${testCases}
-});`;
+// Test cases array - simple and clean
+const testCases = [
+${testCaseArray}
+];
+
+// Simple test runner - pure JavaScript
+function runTests() {
+  console.log('🧪 Running tests for ${problemData.title}\\n');
+  
+  let passed = 0;
+  let failed = 0;
+  
+  for (let i = 0; i < testCases.length; i++) {
+    const test = testCases[i];
+    const emoji = test.category === 'edge' ? '⚠️' : test.category === 'stress' ? '🔥' : '✅';
+    
+    try {
+      const result = ${problemData.slug.replace(/-/g, '')}(...test.input);
+      
+      if (JSON.stringify(result) === JSON.stringify(test.expected)) {
+        console.log(\`\${emoji} PASS: \${test.description}\`);
+        console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+        console.log(\`   Output: \${JSON.stringify(result)}\`);
+        passed++;
+      } else {
+        console.log(\`❌ FAIL: \${test.description}\`);
+        console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+        console.log(\`   Expected: \${JSON.stringify(test.expected)}\`);
+        console.log(\`   Got: \${JSON.stringify(result)}\`);
+        failed++;
+      }
+    } catch (error) {
+      console.log(\`💥 ERROR: \${test.description}\`);
+      console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+      console.log(\`   Error: \${error.message}\`);
+      failed++;
+    }
+    
+    console.log(''); // Empty line between tests
+  }
+  
+  // Summary
+  console.log('='.repeat(50));
+  console.log(\`📊 Results: \${passed} passed, \${failed} failed\`);
+  
+  if (failed === 0) {
+    console.log('🎉 All tests passed!');
+  } else {
+    console.log('🔧 Some tests failed. Keep working on your solution!');
+  }
+  
+  return failed === 0;
+}
+
+// Run tests if this file is executed directly
+if (require.main === module) {
+  runTests();
+}
+
+// Export for external test runners
+module.exports = {
+  ${problemData.slug.replace(/-/g, '')},
+  runTests,
+  runAllTests: runTests, // Alias for compatibility with lct test
+  testCases
+};`;
     }
 
     return `// Test file for ${problemData.title}`;

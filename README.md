@@ -317,6 +317,7 @@ Completing 200+ algorithmic problems is a significant achievement that puts you 
 
 ### ⚡ Lightning Fast
 - **Instant testing** - No network delays, immediate feedback
+- **Zero dependencies** - Tests run with plain Node.js, no Jest/Mocha required
 - **Local execution** - Everything runs on your machine
 - **Quick iteration** - Modify code and test in seconds
 
@@ -350,7 +351,7 @@ Completing 200+ algorithmic problems is a significant achievement that puts you 
 ### ✅ What This Package Already Does
 - **Problem Generation**: `lct challenge easy` - Creates complete problem files with templates
 - **Multi-Language Support**: JavaScript, Python, Java, C++ with proper templates
-- **Testing Framework**: `lct test problem-name` - Runs tests locally
+- **Testing Framework**: `lct test problem-name` - Runs tests locally with **zero dependencies**
 - **Progress Tracking**: `lct complete problem-name` - Tracks completed problems
 - **Learning Assistant**: `lct hint problem-name` - Progressive hints and algorithm analysis
 - **Browser Integration**: `lct open problem-name` - Opens LeetCode for final submission

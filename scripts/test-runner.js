@@ -9,15 +9,7 @@ function runJavaScriptTests(problemPath) {
     const projectRoot = process.cwd();
     const fullProblemPath = path.join(projectRoot, problemPath);
     
-    // Import the solution
-    const solutionModule = require(fullProblemPath);
-    
-    // Handle both default export and named exports
-    const solution = typeof solutionModule === 'function' ? solutionModule : 
-                    solutionModule.addTwoNumbers || solutionModule.default || 
-                    Object.values(solutionModule).find(val => typeof val === 'function');
-    
-    // Import test cases
+    // Check if test file exists
     const testFile = problemPath.replace('.js', '.test.js');
     const fullTestPath = path.join(projectRoot, testFile);
     if (!fs.existsSync(fullTestPath)) {
@@ -25,10 +17,25 @@ function runJavaScriptTests(problemPath) {
       return;
     }
     
-    const tests = require(fullTestPath);
-    runTestCases(tests, solution, problemPath);
+    console.log(`\n🧪 Running JavaScript tests for ${problemPath}...\n`);
+    
+    // Execute the test file directly (it has its own test runner now)
+    delete require.cache[require.resolve(fullTestPath)]; // Clear cache
+    const testModule = require(fullTestPath);
+    
+    if (testModule.runAllTests) {
+      const success = testModule.runAllTests();
+      if (success) {
+        console.log('\n🎉 All tests passed! Your solution is working correctly.');
+      } else {
+        console.log('\n🔧 Some tests failed. Review your solution and try again.');
+      }
+    } else {
+      console.log('❌ Test file does not have runAllTests function');
+    }
   } catch (error) {
-    console.log(`❌ Error loading ${problemPath}: ${error.message}`);
+    console.log(`❌ Error running tests for ${problemPath}: ${error.message}`);
+    console.log('💡 Make sure your solution file exports the function correctly.');
   }
 }
 
@@ -120,56 +127,7 @@ function runCppTests(problemPath) {
   });
 }
 
-// Test case runner for JavaScript
-function runTestCases(tests, solution, problemPath) {
-    
-  console.log(`\n🧪 Running tests for ${problemPath}...\n`);
-  
-  let passed = 0;
-  let total = tests.length;
-  
-  tests.forEach((test, index) => {
-    try {
-      let result = solution(...test.input);
-      const expected = test.expected;
-      
-      // Apply transformation if provided (for linked lists, etc.)
-      if (test.transform && typeof test.transform === 'function') {
-        result = test.transform(result);
-      }
-      
-      // Handle array comparison
-      const isEqual = Array.isArray(result) && Array.isArray(expected) 
-        ? JSON.stringify(result) === JSON.stringify(expected)
-        : result === expected;
-      
-      if (isEqual) {
-        console.log(`✅ Test ${index + 1}: PASSED`);
-        console.log(`   Input: ${JSON.stringify(test.input)}`);
-        console.log(`   Output: ${JSON.stringify(result)}`);
-        passed++;
-      } else {
-        console.log(`❌ Test ${index + 1}: FAILED`);
-        console.log(`   Input: ${JSON.stringify(test.input)}`);
-        console.log(`   Expected: ${JSON.stringify(expected)}`);
-        console.log(`   Got: ${JSON.stringify(result)}`);
-      }
-    } catch (error) {
-      console.log(`❌ Test ${index + 1}: ERROR`);
-      console.log(`   Input: ${JSON.stringify(test.input)}`);
-      console.log(`   Error: ${error.message}`);
-    }
-    console.log('');
-  });
-  
-  console.log(`📊 Results: ${passed}/${total} tests passed`);
-  
-  if (passed === total) {
-    console.log('🎉 All tests passed! Great job!');
-  } else {
-    console.log('💪 Keep working on it!');
-  }
-}
+// Note: Test case runner is now embedded in each test file for framework-free testing
 
 // Main test runner that detects language and runs appropriate tests
 function runTests(problemPath) {

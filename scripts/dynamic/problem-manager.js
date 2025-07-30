@@ -857,28 +857,91 @@ public:
       const categoryEmoji = category === 'edge' ? '⚠️' : category === 'stress' ? '🔥' : '✅';
       
       return `  // ${categoryEmoji} ${testCase.description || `Test case ${index + 1}`} (${category})
-  test('${testCase.description || `Test case ${index + 1}`}', () => {
+  runTest('${testCase.description || `Test case ${index + 1}`}', () => {
     const result = ${signature.name}(${inputStr});
-    ${testCase.expected !== null ? `expect(result).toEqual(${expectedStr});` : `// Expected result: ${expectedStr || 'To be determined'}`}
+    ${testCase.expected !== null ? `assertEqual(result, ${expectedStr});` : `// Expected result: ${expectedStr || 'To be determined'}`}
   });`;
     }).join('\n\n');
 
+    // Convert test cases to simple array format
+    const testCaseArray = testCases.map((testCase, index) => {
+      const category = testCase.category || 'basic';
+      const description = (testCase.description || `Test case ${index + 1}`).replace(/"/g, '\\"');
+      return `  {
+    description: "${description}",
+    input: [${testCase.input.map(val => JSON.stringify(val)).join(', ')}],
+    expected: ${JSON.stringify(testCase.expected)},
+    category: "${category}"
+  }`;
+    }).join(',\n');
+
     return `${fallbackNotice}const ${signature.name} = require('./${problem.name}');
 
-describe('${problem.id}. ${problem.title}', () => {
-${testCaseCode}
-});
+// Test cases array - simple and clean
+const testCases = [
+${testCaseArray}
+];
 
-// Additional test utilities
-function runAllTests() {
-  console.log('Running all tests for ${problem.title}...');
-  // Add custom test runner logic here
+// Simple test runner - pure JavaScript
+function runTests() {
+  console.log('🧪 Running tests for ${problem.title}\\n');
+  
+  let passed = 0;
+  let failed = 0;
+  
+  for (let i = 0; i < testCases.length; i++) {
+    const test = testCases[i];
+    const emoji = test.category === 'edge' ? '⚠️' : test.category === 'stress' ? '🔥' : '✅';
+    
+    try {
+      const result = ${signature.name}(...test.input);
+      
+      if (JSON.stringify(result) === JSON.stringify(test.expected)) {
+        console.log(\`\${emoji} PASS: \${test.description}\`);
+        console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+        console.log(\`   Output: \${JSON.stringify(result)}\`);
+        passed++;
+      } else {
+        console.log(\`❌ FAIL: \${test.description}\`);
+        console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+        console.log(\`   Expected: \${JSON.stringify(test.expected)}\`);
+        console.log(\`   Got: \${JSON.stringify(result)}\`);
+        failed++;
+      }
+    } catch (error) {
+      console.log(\`💥 ERROR: \${test.description}\`);
+      console.log(\`   Input: \${JSON.stringify(test.input)}\`);
+      console.log(\`   Error: \${error.message}\`);
+      failed++;
+    }
+    
+    console.log(''); // Empty line between tests
+  }
+  
+  // Summary
+  console.log('='.repeat(50));
+  console.log(\`📊 Results: \${passed} passed, \${failed} failed\`);
+  
+  if (failed === 0) {
+    console.log('🎉 All tests passed!');
+  } else {
+    console.log('🔧 Some tests failed. Keep working on your solution!');
+  }
+  
+  return failed === 0;
+}
+
+// Run tests if this file is executed directly
+if (require.main === module) {
+  runTests();
 }
 
 // Export for external test runners
 module.exports = {
   ${signature.name},
-  runAllTests
+  runTests,
+  runAllTests: runTests, // Alias for compatibility with lct test
+  testCases
 };`;
   }
 

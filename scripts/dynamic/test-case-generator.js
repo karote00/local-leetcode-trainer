@@ -65,19 +65,39 @@ class TestCaseGenerator {
    * Parse input string to actual values
    */
   static parseInput(inputStr) {
-    // Handle multiple parameters
+    // Handle multiple parameters - need to be careful with commas inside arrays/objects
     const params = [];
-    const paramMatches = inputStr.match(/(\w+)\s*=\s*([^,]+)/g);
     
-    if (paramMatches) {
-      for (const match of paramMatches) {
-        const [, paramName, paramValue] = match.match(/(\w+)\s*=\s*(.+)/);
-        params.push(this.parseValue(paramValue.trim()));
+    // First try to match parameter = value patterns, handling nested structures
+    const paramPattern = /(\w+)\s*=\s*/g;
+    let match;
+    let lastIndex = 0;
+    
+    while ((match = paramPattern.exec(inputStr)) !== null) {
+      const paramName = match[1];
+      const valueStart = match.index + match[0].length;
+      
+      // Find the end of this parameter's value
+      let valueEnd = inputStr.length;
+      let nextMatch = paramPattern.exec(inputStr);
+      if (nextMatch) {
+        valueEnd = nextMatch.index;
+        paramPattern.lastIndex = nextMatch.index; // Reset for next iteration
       }
+      
+      const paramValue = inputStr.substring(valueStart, valueEnd).trim();
+      // Remove trailing comma if present
+      const cleanValue = paramValue.replace(/,\s*$/, '');
+      params.push(this.parseValue(cleanValue));
+      
+      if (!nextMatch) break;
+    }
+    
+    if (params.length > 0) {
       return params;
     }
     
-    // Single parameter
+    // Single parameter without parameter name
     const cleaned = inputStr.replace(/^\w+\s*=\s*/, '');
     return [this.parseValue(cleaned)];
   }
@@ -110,11 +130,39 @@ class TestCaseGenerator {
       // Handle arrays manually
       if (trimmed.includes('[') && trimmed.includes(']')) {
         try {
-          const arrayMatch = trimmed.match(/\[([^\]]*)\]/);
-          if (arrayMatch) {
-            const content = arrayMatch[1];
-            if (content.trim() === '') return [];
-            return content.split(',').map(item => this.parseValue(item.trim()));
+          // Find the complete array by matching brackets
+          let bracketCount = 0;
+          let startIndex = trimmed.indexOf('[');
+          let endIndex = -1;
+          
+          for (let i = startIndex; i < trimmed.length; i++) {
+            if (trimmed[i] === '[') bracketCount++;
+            if (trimmed[i] === ']') bracketCount--;
+            if (bracketCount === 0) {
+              endIndex = i;
+              break;
+            }
+          }
+          
+          if (endIndex !== -1) {
+            const arrayStr = trimmed.substring(startIndex, endIndex + 1);
+            // Try JSON.parse first for proper array parsing
+            try {
+              return JSON.parse(arrayStr);
+            } catch {
+              // Fallback to manual parsing
+              const content = arrayStr.slice(1, -1); // Remove [ and ]
+              if (content.trim() === '') return [];
+              return content.split(',').map(item => {
+                const trimmedItem = item.trim();
+                if (trimmedItem === 'null') return null;
+                if (trimmedItem === 'true') return true;
+                if (trimmedItem === 'false') return false;
+                const num = parseFloat(trimmedItem);
+                if (!isNaN(num)) return num;
+                return trimmedItem.replace(/^["']|["']$/g, '');
+              });
+            }
           }
         } catch (error) {
           console.warn(`Failed to parse array: ${error.message}`);
