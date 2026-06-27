@@ -2,7 +2,7 @@
 
 A complete local coding practice environment with **revolutionary AI teaching system** - designed for deep learning and algorithmic mastery, not just solving problems.
 
-> `lct challenge` uses the bundled local problem library. It does not scrape, crawl, or fetch problem content from LeetCode. When you are confident in a solution, use `lct open` to open the official practice page yourself and submit there.
+> This project is designed for practicing coding interview problems locally with AI assistance. It is not a LeetCode scraper and does not fetch problem content from LeetCode. Use the bundled local problem library to learn, experiment, and build confidence; when you're ready, open the official LeetCode page and challenge yourself there.
 
 ## 🤖 **NEW: AI Teaching System - Your Personal Coding Tutor**
 
