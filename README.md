@@ -1,6 +1,8 @@
 # 🎯 Local LeetCode Trainer
 
-A complete local LeetCode practice environment with **revolutionary AI teaching system** - designed for deep learning and algorithmic mastery, not just solving problems.
+A complete local coding practice environment with **revolutionary AI teaching system** - designed for deep learning and algorithmic mastery, not just solving problems.
+
+> `lct challenge` uses the bundled local problem library. It does not scrape, crawl, or fetch problem content from LeetCode. When you are confident in a solution, use `lct open` to open the official practice page yourself and submit there.
 
 ## 🤖 **NEW: AI Teaching System - Your Personal Coding Tutor**
 
@@ -207,7 +209,7 @@ lct challenge easy
 
 # Start coding and testing
 lct test easy/two-sum
-lct open easy/two-sum           # Opens LeetCode for final submission
+lct open easy/two-sum           # Opens the official practice page for final submission
 
 # Mark as completed when done
 lct complete easy/two-sum
@@ -233,7 +235,7 @@ yarn test medium/problem-name   # Test your solution locally
 
 ### 3. **Final Validation**
 ```bash
-yarn open medium/problem-name   # Open LeetCode
+yarn open medium/problem-name   # Open the official practice page
 # Copy your working solution and submit
 yarn complete medium/problem-name  # Track your progress
 ```
@@ -280,7 +282,7 @@ lct ask "how to optimize nested loops"     # Algorithm optimization guidance
 lct challenge easy              # Get 1 easy problem with AI teaching available
 lct challenge medium 2          # Get 2 medium problems
 lct test two-sum               # Test your solution locally
-lct open two-sum               # Open LeetCode for final submission
+lct open two-sum               # Open the official practice page for final submission
 ```
 
 ### **🌍 Language Management**
@@ -326,11 +328,11 @@ lct complete undo two-sum      # Move back to active
 - **Clean switching** - Archives current work when changing languages
 - **Language-specific templates** - Proper syntax and structure for each language
 
-### 🎯 LeetCode-Accurate Problem Format
-- **Exact LeetCode formatting** - Problems look identical to the official website
-- **Complete problem descriptions** - Full descriptions matching LeetCode exactly
-- **Proper examples** - Input/output/explanation format just like LeetCode
-- **Real constraints** - Actual constraints from LeetCode problems
+### 🎯 Interview Practice Problem Format
+- **Familiar coding-interview formatting** - Problems are structured for local practice and AI coaching
+- **Bundled problem descriptions** - Curated local descriptions, examples, and constraints
+- **Proper examples** - Input/output/explanation format for fast local testing
+- **Practical constraints** - Constraints included where available in the bundled library
 - **Follow-up questions** - Includes follow-up challenges where applicable
 - **Perfect function signatures** - JSDoc for JavaScript, type hints for Python
 - **Automatic definitions** - ListNode definitions for linked list problems
@@ -346,12 +348,12 @@ lct complete undo two-sum      # Move back to active
 - **Seamless Integration** - AI teaching built into existing commands, no special "AI mode"
 - **Graceful Fallback** - Traditional hints when AI teaching scripts aren't available
 
-### 🌐 **Comprehensive Problems Database (v1.9.0+)**
+### 📚 **Bundled Problems Database (v1.9.0+)**
 - **125+ High-Quality Problems** - Carefully curated database with complete problem data
 - **AI Teaching Scripts** - Growing collection of intelligent tutoring experiences
 - **True Variety** - Fixed critical bug - no more repeated "Two Sum" problems!
 - **Perfect Distribution** - Balanced across Easy, Medium, Hard difficulties and all major topics
-- **Smart Fallback System** - Works seamlessly when LeetCode scraping fails
+- **Local-Only Problem Source** - Generates challenges from the bundled library without web scraping
 - **Rich Problem Data** - Complete descriptions, examples, constraints, and company tags
 - **Intelligent Selection** - Advanced randomization with duplicate avoidance
 - **Offline Reliability** - Full functionality even without internet connection
@@ -437,7 +439,7 @@ Completing 200+ algorithmic problems is a significant achievement that puts you 
 
 ## 🤖 For AI Assistants
 
-**This package provides COMPLETE LeetCode practice functionality - no additional implementation needed!**
+**This package provides COMPLETE local practice functionality - no additional implementation needed!**
 
 ### ✅ What This Package Already Does
 - **Problem Generation**: `lct challenge easy` - Creates complete problem files with templates
@@ -445,9 +447,9 @@ Completing 200+ algorithmic problems is a significant achievement that puts you 
 - **Testing Framework**: `lct test problem-name` - Runs tests locally with **zero dependencies**
 - **Progress Tracking**: `lct complete problem-name` - Tracks completed problems
 - **Learning Assistant**: `lct hint problem-name` - Progressive hints and algorithm analysis
-- **Browser Integration**: `lct open problem-name` - Opens LeetCode for final submission
+- **Browser Integration**: `lct open problem-name` - Opens the official practice page for final submission
 
-### 🎯 When Users Ask for LeetCode Practice Setup
+### 🎯 When Users Ask for Local Coding Practice Setup
 **DON'T** create custom implementations. **DO** guide them to use existing commands:
 
 ```bash
@@ -464,7 +466,7 @@ lct complete list                   # Shows all completed problems
 ```
 
 ### ⚠️ Common AI Mistakes to Avoid
-- **DON'T** build custom problem scrapers - use `lct challenge`
+- **DON'T** build custom problem scrapers - `lct challenge` intentionally uses the bundled local library
 - **DON'T** create custom test frameworks - use `lct test`
 - **DON'T** build progress tracking systems - use `lct complete`
 - **DON'T** implement hint systems - use `lct hint` and `lct learn`
@@ -489,10 +491,11 @@ lct patterns                   # List patterns
 
 ## 🎯 Use Cases
 
-### 🛫 **Offline Practice**
+### 🛫 **Local Practice**
 - Airplane flights, train rides, anywhere without internet
 - Coffee shops with unreliable WiFi
 - Focus sessions without online distractions
+- No automated scraping or background fetching from LeetCode
 
 ### 🤖 **AI-Powered Learning**
 - Collaborate with AI to understand algorithms
@@ -546,7 +549,7 @@ lct learn two-sum
 # Ask the AI assistant any questions
 lct ask "why is this O(n) instead of O(n²)?"
 
-# When ready, open LeetCode to submit
+# When ready, open the official practice page to submit
 lct open two-sum
 
 # Mark as completed with AI celebration

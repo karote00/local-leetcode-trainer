@@ -1,66 +1,30 @@
 /**
- * Offline Manager for handling offline scenarios and cache validation
+ * Local Cache Manager for cache validation and compatibility helpers
  */
 
 const { CacheManagerImpl } = require('./cache-manager');
-const { config } = require('./config');
 
 class OfflineManager {
   constructor() {
     this.cache = new CacheManagerImpl();
-    this.isOnline = true;
+    this.isOnline = false;
     this.lastOnlineCheck = null;
-    this.onlineCheckInterval = 30000; // 30 seconds
-    
-    this.startConnectivityMonitoring();
   }
 
   /**
-   * Start monitoring network connectivity
+   * Network monitoring is intentionally disabled. Problems are bundled locally.
    */
   startConnectivityMonitoring() {
-    setInterval(() => {
-      this.checkConnectivity().catch(() => {
-        // Ignore errors in background check
-      });
-    }, this.onlineCheckInterval);
+    return false;
   }
 
   /**
    * Check network connectivity
    */
   async checkConnectivity() {
-    try {
-      const https = require('https');
-      const url = config.get('api.leetcodeBaseUrl');
-      
-      return new Promise((resolve, reject) => {
-        const req = https.request(url, { method: 'HEAD', timeout: 5000 }, (res) => {
-          this.isOnline = res.statusCode >= 200 && res.statusCode < 400;
-          this.lastOnlineCheck = new Date();
-          resolve(this.isOnline);
-        });
-        
-        req.on('error', () => {
-          this.isOnline = false;
-          this.lastOnlineCheck = new Date();
-          resolve(false);
-        });
-        
-        req.on('timeout', () => {
-          req.destroy();
-          this.isOnline = false;
-          this.lastOnlineCheck = new Date();
-          resolve(false);
-        });
-        
-        req.end();
-      });
-    } catch (error) {
-      this.isOnline = false;
-      this.lastOnlineCheck = new Date();
-      return false;
-    }
+    this.isOnline = false;
+    this.lastOnlineCheck = null;
+    return false;
   }
 
   /**
@@ -68,71 +32,41 @@ class OfflineManager {
    */
   getConnectivityStatus() {
     return {
-      isOnline: this.isOnline,
+      isOnline: false,
       lastCheck: this.lastOnlineCheck,
-      mode: this.isOnline ? 'online' : 'offline'
+      mode: 'local',
+      localOnly: true
     };
   }
 
   /**
-   * Force offline mode
+   * Compatibility method: local-only mode is always enabled.
    */
   setOfflineMode(offline = true) {
-    config.set('network.offlineMode', offline);
-    this.isOnline = !offline;
-    console.log(`${offline ? 'Enabled' : 'Disabled'} offline mode`);
+    this.isOnline = false;
+    console.log('Local-only mode is always enabled');
   }
 
   /**
    * Check if should prefer cache
    */
   shouldPreferCache() {
-    return config.get('network.preferCache') || 
-           config.get('network.offlineMode') || 
-           !this.isOnline;
+    return false;
   }
 
   /**
-   * Get problem with offline support
+   * Get problem with local cache support
    */
   async getProblemOffline(identifier) {
-    const cacheKey = `problem:${identifier}`;
-    
     try {
-      // Try cache first if offline or prefer cache
-      if (this.shouldPreferCache()) {
-        const cached = await this.cache.get(cacheKey);
-        if (cached) {
-          console.log(`📱 Using cached problem: ${identifier}`);
-          return {
-            ...cached,
-            metadata: {
-              ...cached.metadata,
-              source: 'cache',
-              isOffline: !this.isOnline
-            }
-          };
-        }
-        
-        if (!this.isOnline) {
-          throw new Error(`Problem "${identifier}" not available offline. Try: lct cache list`);
-        }
-      }
-      
-      // If online, indicate cache miss
-      if (this.isOnline) {
-        console.log(`🌐 Problem not in cache, will fetch from LeetCode: ${identifier}`);
-        return null; // Let caller handle fetching
-      }
-      
-      throw new Error(`Offline and problem "${identifier}" not cached`);
+      return null;
     } catch (error) {
-      throw new Error(`Offline access failed: ${error.message}`);
+      throw new Error(`Local cache access failed: ${error.message}`);
     }
   }
 
   /**
-   * Get offline problem list
+   * Get cached problem list
    */
   async getOfflineProblemList() {
     try {
@@ -141,11 +75,11 @@ class OfflineManager {
       return {
         problems,
         count: problems.length,
-        isOffline: !this.isOnline,
+        isOffline: true,
         lastSync: this.lastOnlineCheck
       };
     } catch (error) {
-      throw new Error(`Failed to get offline problems: ${error.message}`);
+      throw new Error(`Failed to get cached problems: ${error.message}`);
     }
   }
 
@@ -220,13 +154,8 @@ class OfflineManager {
    * Refresh stale cache entries
    */
   async refreshStaleEntries(maxAge = 7 * 24 * 60 * 60 * 1000) { // 7 days
-    if (!this.isOnline) {
-      console.log('📱 Offline - cannot refresh cache entries');
-      return { refreshed: 0, errors: [] };
-    }
-    
     try {
-      console.log('🔄 Refreshing stale cache entries...');
+      console.log('🔄 Marking stale local cache entries...');
       
       const entries = await this.cache.getAllEntries();
       const now = Date.now();
@@ -244,7 +173,7 @@ class OfflineManager {
           
           const age = now - new Date(entry.timestamp).getTime();
           if (age > maxAge) {
-            console.log(`🔄 Refreshing stale entry: ${entry.key}`);
+            console.log(`🔄 Marking stale entry: ${entry.key}`);
             
             // This would trigger a refresh - implementation depends on ProblemManager
             // For now, just mark as needing refresh
@@ -260,7 +189,7 @@ class OfflineManager {
         }
       }
       
-      console.log(`✅ Refresh complete: ${results.refreshed} refreshed, ${results.skipped} skipped`);
+      console.log(`✅ Stale cache check complete: ${results.refreshed} marked, ${results.skipped} skipped`);
       return results;
     } catch (error) {
       throw new Error(`Failed to refresh stale entries: ${error.message}`);
@@ -268,55 +197,22 @@ class OfflineManager {
   }
 
   /**
-   * Prepare for offline use
+   * Prepare for local use
    */
   async prepareOffline(problems = []) {
-    if (!this.isOnline) {
-      throw new Error('Must be online to prepare for offline use');
-    }
-    
     try {
-      console.log('📱 Preparing for offline use...');
+      console.log('📚 Local problem library is bundled with the package.');
       
       const results = {
-        cached: 0,
+        cached: problems.length,
         errors: [],
         totalSize: 0
       };
-      
-      // If no specific problems provided, cache popular ones
-      if (problems.length === 0) {
-        problems = [
-          'two-sum', 'add-two-numbers', 'longest-substring-without-repeating-characters',
-          'median-of-two-sorted-arrays', 'longest-palindromic-substring', 'reverse-integer',
-          'palindrome-number', 'container-with-most-water', 'roman-to-integer',
-          'longest-common-prefix', 'valid-parentheses', 'merge-two-sorted-lists',
-          'generate-parentheses', 'remove-duplicates-from-sorted-array', 'remove-element',
-          'search-insert-position', 'maximum-subarray', 'climbing-stairs', 'merge-intervals',
-          'unique-paths', 'minimum-path-sum', 'edit-distance', 'sort-colors'
-        ];
-      }
-      
-      for (const problemId of problems) {
-        try {
-          const cacheKey = `problem:${problemId}`;
-          const existing = await this.cache.get(cacheKey);
-          
-          if (!existing) {
-            console.log(`📥 Caching problem for offline use: ${problemId}`);
-            // This would fetch and cache the problem
-            // Implementation depends on LeetCodeAPI integration
-            results.cached++;
-          }
-        } catch (error) {
-          results.errors.push(`Failed to cache ${problemId}: ${error.message}`);
-        }
-      }
-      
-      console.log(`✅ Offline preparation complete: ${results.cached} problems cached`);
+
+      console.log('✅ No network preparation is required.');
       return results;
     } catch (error) {
-      throw new Error(`Failed to prepare for offline use: ${error.message}`);
+      throw new Error(`Failed to prepare local library: ${error.message}`);
     }
   }
 
@@ -362,18 +258,10 @@ class OfflineManager {
       });
     }
     
-    if (!connectivity.isOnline && stats.problemCount < 10) {
+    if (stats.problemCount === 0) {
       recommendations.push({
         type: 'info',
-        message: 'Limited offline problems available. Cache more when online.',
-        action: 'lct cache prepare'
-      });
-    }
-    
-    if (connectivity.isOnline && stats.problemCount === 0) {
-      recommendations.push({
-        type: 'info',
-        message: 'No problems cached. Start practicing to build offline library.',
+        message: 'No generated problems cached. Start practicing to create local problem files.',
         action: 'lct challenge easy'
       });
     }

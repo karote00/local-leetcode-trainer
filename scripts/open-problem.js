@@ -3,11 +3,11 @@ const path = require('path');
 const { exec } = require('child_process');
 const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
 
-// Function to extract LeetCode link from a problem file
-function extractLeetCodeLink(filePath) {
+// Function to extract the official practice link from a problem file
+function extractOfficialPracticeLink(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
-    const linkMatch = content.match(/Link:\s*(https:\/\/leetcode\.com\/problems\/[^\/\s]+\/)/);
+    const linkMatch = content.match(/(?:Link:|Official Practice Link:)?\s*(https:\/\/leetcode\.com\/problems\/[^\/\s]+\/)/);
     return linkMatch ? linkMatch[1] : null;
   } catch (error) {
     return null;
@@ -60,7 +60,7 @@ function openInBrowser(url) {
       console.log(`❌ Failed to open browser: ${error.message}`);
       console.log(`🔗 Please open this link manually: ${url}`);
     } else {
-      console.log(`🚀 Opened LeetCode problem in your browser!`);
+      console.log(`🚀 Opened official practice page in your browser!`);
     }
   });
 }
@@ -135,7 +135,7 @@ function main() {
     if (activeProblems.length > 0) {
       console.log('🔥 Active Problems:');
       activeProblems.forEach((item, index) => {
-        const link = extractLeetCodeLink(item.file);
+        const link = extractOfficialPracticeLink(item.file);
         const status = link ? '🔗' : '❌';
         console.log(`  ${index + 1}. ${status} ${item.shortPath}`);
       });
@@ -145,7 +145,7 @@ function main() {
     if (completedProblems.length > 0) {
       console.log('✅ Completed Problems:');
       completedProblems.forEach((item, index) => {
-        const link = extractLeetCodeLink(item.file);
+        const link = extractOfficialPracticeLink(item.file);
         const status = link ? '🔗' : '❌';
         console.log(`  ${index + 1}. ${status} ${item.shortPath}`);
       });
@@ -167,12 +167,12 @@ function main() {
     process.exit(1);
   }
   
-  // Extract and open the LeetCode link
-  const link = extractLeetCodeLink(problemPath);
+  // Extract and open the official practice link
+  const link = extractOfficialPracticeLink(problemPath);
   
   if (!link) {
-    console.log(`❌ No LeetCode link found in ${problemPath}`);
-    console.log('💡 Make sure the file contains a line like: Link: https://leetcode.com/problems/...');
+    console.log(`❌ No official practice link found in ${problemPath}`);
+    console.log('💡 Make sure the file contains a line like: https://leetcode.com/problems/...');
     process.exit(1);
   }
   

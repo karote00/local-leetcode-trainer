@@ -1,23 +1,20 @@
 /**
- * Problem Manager - Orchestrates problem fetching, caching, and generation
+ * Problem Manager - Orchestrates local problem loading, caching, and generation
  */
 
 const { ProblemManager } = require('./interfaces');
-const { LeetCodeAPIImpl } = require('./leetcode-api');
+const { LocalProblemSourceImpl } = require('./local-problem-source');
 const { CacheManagerImpl } = require('./cache-manager');
 const { OfflineManager } = require('./offline-manager');
-const { ProblemParser } = require('./problem-parser');
 const { TestCaseGenerator } = require('./test-case-generator');
 const { FallbackValidator } = require('./fallback-validator');
-const { config } = require('./config');
 
 class ProblemManagerImpl extends ProblemManager {
   constructor() {
     super();
-    this.api = new LeetCodeAPIImpl();
+    this.problemSource = new LocalProblemSourceImpl();
     this.cache = new CacheManagerImpl();
     this.offline = new OfflineManager();
-    this.parser = new ProblemParser();
   }
 
   /**
@@ -36,24 +33,18 @@ class ProblemManagerImpl extends ProblemManager {
       const cacheKey = `problem:${identifier}`;
       let problemData = null;
 
-      // Try offline/cache first unless force refresh
+      // Try local cache first unless force refresh
       if (!forceRefresh) {
         problemData = await this.offline.getProblemOffline(identifier);
       }
 
-      // Fetch from API if not in cache or force refresh
+      // Load from bundled local library if not in cache or force refresh
       if (!problemData || forceRefresh) {
-        if (!this.offline.getConnectivityStatus().isOnline && !config.get('network.offlineMode')) {
-          throw new Error(`Cannot fetch problem "${identifier}" - offline and not cached`);
-        }
-
-        console.log(`🌐 Fetching problem from LeetCode: ${identifier}`);
-        problemData = await this.api.fetchProblem(identifier);
+        console.log(`📚 Loading problem from local library: ${identifier}`);
+        problemData = await this.problemSource.fetchProblem(identifier);
         
-        // Validate fetched data using enhanced fallback validator
-        const validation = problemData.metadata?.source === 'enhanced-fallback' || problemData.metadata?.source === 'fallback' ?
-          FallbackValidator.validateProblemData(problemData) :
-          ProblemParser.validateProblemData(problemData);
+        // Validate bundled problem data using the local-library validator rules.
+        const validation = FallbackValidator.validateProblemData(problemData);
           
         if (!validation.isValid) {
           throw new Error(`Invalid problem data: ${validation.errors.join(', ')}`);
@@ -63,23 +54,27 @@ class ProblemManagerImpl extends ProblemManager {
           console.warn(`⚠️  Problem warnings: ${validation.warnings.join(', ')}`);
         }
 
-        // Display fallback mode information
-        if (problemData.metadata?.source === 'enhanced-fallback') {
-          console.log(`📱 Using enhanced fallback data (${validation.completenessScore}% complete)`);
-        } else if (problemData.metadata?.source === 'fallback') {
-          console.log(`📱 Using basic fallback data`);
+        // Display local library information
+        if (problemData.metadata?.source === 'local-library') {
+          console.log(`📚 Using local library data (${validation.completenessScore}% complete)`);
+        } else if (problemData.metadata?.source === 'enhanced-fallback' || problemData.metadata?.source === 'fallback') {
+          console.log(`📚 Using bundled fallback data (${validation.completenessScore}% complete)`);
         }
 
-        // Cache the fetched problem
-        await this.cache.set(cacheKey, problemData, {
-          source: problemData.metadata?.source || 'leetcode-api',
+        // Cache the loaded problem
+        const cached = await this.cache.set(cacheKey, problemData, {
+          source: problemData.metadata?.source || 'local-library',
           version: '2.0',
           language: language,
-          fetchedAt: new Date().toISOString(),
+          loadedAt: new Date().toISOString(),
           completeness: validation.completenessScore || 100
         });
 
-        console.log(`✅ Problem cached: ${identifier}`);
+        if (cached) {
+          console.log(`✅ Problem cached: ${identifier}`);
+        } else {
+          console.warn(`⚠️  Problem cache skipped: ${identifier}`);
+        }
       }
 
       // Enhance problem data
@@ -98,25 +93,10 @@ class ProblemManagerImpl extends ProblemManager {
     try {
       console.log(`🎲 Getting random ${difficulty} problem`);
 
-      // Try to get from search results first
-      let randomProblem;
-      
-      if (this.offline.getConnectivityStatus().isOnline) {
-        randomProblem = await this.api.getRandomProblem(difficulty);
-      } else {
-        // Get from cached problems
-        const offlineProblems = await this.offline.getOfflineProblemList();
-        const filteredProblems = offlineProblems.problems.filter(
-          p => p.difficulty.toLowerCase() === difficulty.toLowerCase()
-        );
-        
-        if (filteredProblems.length === 0) {
-          throw new Error(`No offline ${difficulty} problems available`);
-        }
-        
-        const randomIndex = Math.floor(Math.random() * filteredProblems.length);
-        randomProblem = filteredProblems[randomIndex];
-      }
+      const excludedNames = new Set((options.exclude || []).map(name => String(name).toLowerCase()));
+      const randomProblem = await this.problemSource.getRandomProblem(difficulty, {
+        exclude: Array.from(excludedNames)
+      });
 
       // Get full problem data
       return await this.getProblem(randomProblem.name || randomProblem.id, options);
@@ -572,9 +552,9 @@ class ProblemManagerImpl extends ProblemManager {
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    // Add fallback mode indicator
+    // Add bundled-data indicator for old cache entries from previous versions.
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+      ` * \n * 📚 LOCAL LIBRARY: This problem data is bundled with the package.\n` : '';
     
     const listNodeDef = template.needsListNode ? `/**
  * Definition for singly-linked list.
@@ -599,7 +579,7 @@ class ProblemManagerImpl extends ProblemManager {
     
     return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
- * https://leetcode.com/problems/${problem.name}/
+ * Official Practice Link: https://leetcode.com/problems/${problem.name}/
  *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
@@ -634,9 +614,9 @@ module.exports = ${signature.name};`;
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    // Add fallback mode indicator
+    // Add bundled-data indicator for old cache entries from previous versions.
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `\n📱 OFFLINE MODE: This problem data is from fallback database\nFor the latest version, try again when online\n` : '';
+      `\n📚 LOCAL LIBRARY: This problem data is bundled with the package.\n` : '';
     
     const listNodeDef = template.needsListNode ? `# Definition for singly-linked list.
 # class ListNode:
@@ -659,7 +639,7 @@ module.exports = ${signature.name};`;
     
     return `"""
 ${problem.id}. ${problem.title}
-https://leetcode.com/problems/${problem.name}/
+Official Practice Link: https://leetcode.com/problems/${problem.name}/
 ${fallbackNotice}
 ${problem.description}
 
@@ -693,9 +673,9 @@ if __name__ == "__main__":
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    // Add fallback mode indicator
+    // Add bundled-data indicator for old cache entries from previous versions.
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+      ` * \n * 📚 LOCAL LIBRARY: This problem data is bundled with the package.\n` : '';
     
     const listNodeDef = template.needsListNode ? `/**
  * Definition for singly-linked list.
@@ -730,7 +710,7 @@ if __name__ == "__main__":
     
     return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
- * https://leetcode.com/problems/${problem.name}/
+ * Official Practice Link: https://leetcode.com/problems/${problem.name}/
  *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
@@ -761,9 +741,9 @@ class Solution {
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    // Add fallback mode indicator
+    // Add bundled-data indicator for old cache entries from previous versions.
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      ` * \n * 📱 OFFLINE MODE: This problem data is from fallback database\n * For the latest version, try again when online\n` : '';
+      ` * \n * 📚 LOCAL LIBRARY: This problem data is bundled with the package.\n` : '';
     
     const listNodeDef = template.needsListNode ? `/**
  * Definition for singly-linked list.
@@ -794,7 +774,7 @@ class Solution {
     
     return `${listNodeDef}${treeNodeDef}/**
  * ${problem.id}. ${problem.title}
- * https://leetcode.com/problems/${problem.name}/
+ * Official Practice Link: https://leetcode.com/problems/${problem.name}/
  *${fallbackNotice}
  * ${problem.description.replace(/\n/g, '\n * ')}
  * 
@@ -848,7 +828,7 @@ public:
     }
 
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+      `// 📚 LOCAL LIBRARY: This test file uses bundled problem data\n\n` : '';
 
     const testCaseCode = testCases.map((testCase, index) => {
       const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
@@ -955,7 +935,7 @@ module.exports = {
     }
 
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `# 📱 OFFLINE MODE: This test file uses fallback problem data\n# For the latest version, try again when online\n\n` : '';
+      `# 📚 LOCAL LIBRARY: This test file uses bundled problem data\n\n` : '';
 
     const testCaseCode = testCases.map((testCase, index) => {
       const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
@@ -995,7 +975,7 @@ if __name__ == '__main__':
     }
 
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+      `// 📚 LOCAL LIBRARY: This test file uses bundled problem data\n\n` : '';
 
     const testCaseCode = testCases.map((testCase, index) => {
       const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
@@ -1035,7 +1015,7 @@ ${testCaseCode}
     }
 
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `// 📱 OFFLINE MODE: This test file uses fallback problem data\n// For the latest version, try again when online\n\n` : '';
+      `// 📚 LOCAL LIBRARY: This test file uses bundled problem data\n\n` : '';
 
     const testCaseCode = testCases.map((testCase, index) => {
       const inputStr = testCase.input.map(val => JSON.stringify(val)).join(', ');
@@ -1088,9 +1068,9 @@ int main() {
     
     const constraints = problem.constraints.map(c => `- ${c}`).join('\n');
     
-    // Add fallback mode notice
+    // Add bundled-data notice for old cache entries from previous versions.
     const fallbackNotice = problem.metadata?.source === 'enhanced-fallback' || problem.metadata?.source === 'fallback' ? 
-      `\n## 📱 Offline Mode Notice\n\n**This problem data is from the fallback database** because LeetCode API is currently unavailable.\n\n**Limitations:**\n- Problem data may not be the most recent version\n- Some advanced features may be limited\n- Test cases are generated based on available examples\n\n**To get the latest data:** Try again when you have internet connectivity and LeetCode is accessible.\n\n**Completeness Score:** ${problem.metadata?.completeness || 'N/A'}%\n` : '';
+      `\n## Local Library Notice\n\nThis problem data is bundled with the package for local AI-assisted practice.\n\nCompleteness Score: ${problem.metadata?.completeness || 'N/A'}%\n` : '';
     
     // Add hints section if available
     const hintsSection = problem.hints && problem.hints.length > 0 ? 
@@ -1118,7 +1098,7 @@ ${problem.followUp ? `## Follow-up\n\n${problem.followUp}` : ''}
 ${hintsSection}
 ## Links
 
-- [LeetCode Problem](https://leetcode.com/problems/${problem.name}/)
+- [Official Practice Page](https://leetcode.com/problems/${problem.name}/)
 
 ## Notes
 

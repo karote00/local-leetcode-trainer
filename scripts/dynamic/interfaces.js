@@ -1,13 +1,13 @@
 /**
- * Core interfaces for the dynamic LeetCode integration system
+ * Core interfaces for the local problem practice system
  */
 
 /**
- * LeetCode API Integration Interface
+ * Problem Source Interface
  */
-class LeetCodeAPI {
+class ProblemSource {
   /**
-   * Fetch a problem by identifier (ID, name, or URL)
+   * Load a problem by identifier (ID, name, or URL)
    * @param {string|number} identifier - Problem identifier
    * @returns {Promise<Object>} Problem data
    */
@@ -45,7 +45,7 @@ class ProblemManager {
    * Get a problem with caching and template generation
    * @param {string|number} identifier - Problem identifier
    * @param {Object} options - Options
-   * @param {boolean} options.forceRefresh - Force refresh from API
+   * @param {boolean} options.forceRefresh - Bypass local cache and reload bundled data
    * @param {string} options.language - Target language
    * @param {boolean} options.includeHints - Include AI hints
    * @returns {Promise<Object>} Complete problem object
@@ -58,6 +58,7 @@ class ProblemManager {
    * Get a random problem by difficulty
    * @param {string} difficulty - easy, medium, hard
    * @param {Object} options - Options
+   * @param {string[]} options.exclude - Problem names to skip
    * @returns {Promise<Object>} Random problem
    */
   async getRandomProblem(difficulty, options = {}) {
@@ -95,7 +96,7 @@ class CacheManager {
    * @param {string} key - Cache key
    * @param {any} data - Data to cache
    * @param {Object} metadata - Additional metadata
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>} Whether the entry was written
    */
   async set(key, data, metadata = {}) {
     throw new Error('set must be implemented');
@@ -111,7 +112,7 @@ class CacheManager {
   }
 
   /**
-   * Get list of offline available problems
+   * Get list of cached problems
    * @returns {Promise<Array>} Array of cached problem identifiers
    */
   async getOfflineProblems() {
@@ -156,7 +157,7 @@ class AILearningAssistant {
 }
 
 module.exports = {
-  LeetCodeAPI,
+  ProblemSource,
   ProblemManager,
   CacheManager,
   AILearningAssistant

@@ -18,7 +18,7 @@ node medium/problem-name/problem-name.test.js
 
 # Run other local scripts
 node scripts/test-runner.js easy/problem-name
-node scripts/simple-challenge.js easy 1
+node scripts/regression-tests.js
 ```
 
 ### ❌ Incorrect - Uses Global Package

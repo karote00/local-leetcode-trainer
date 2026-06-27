@@ -1,20 +1,11 @@
 /**
- * Configuration system for dynamic LeetCode integration
+ * Configuration system for local practice integration
  */
 
 const path = require('path');
 const fs = require('fs');
 
 const DEFAULT_CONFIG = {
-  // API Configuration
-  api: {
-    leetcodeBaseUrl: 'https://leetcode.com',
-    requestTimeout: 30000,
-    maxRetries: 3,
-    retryDelay: 1000,
-    userAgent: 'Local-LeetCode-Trainer/1.5.0'
-  },
-
   // Cache Configuration
   cache: {
     directory: '.lct-cache',
@@ -48,11 +39,9 @@ const DEFAULT_CONFIG = {
     validateAgainstSolution: true
   },
 
-  // Network Configuration
-  network: {
-    offlineMode: false,
-    preferCache: false,
-    backgroundRefresh: true
+  // Problem Source Configuration
+  source: {
+    mode: 'local-library'
   }
 };
 

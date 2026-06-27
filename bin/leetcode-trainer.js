@@ -18,7 +18,7 @@ if (isDeprecatedCommand) {
 // Configure the main program
 program
   .name('local-leetcode-trainer')
-  .description('🎯 A complete local LeetCode practice environment with multi-language support')
+  .description('🎯 A complete local coding practice environment with multi-language support')
   .version(packageJson.version, '-v, --version', 'Show version number')
   .helpOption('-h, --help', 'Show this help message');
 
@@ -49,7 +49,7 @@ program
 // Open command
 program
   .command('open')
-  .description('Open LeetCode problem in browser')
+  .description('Open the official practice page in browser')
   .argument('[problem]', 'Problem to open (e.g., easy/two-sum)')
   .action((problem) => {
     executeScript('open-problem.js', problem ? [problem] : []);
@@ -110,7 +110,7 @@ program
 program
   .command('challenge')
   .alias('c')
-  .description('Generate new LeetCode problems with intelligent AI guidance')
+  .description('Generate new local practice problems with intelligent AI guidance')
   .argument('<difficulty>', 'Problem difficulty (easy/medium/hard) or specific problem name')
   .argument('[count]', 'Number of problems to generate (default: 1) or "guided" for AI tutoring')
   .action((difficulty, count) => {
@@ -145,7 +145,7 @@ program
 // Init command
 program
   .command('init')
-  .description('Initialize LeetCode practice environment')
+  .description('Initialize local practice environment')
   .action(() => {
     executeScript('init.js');
   });

@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const { getCurrentLanguage, getLanguageConfig } = require('./config.js');
 
-// Dynamic LeetCode Integration (required)
+// Local problem library integration (required)
 let dynamicSystem = null;
 
-console.log('🔍 Loading dynamic LeetCode integration...');
+console.log('🔍 Loading local problem library...');
 
 try {
   const { ProblemManagerImpl } = require('./dynamic/problem-manager');
@@ -16,9 +16,9 @@ try {
     offlineManager: new OfflineManager()
   };
   
-  console.log('🌐 Dynamic LeetCode integration enabled');
+  console.log('📚 Local problem library enabled');
 } catch (error) {
-  console.error('❌ CRITICAL ERROR: Dynamic system failed to load');
+  console.error('❌ CRITICAL ERROR: Local problem system failed to load');
   console.error('📁 Error details:', error.message);
   console.error('📍 Error location:', error.stack?.split('\n')[1]?.trim() || 'Unknown');
   console.error('');
@@ -31,9 +31,9 @@ try {
   process.exit(1);
 }
 
-// Verify dynamic system is working
+// Verify local problem system is working
 if (!dynamicSystem || !dynamicSystem.problemManager || !dynamicSystem.offlineManager) {
-  console.error('❌ CRITICAL ERROR: Dynamic system components missing');
+  console.error('❌ CRITICAL ERROR: Local problem system components missing');
   console.error('🚨 Cannot continue - exiting...');
   process.exit(1);
 }
@@ -81,7 +81,7 @@ async function generateDynamicProblems(difficulty, count, specificProblem = null
       });
       problems.push(problem);
     } catch (error) {
-      throw new Error(`Failed to fetch specific problem "${specificProblem}": ${error.message}`);
+      throw new Error(`Failed to load specific problem "${specificProblem}": ${error.message}`);
     }
   } else {
     // Generate random problems
@@ -93,7 +93,8 @@ async function generateDynamicProblems(difficulty, count, specificProblem = null
       try {
         const problem = await dynamicSystem.problemManager.getRandomProblem(difficulty, {
           language: getCurrentLanguage(),
-          includeHints: false
+          includeHints: false,
+          exclude: existing[difficulty]
         });
         
         // Check if problem already exists
@@ -106,13 +107,16 @@ async function generateDynamicProblems(difficulty, count, specificProblem = null
         existing[difficulty].push(problem.name); // Avoid duplicates in this session
         i++;
       } catch (error) {
-        console.warn(`⚠️  Failed to fetch problem ${i + 1}: ${error.message}`);
+        console.warn(`⚠️  Failed to load problem ${i + 1}: ${error.message}`);
+        if (error.message.includes('No available')) {
+          break;
+        }
         continue;
       }
     }
     
     if (problems.length === 0) {
-      throw new Error(`Failed to fetch any ${difficulty} problems after ${maxAttempts} attempts`);
+      throw new Error(`Failed to load any ${difficulty} problems after ${maxAttempts} attempts`);
     }
   }
   
@@ -124,15 +128,18 @@ async function createProblemFiles(difficulty, problem) {
   try {
     const language = getCurrentLanguage();
     const problemDir = path.join(difficulty, problem.name);
+    const langConfig = getLanguageConfig(language);
+    const problemFilePath = path.join(problemDir, `${problem.name}${langConfig.extension}`);
+    const isNewProblem = !fs.existsSync(problemFilePath);
     
     // Generate problem files using the problem manager
-    const files = await dynamicSystem.problemManager.generateProblemFiles(
+    await dynamicSystem.problemManager.generateProblemFiles(
       problem, 
       language, 
       problemDir
     );
     
-    return !fs.existsSync(files.problemFile);
+    return isNewProblem;
   } catch (error) {
     console.error(`❌ Failed to create files for ${problem.name}: ${error.message}`);
     return false;
@@ -141,9 +148,11 @@ async function createProblemFiles(difficulty, problem) {
 
 // Display problem information
 function displayProblemInfo(problem, created, index) {
-  const connectivity = dynamicSystem.offlineManager.getConnectivityStatus();
-  const sourceIcon = problem.metadata?.source === 'cache' ? '📱' : '🌐';
-  const sourceText = problem.metadata?.source === 'cache' ? 'Cache' : 'LeetCode';
+  const source = problem.metadata?.source || 'local-library';
+  const isFallback = source.includes('fallback');
+  const isLocal = source === 'local-library';
+  const sourceIcon = isLocal || problem.metadata?.source === 'cache' || isFallback ? '📚' : '🌐';
+  const sourceText = isLocal ? 'Local Library' : problem.metadata?.source === 'cache' ? 'Cache' : isFallback ? 'Bundled Data' : 'External';
   const status = created ? '✨ NEW' : '📁 EXISTS';
 
   // Show absolute path for new challenges
@@ -204,19 +213,19 @@ async function showProgressStats() {
 
   // Show cache stats
   try {
-    const offlineProblems = await dynamicSystem.offlineManager.getOfflineProblemList();
-    console.log(`\n📱 Offline Problems Available: ${offlineProblems.count}`);
+    const cachedProblems = await dynamicSystem.offlineManager.getOfflineProblemList();
+    console.log(`\n📚 Cached Problems Available: ${cachedProblems.count}`);
     
-    if (offlineProblems.count > 0) {
+    if (cachedProblems.count > 0) {
       const grouped = {
-        easy: offlineProblems.problems.filter(p => p.difficulty === 'easy').length,
-        medium: offlineProblems.problems.filter(p => p.difficulty === 'medium').length,
-        hard: offlineProblems.problems.filter(p => p.difficulty === 'hard').length
+        easy: cachedProblems.problems.filter(p => p.difficulty === 'easy').length,
+        medium: cachedProblems.problems.filter(p => p.difficulty === 'medium').length,
+        hard: cachedProblems.problems.filter(p => p.difficulty === 'hard').length
       };
       console.log(`  Easy: ${grouped.easy}, Medium: ${grouped.medium}, Hard: ${grouped.hard}`);
     }
   } catch (error) {
-    console.log('📱 Offline cache not available');
+    console.log('📚 Local cache not available');
   }
 }
 
@@ -263,17 +272,17 @@ async function main() {
 
   // Show help if no difficulty and no specific problem
   if (!difficulty && !specificProblem) {
-    console.log('🎯 LeetCode Challenge Generator (Dynamic)');
+    console.log('🎯 Local Coding Challenge Generator');
     console.log('');
     console.log('💡 Usage:');
-    console.log('  lct challenge easy              # Get 1 random easy problem from LeetCode');
-    console.log('  lct challenge medium 2          # Get 2 random medium problems from LeetCode');
-    console.log('  lct challenge hard              # Get 1 random hard problem from LeetCode');
+    console.log('  lct challenge easy              # Get 1 random easy problem from the local library');
+    console.log('  lct challenge medium 2          # Get 2 random medium problems from the local library');
+    console.log('  lct challenge hard              # Get 1 random hard problem from the local library');
     console.log('  lct challenge two-sum           # Get specific problem by name');
     console.log('  lct challenge 3sum              # Get specific problem by name');
     console.log('  lct challenge 1                 # Get problem by ID');
     console.log('');
-    console.log('🌐 All problems are fetched directly from LeetCode in real-time!');
+    console.log('📚 Problems are loaded from the bundled local library.');
     console.log('');
 
     await showProgressStats();
@@ -282,15 +291,13 @@ async function main() {
     console.log('💡 New Features:');
     console.log('  lct hint <problem> <level>      # Get AI hints (levels 1-5)');
     console.log('  lct solution <problem>          # Get complete solution');
-    console.log('  lct cache stats                 # Check cache status');
-    console.log('  lct cache list                  # List offline problems');
     
     process.exit(0);
   }
 
   try {
     // Generate problems using dynamic system
-    console.log('🌐 Fetching from LeetCode...');
+    console.log('📚 Loading from local problem library...');
     const selectedProblems = await generateDynamicProblems(difficulty, count, specificProblem);
 
     if (selectedProblems.length === 0) {
@@ -319,20 +326,10 @@ async function main() {
   } catch (error) {
     console.error(`❌ Failed to generate challenge: ${error.message}`);
     
-    // Check connectivity and provide helpful suggestions
-    const connectivity = dynamicSystem.offlineManager.getConnectivityStatus();
-    if (!connectivity.isOnline) {
-      console.log('');
-      console.log('📱 You appear to be offline. Try:');
-      console.log('  lct cache list                  # See available offline problems');
-      console.log('  lct cache prepare               # Cache problems when online');
-    } else {
-      console.log('');
-      console.log('💡 Suggestions:');
-      console.log('  - Check your internet connection');
-      console.log('  - Try a different problem name');
-      console.log('  - Use `lct cache list` to see offline problems');
-    }
+    console.log('');
+    console.log('💡 Suggestions:');
+    console.log('  - Try a different difficulty or problem name');
+    console.log('  - Check the bundled library under scripts/dynamic/problems');
     
     process.exit(1);
   }

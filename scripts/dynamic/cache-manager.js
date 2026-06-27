@@ -254,8 +254,10 @@ class CacheManagerImpl extends CacheManager {
       await this.updateCacheMetadata(compressed.length, 1);
       
       console.log(`Cached entry for key: ${key} (${compressed.length} bytes)`);
+      return true;
     } catch (error) {
       console.warn(`Failed to set cache entry for key ${key}: ${error.message}`);
+      return false;
     }
   }
 
@@ -399,7 +401,7 @@ class CacheManagerImpl extends CacheManager {
   }
 
   /**
-   * Get offline available problems
+   * Get cached local problems
    */
   async getOfflineProblems() {
     try {
@@ -428,7 +430,7 @@ class CacheManagerImpl extends CacheManager {
       
       return problems;
     } catch (error) {
-      console.warn(`Failed to get offline problems: ${error.message}`);
+      console.warn(`Failed to get cached problems: ${error.message}`);
       return [];
     }
   }

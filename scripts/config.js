@@ -27,7 +27,7 @@ var {{functionName}} = function({{functionParams}}) {
 
 module.exports = {{functionName}};`,
     testTemplate: `// Test cases for {{title}}
-// TODO: Add test cases from LeetCode problem description
+// TODO: Add local test cases for this problem
 module.exports = [
     {
         input: [],
@@ -39,15 +39,15 @@ module.exports = [
     extension: '.py',
     testCommand: 'python3',
     template: `"""
-LeetCode {{id}}: {{title}}
-Link: https://leetcode.com/problems/{{name}}/
+{{id}}. {{title}}
+Official Practice Link: https://leetcode.com/problems/{{name}}/
 
 {{description}}
 
 Topics: {{topics}}
 Companies: {{companies}}
 
-TODO: Add problem description, examples, and constraints from LeetCode
+TODO: Add local problem description, examples, and constraints
 """
 
 def {{function_name}}():
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     # Test runner will execute this
     pass`,
     testTemplate: `# Test cases for {{title}}
-# TODO: Add test cases from LeetCode problem description
+# TODO: Add local test cases for this problem
 test_cases = [
     {
         "input": [],
@@ -70,15 +70,15 @@ test_cases = [
     extension: '.java',
     testCommand: 'javac {{file}} && java {{className}}',
     template: `/**
- * LeetCode {{id}}: {{title}}
- * Link: https://leetcode.com/problems/{{name}}/
+ * {{id}}. {{title}}
+ * Official Practice Link: https://leetcode.com/problems/{{name}}/
  * 
  * {{description}}
  * 
  * Topics: {{topics}}
  * Companies: {{companies}}
  * 
- * TODO: Add problem description, examples, and constraints from LeetCode
+ * TODO: Add local problem description, examples, and constraints
  */
 
 public class {{ClassName}} {
@@ -88,7 +88,7 @@ public class {{ClassName}} {
     }
 }`,
     testTemplate: `// Test cases for {{title}}
-// TODO: Add test cases from LeetCode problem description
+// TODO: Add local test cases for this problem
 public class {{ClassName}}Test {
     // Test implementation
 }`
@@ -97,15 +97,15 @@ public class {{ClassName}}Test {
     extension: '.cpp',
     testCommand: 'g++ -o {{output}} {{file}} && ./{{output}}',
     template: `/**
- * LeetCode {{id}}: {{title}}
- * Link: https://leetcode.com/problems/{{name}}/
+ * {{id}}. {{title}}
+ * Official Practice Link: https://leetcode.com/problems/{{name}}/
  * 
  * {{description}}
  * 
  * Topics: {{topics}}
  * Companies: {{companies}}
  * 
- * TODO: Add problem description, examples, and constraints from LeetCode
+ * TODO: Add local problem description, examples, and constraints
  */
 
 #include <iostream>
@@ -123,7 +123,7 @@ int main() {
     return 0;
 }`,
     testTemplate: `// Test cases for {{title}}
-// TODO: Add test cases from LeetCode problem description`
+// TODO: Add local test cases for this problem`
   }
 };
 
@@ -342,7 +342,7 @@ async function main() {
   const command = args[0];
   
   if (!command) {
-    console.log('🔧 LeetCode Language Configuration');
+    console.log('🔧 Local Practice Language Configuration');
     console.log('');
     showCurrentConfig();
     console.log('');

@@ -1,6 +1,6 @@
 /**
- * LeetCode Problems Database Index
- * Comprehensive collection of LeetCode problems organized by difficulty
+ * Local Problems Database Index
+ * Comprehensive collection of bundled practice problems organized by difficulty
  */
 
 const fs = require('fs');
@@ -15,19 +15,34 @@ function loadProblemsFromDirectory(directory) {
     return problems;
   }
   
-  const files = fs.readdirSync(dirPath);
-  
-  files.forEach(file => {
-    if (file.endsWith('.js') && file !== 'index.js' && !file.startsWith('.')) {
-      const problemName = file.replace('.js', '');
-      try {
-        const problem = require(path.join(dirPath, file));
-        problems[problemName] = problem;
-      } catch (error) {
-        console.warn(`Failed to load problem ${file}:`, error.message);
+  function scanDirectory(currentDir) {
+    const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+
+    entries.forEach(entry => {
+      if (entry.name.startsWith('.')) {
+        return;
       }
-    }
-  });
+
+      const entryPath = path.join(currentDir, entry.name);
+
+      if (entry.isDirectory()) {
+        scanDirectory(entryPath);
+        return;
+      }
+
+      if (entry.name.endsWith('.js') && entry.name !== 'index.js') {
+        try {
+          const problem = require(entryPath);
+          const problemName = problem.name || entry.name.replace('.js', '');
+          problems[problemName] = problem;
+        } catch (error) {
+          console.warn(`Failed to load problem ${entryPath}:`, error.message);
+        }
+      }
+    });
+  }
+
+  scanDirectory(dirPath);
   
   return problems;
 }
@@ -61,14 +76,10 @@ function getProblem(identifier) {
  * Get problems by difficulty
  */
 function getProblemsByDifficulty(difficulty) {
-  const difficultyMap = {
-    'easy': easyProblems,
-    'medium': mediumProblems,
-    'hard': hardProblems
-  };
-  
-  const problems = difficultyMap[difficulty.toLowerCase()] || {};
-  return Object.entries(problems).map(([slug, problem]) => ({ slug, ...problem }));
+  const normalizedDifficulty = difficulty.toLowerCase();
+  return Object.entries(allProblems)
+    .filter(([_, problem]) => String(problem.difficulty).toLowerCase() === normalizedDifficulty)
+    .map(([slug, problem]) => ({ slug, ...problem }));
 }
 
 /**

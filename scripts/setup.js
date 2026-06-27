@@ -32,9 +32,9 @@ console.log(`
 🎉 Local LeetCode Trainer is ready!
 
 Quick start:
-  leetcode-trainer challenge easy    # Get your first problem
+  lct challenge easy                # Get your first local problem
   lct lang python                   # Switch to Python
   lct test easy/problem-name        # Test your solution
 
-For help: leetcode-trainer --help
+For help: lct --help
 `);

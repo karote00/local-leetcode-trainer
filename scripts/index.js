@@ -21,7 +21,7 @@ module.exports = {
   // CLI info
   info: {
     name: 'Local LeetCode Trainer',
-    description: 'A complete offline LeetCode practice environment with multi-language support',
+    description: 'A complete local coding practice environment with multi-language support',
     repository: 'https://github.com/karote00/local-leetcode-trainer'
   }
 };
